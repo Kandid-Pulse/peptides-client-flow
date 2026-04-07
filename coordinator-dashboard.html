@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Coordinator Dashboard</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { background: var(--cream); }
+  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
+  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto; }
+  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--terra-light); margin-top: 3px; }
+  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
+  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
+  .sidebar-item.locked { opacity: 0.3; cursor: not-allowed; }
+  .sidebar-badge { margin-left: auto; font-size: 9px; padding: 2px 6px; background: var(--terra); color: var(--white); }
+  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
+  .sidebar-item.active .sb-icon { background: var(--terra); }
+  .sidebar-spacer { flex: 1; }
+  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
+  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--terra); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
+  .user-name { font-size: 11px; color: var(--cream); }
+  .user-role-lbl { font-size: 9px; color: var(--terra-light); }
+
+  .main { padding: 32px 36px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
+
+  .greeting { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); margin-bottom: 4px; }
+  .greeting-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+
+  .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+  .card-block { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; margin-bottom: 16px; }
+  .card-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 0 8px 10px 0; border-bottom: 1px solid var(--border); text-align: left; }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: rgba(61,79,46,0.02); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 10px 8px 10px 0; font-size: 12px; color: var(--text-dark); }
+  .td-muted { font-size: 11px; color: var(--text-muted); }
+  .td-actions { display: flex; gap: 5px; }
+  .action-btn { font-size: 10px; padding: 4px 8px; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--text-muted); transition: all 0.2s; font-family: 'Jost', sans-serif; letter-spacing: 0.06em; }
+  .action-btn:hover { background: var(--olive-dark); color: var(--cream); border-color: var(--olive-dark); }
+  .action-btn.primary { background: var(--terra); color: var(--white); border-color: var(--terra); }
+  .action-btn.primary:hover { background: var(--terra-dark); }
+
+  .notif-list { display: flex; flex-direction: column; }
+  .notif-item { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .notif-item:last-child { border-bottom: none; }
+  .ni-icon { width: 26px; height: 26px; background: var(--cream); flex-shrink: 0; }
+  .ni-title { font-size: 12px; font-weight: 500; color: var(--text-dark); margin-bottom: 2px; }
+  .ni-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .ni-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+  .ni-unread { width: 6px; height: 6px; border-radius: 50%; background: var(--terra); flex-shrink: 0; margin-top: 4px; }
+
+  .locked-notice { background: rgba(61,79,46,0.03); border: 1px solid var(--border); padding: 10px 12px; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .lock-icon { font-size: 12px; }
+
+  .autoship-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .autoship-item:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><a href="index.html">Manor</a></div>
+  <div class="nav-links">
+    <a href="index.html">Website</a>
+    <a href="coordinator-dashboard.html" class="active">Coordinator</a>
+    <a href="login.html">Sign out</a>
+  </div>
+  <div class="nav-right">
+    <div style="font-size:11px;color:var(--text-muted);">Celeste (Coordinator)</div>
+    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--terra);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:600;">CE</div>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="sidebar-logo">Manor<div class="sidebar-role">Coordinator</div></div>
+    <div class="sidebar-section">My work</div>
+    <div class="sidebar-item active"><div class="sb-icon"></div>Dashboard</div>
+    <div class="sidebar-item" onclick="showView('queue')"><div class="sb-icon"></div>Patient queue</div>
+    <div class="sidebar-item" onclick="showView('payments')"><div class="sb-icon"></div>Payment links <div class="sidebar-badge">2</div></div>
+    <div class="sidebar-item" onclick="showView('shipments')"><div class="sb-icon"></div>Shipments</div>
+    <div class="sidebar-item" onclick="showView('autoship')"><div class="sb-icon"></div>Auto-ship</div>
+    <div class="sidebar-section">Locked</div>
+    <div class="sidebar-item locked"><div class="sb-icon"></div>Lab results</div>
+    <div class="sidebar-item locked"><div class="sb-icon"></div>Prescriptions</div>
+    <div class="sidebar-item locked"><div class="sb-icon"></div>Clinical notes</div>
+    <div class="sidebar-item locked"><div class="sb-icon"></div>Settings</div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="user-av">CE</div>
+      <div><div class="user-name">Celeste</div><div class="user-role-lbl">Coordinator</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Dashboard view -->
+    <div id="view-dashboard">
+      <div class="greeting">Good morning, Celeste</div>
+      <div class="greeting-sub">Monday, 6 Apr 2026 · 3 patients need action today</div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Active patients</div><div class="stat-value">14</div></div>
+        <div class="stat-card"><div class="stat-label">Links pending</div><div class="stat-value">2</div><div class="stat-sub warning">Awaiting payment</div></div>
+        <div class="stat-card"><div class="stat-label">Dispatching today</div><div class="stat-value">1</div><div class="stat-sub positive">Ready to ship</div></div>
+        <div class="stat-card"><div class="stat-label">Auto-ships due</div><div class="stat-value">3</div><div class="stat-sub">Next 7 days</div></div>
+      </div>
+
+      <div class="main-grid">
+        <div>
+          <div class="card-block">
+            <div class="card-block-title">Action required <span class="badge badge-terra">3 items</span></div>
+            <div style="display:flex;flex-direction:column;gap:0;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">JD</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">John Dawson</div><div style="font-size:11px;color:var(--text-muted);">Rx approved by Jordyn — send payment link</div></div>
+                <span class="badge badge-terra">Awaiting link</span>
+                <button class="action-btn primary" onclick="openPaymentModal('John Dawson')">Send link</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">MT</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">Maria Torres</div><div style="font-size:11px;color:var(--text-muted);">Payment received — confirm dispatch to pharmacy</div></div>
+                <span class="badge badge-amber">Awaiting dispatch</span>
+                <button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">SM</div>
+                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">Sarah Mitchell</div><div style="font-size:11px;color:var(--text-muted);">Auto-ship due in 3 days — confirm with pharmacy</div></div>
+                <span class="badge badge-amber">Auto-ship due</span>
+                <button class="action-btn" onclick="showView('autoship')">Review</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-block">
+            <div class="card-block-title">Upcoming auto-ships</div>
+            <div class="autoship-item"><span>Sarah Mitchell</span><span class="badge badge-amber">28 Mar · 90 days · €350</span></div>
+            <div class="autoship-item"><span>John Dawson</span><span>2 Apr · 90 days · €350</span></div>
+            <div class="autoship-item"><span>Maria Torres</span><span>10 Apr · 90 days · €350</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card-block">
+            <div class="card-block-title">Notifications</div>
+            <div class="notif-list">
+              <div class="notif-item">
+                <div class="ni-icon" style="background:rgba(61,79,46,0.08);"></div>
+                <div style="flex:1;"><div class="ni-title">Rx approved — John Dawson</div><div class="ni-sub">Jordyn approved. Ready to send payment link.</div></div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">5m</span><div class="ni-unread"></div></div>
+              </div>
+              <div class="notif-item">
+                <div class="ni-icon" style="background:rgba(58,96,32,0.08);"></div>
+                <div style="flex:1;"><div class="ni-title">Payment received</div><div class="ni-sub">Maria Torres paid €350. Advance to dispatch.</div></div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">1h</span><div class="ni-unread"></div></div>
+              </div>
+              <div class="notif-item">
+                <div class="ni-icon" style="background:rgba(180,120,30,0.08);"></div>
+                <div style="flex:1;"><div class="ni-title">Auto-ship due in 3 days</div><div class="ni-sub">Sarah Mitchell · 28 Mar · Confirm pharmacy</div></div>
+                <span class="ni-time">3h</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-block">
+            <div class="card-block-title">Clinical data access</div>
+            <div class="locked-notice"><span class="lock-icon">🔒</span>Lab results are not visible to the coordinator role</div>
+            <div class="locked-notice"><span class="lock-icon">🔒</span>Prescription details are not visible to the coordinator role</div>
+            <div class="locked-notice"><span class="lock-icon">🔒</span>Clinical notes are not visible to the coordinator role</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Clinical data access is restricted to the physician role. You can see that a prescription exists and has been approved — not its content.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Queue view -->
+    <div id="view-queue" style="display:none;">
+      <div class="topbar"><div class="page-title">Patient queue</div><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm">Search</button><button class="btn btn-ghost btn-sm">Filter by stage</button></div></div>
+      <div class="card-block">
+        <table>
+          <thead><tr><th>Patient</th><th>Programme</th><th>Stage</th><th>Payment</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>John Dawson</strong><div class="td-muted">New patient</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-terra">Awaiting link</span></td><td class="td-muted">—</td><td class="td-actions"><button class="action-btn primary" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
+            <tr><td><strong>Maria Torres</strong><div class="td-muted">Active · Day 55</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-amber">Awaiting dispatch</span></td><td><span class="badge badge-green">Paid</span></td><td class="td-actions"><button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
+            <tr><td><strong>Sarah Mitchell</strong><div class="td-muted">Active · Day 24</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-olive">Active</span></td><td><span class="badge badge-green">Auto-pay on</span></td><td class="td-actions"><button class="action-btn" onclick="showView('shipments')">View</button></td></tr>
+            <tr><td><strong>Tom Allen</strong><div class="td-muted">Active · Day 78</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-olive">Active</span></td><td><span class="badge badge-green">Auto-pay on</span></td><td class="td-actions"><button class="action-btn">View</button></td></tr>
+            <tr><td><strong>Emma Walsh</strong><div class="td-muted">Lab expired</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-red">Paused</span></td><td class="td-muted">On hold</td><td class="td-actions"><button class="action-btn">Flag</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payment links view -->
+    <div id="view-payments" style="display:none;">
+      <div class="topbar"><div class="page-title">Payment links</div><button class="btn btn-terra btn-sm" onclick="openPaymentModal('')">+ New link</button></div>
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
+        <div class="card-block">
+          <div class="card-block-title">All links</div>
+          <table>
+            <thead><tr><th>Patient</th><th>Amount</th><th>Sent</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>John Dawson</strong></td><td>€350</td><td class="td-muted">Just now</td><td><span class="badge badge-amber">Pending</span></td><td class="td-actions"><button class="action-btn">Resend</button><button class="action-btn">Void</button></td></tr>
+              <tr><td><strong>Maria Torres</strong></td><td>€350</td><td class="td-muted">2 Jan</td><td><span class="badge badge-green">Paid</span></td><td></td></tr>
+              <tr><td><strong>Sarah M.</strong></td><td>€350</td><td class="td-muted">26 Jan</td><td><span class="badge badge-green">Paid</span></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-block">
+          <div class="card-block-title">Create new link</div>
+          <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>John Dawson (Rx approved)</option><option>Select patient…</option></select></div>
+          <div class="info-banner"><div class="banner-label">Rx approved · Jordyn (NP)</div><div class="banner-body">Programme: 90-day wellness · Amount: €350 · Auto-ship enrolled</div></div>
+          <div class="form-group"><label class="form-label">Send via</label>
+            <div style="display:flex;gap:6px;">
+              <div style="flex:1;padding:8px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>
+              <div style="flex:1;padding:8px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">SMS</div>
+              <div style="flex:1;padding:8px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">In-app</div>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Link expiry</label><select class="form-select"><option>48 hours</option><option>24 hours</option><option>7 days</option></select></div>
+          <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="sendLink()">Send payment link</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipments view -->
+    <div id="view-shipments" style="display:none;">
+      <div class="topbar"><div class="page-title">Shipments</div><button class="btn btn-olive btn-sm" onclick="recordDispatch()">+ Record dispatch</button></div>
+      <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="stat-label">Total shipped</div><div class="stat-value">22</div></div>
+        <div class="stat-card"><div class="stat-label">In transit</div><div class="stat-value">3</div></div>
+        <div class="stat-card"><div class="stat-label">Pending dispatch</div><div class="stat-value">1</div><div class="stat-sub warning">Action needed</div></div>
+        <div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value">1</div><div class="stat-sub warning">Needs resolve</div></div>
+      </div>
+      <div class="card-block">
+        <table>
+          <thead><tr><th>Patient</th><th>Shipment</th><th>Dispatched</th><th>Status</th><th>Tracking</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Maria Torres</strong></td><td class="td-muted">Cycle 2</td><td class="td-muted">Today</td><td><span class="badge badge-amber">Pending</span></td><td class="td-muted">—</td><td class="td-actions"><button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch now</button></td></tr>
+            <tr><td><strong>Sarah Mitchell</strong></td><td class="td-muted">Cycle 1</td><td class="td-muted">28 Jan</td><td><span class="badge badge-green">Delivered</span></td><td class="td-muted">TRK-20260128</td><td></td></tr>
+            <tr><td><strong>Tom Allen</strong></td><td class="td-muted">Cycle 1</td><td class="td-muted">25 Jan</td><td><span class="badge badge-red">Flagged</span></td><td class="td-muted">TRK-20260125</td><td class="td-actions"><button class="action-btn" onclick="resolveFlag()">Resolve</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Auto-ship view -->
+    <div id="view-autoship" style="display:none;">
+      <div class="topbar"><div class="page-title">Auto-ship management</div></div>
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
+        <div class="card-block">
+          <div class="card-block-title">Active schedules</div>
+          <table>
+            <thead><tr><th>Patient</th><th>Interval</th><th>Next ship</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Sarah Mitchell</strong></td><td class="td-muted">90 days</td><td class="td-muted">28 Mar</td><td><span class="badge badge-olive">Active</span></td><td class="td-actions"><button class="action-btn">Pause</button></td></tr>
+              <tr><td><strong>John Dawson</strong></td><td class="td-muted">90 days</td><td class="td-muted">2 Apr</td><td><span class="badge badge-olive">Active</span></td><td class="td-actions"><button class="action-btn">Pause</button></td></tr>
+              <tr><td><strong>Maria Torres</strong></td><td class="td-muted">90 days</td><td class="td-muted">5 Apr</td><td><span class="badge badge-amber">Paused</span></td><td class="td-actions"><button class="action-btn primary">Resume</button></td></tr>
+              <tr><td><strong>Emma Walsh</strong></td><td class="td-muted">90 days</td><td class="td-muted">On hold</td><td><span class="badge badge-red">Notice recv.</span></td><td class="td-actions"><button class="action-btn">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card-block" style="margin-bottom:14px;">
+            <div class="card-block-title">Record cancellation notice</div>
+            <div class="warn-banner"><div class="banner-label">Important</div><div class="banner-body">Recording a notice does NOT cancel the programme. It starts the 60-day window. Admin confirms final cancellation.</div></div>
+            <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>Select patient…</option><option>Emma Walsh</option></select></div>
+            <div class="form-group"><label class="form-label">Notice received date</label><input class="form-input" type="date" value="2026-03-25"></div>
+            <div class="form-group"><label class="form-label">Channel</label><select class="form-select"><option>Email</option><option>Phone call</option><option>In-person</option></select></div>
+            <div class="info-banner"><div class="banner-label">Final cancellation date</div><div class="banner-body" style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--text-dark);">24 May 2026 <span style="font-family:'Jost',sans-serif;font-size:11px;color:var(--text-muted);">60 days from notice</span></div></div>
+            <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="alert('Cancellation notice recorded. Final ship date: 24 May 2026.')">Record notice</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Payment link modal -->
+<div id="paymentModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:40px;">
+  <div style="background:var(--white);max-width:480px;width:100%;padding:32px;position:relative;">
+    <button onclick="document.getElementById('paymentModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;">×</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:6px;">Send payment link</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;" id="payModalPatient">Patient: —</div>
+    <div class="info-banner"><div class="banner-label">Rx approved by Jordyn (NP)</div><div class="banner-body">Programme: 90-day wellness · Amount: €350 · Auto-ship enrolled at 90-day intervals</div></div>
+    <div class="form-group"><label class="form-label">Send to</label><input class="form-input" value="patient@email.com"></div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;">
+      <div style="flex:1;padding:9px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>
+      <div style="flex:1;padding:9px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">SMS</div>
+      <div style="flex:1;padding:9px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">In-app</div>
+    </div>
+    <div class="form-group"><label class="form-label">Expiry</label><select class="form-select"><option>48 hours</option></select></div>
+    <div class="form-group"><label class="form-label">Note to patient (optional)</label><input class="form-input" placeholder="e.g. Hi John, please complete payment to activate your prescription…"></div>
+    <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="sendPaymentLink()">Send payment link</button>
+    <div style="font-size:10px;color:var(--text-muted);margin-top:8px;text-align:center;">Clinical notes and prescription details are not visible to the coordinator</div>
+  </div>
+</div>
+
+<script>
+  function showView(name) {
+    ['dashboard','queue','payments','shipments','autoship'].forEach(v => {
+      document.getElementById('view-'+v).style.display = 'none';
+    });
+    document.getElementById('view-'+name).style.display = 'block';
+    document.querySelectorAll('.sidebar-item').forEach((item,i) => item.classList.remove('active'));
+  }
+
+  function openPaymentModal(patient) {
+    document.getElementById('payModalPatient').textContent = 'Patient: ' + patient;
+    document.getElementById('paymentModal').style.display = 'flex';
+  }
+
+  function sendPaymentLink() {
+    document.getElementById('paymentModal').style.display = 'none';
+    alert('Payment link sent. You will be notified when the patient completes payment.');
+  }
+
+  function sendLink() {
+    alert('Payment link sent to patient.');
+  }
+
+  function confirmDispatch(patient) {
+    const ref = 'TRK-' + Date.now().toString().slice(-8);
+    alert(`Dispatch confirmed for ${patient}.\nTracking ref: ${ref}\nPharmacy notified via automated route.\nPatient will receive dosage instructions by email.`);
+  }
+
+  function resolveFlag() {
+    alert('Shipment flag resolved. Updated status to in-transit.');
+  }
+
+  function recordDispatch() {
+    alert('Dispatch recorded.');
+  }
+</script>
+</body>
+</html>

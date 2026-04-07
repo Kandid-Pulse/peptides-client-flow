@@ -1,0 +1,125 @@
+/* shared.css — Manor Wellness Portal */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --olive: #3d4f2e;
+  --olive-dark: #2d3a21;
+  --olive-mid: #4a5c38;
+  --olive-light: #6b7c58;
+  --olive-pale: #8a9878;
+  --cream: #f5f0e8;
+  --cream-dark: #ede7da;
+  --cream-mid: #e8e0d0;
+  --terra: #8b5a3c;
+  --terra-dark: #6d4530;
+  --terra-light: #a67055;
+  --white: #faf9f6;
+  --text-dark: #1a1f14;
+  --text-mid: #3d4f2e;
+  --text-muted: #7a8a6a;
+  --border: rgba(61,79,46,0.15);
+  --border-strong: rgba(61,79,46,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--text-dark); overflow-x: hidden; }
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand a { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; letter-spacing: 0.12em; color: var(--olive-dark); text-transform: uppercase; text-decoration: none; }
+.nav-links { display: flex; gap: 28px; }
+.nav-links a { font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-light); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--olive-dark); }
+.nav-right { display: flex; gap: 12px; align-items: center; }
+
+.btn { padding: 10px 24px; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-block; border: none; }
+.btn-olive { background: var(--olive-dark); color: var(--cream); }
+.btn-olive:hover { background: var(--olive-mid); }
+.btn-terra { background: var(--terra); color: var(--white); }
+.btn-terra:hover { background: var(--terra-dark); }
+.btn-outline { border: 1px solid var(--olive-mid); color: var(--olive-mid); background: transparent; }
+.btn-outline:hover { background: var(--olive-mid); color: var(--white); }
+.btn-outline-cream { border: 1px solid rgba(245,240,232,0.3); color: var(--cream); background: transparent; }
+.btn-ghost { color: var(--text-muted); background: transparent; border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--border-strong); color: var(--text-dark); }
+.btn-sm { padding: 7px 16px; font-size: 10px; }
+.btn-danger { background: rgba(139,90,60,0.1); color: var(--terra); border: 1px solid rgba(139,90,60,0.2); }
+
+.badge { display: inline-block; padding: 3px 10px; font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.badge-olive { background: var(--olive-dark); color: var(--cream); }
+.badge-olive-light { background: rgba(61,79,46,0.08); color: var(--olive-mid); }
+.badge-terra { background: rgba(139,90,60,0.1); color: var(--terra); }
+.badge-terra-solid { background: var(--terra); color: var(--white); }
+.badge-green { background: rgba(45,80,30,0.1); color: #3a6020; }
+.badge-amber { background: rgba(180,120,30,0.1); color: #7a5010; }
+.badge-red { background: rgba(160,50,40,0.1); color: #902820; }
+.badge-gray { background: rgba(61,79,46,0.06); color: var(--text-muted); }
+
+.card { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; }
+.card-sm { padding: 14px 16px; }
+.card-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-light); margin-bottom: 14px; }
+
+.info-banner { background: rgba(61,79,46,0.06); border: 1px solid rgba(61,79,46,0.15); padding: 14px 16px; margin-bottom: 16px; }
+.warn-banner { background: rgba(180,120,30,0.06); border: 1px solid rgba(180,120,30,0.2); padding: 14px 16px; margin-bottom: 16px; }
+.alert-banner { background: rgba(160,50,40,0.06); border: 1px solid rgba(160,50,40,0.2); padding: 14px 16px; margin-bottom: 16px; }
+.banner-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.info-banner .banner-label { color: var(--olive-mid); }
+.warn-banner .banner-label { color: #7a5010; }
+.alert-banner .banner-label { color: #902820; }
+.banner-body { font-size: 12px; line-height: 1.6; }
+.info-banner .banner-body { color: var(--olive-light); }
+.warn-banner .banner-body { color: #7a5010; }
+.alert-banner .banner-body { color: #902820; }
+
+.form-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: block; }
+.form-input { width: 100%; height: 42px; border: 1px solid var(--border); background: var(--white); padding: 0 14px; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--text-dark); transition: border-color 0.2s; outline: none; }
+.form-input:focus { border-color: var(--olive-mid); }
+.form-input.filled { background: var(--cream); }
+.form-textarea { width: 100%; border: 1px solid var(--border); background: var(--white); padding: 12px 14px; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--text-dark); resize: vertical; outline: none; min-height: 80px; }
+.form-textarea:focus { border-color: var(--olive-mid); }
+.form-select { width: 100%; height: 42px; border: 1px solid var(--border); background: var(--white); padding: 0 14px; font-family: 'Jost', sans-serif; font-size: 13px; color: var(--text-dark); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='none' stroke='%237a8a6a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; outline: none; cursor: pointer; }
+.form-group { margin-bottom: 18px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.divider-label { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.divider-label::before, .divider-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.divider-label span { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+
+.stat-card { background: var(--cream); padding: 16px 18px; }
+.stat-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.stat-value { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 400; color: var(--text-dark); line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.stat-sub.positive { color: #3a6020; }
+.stat-sub.warning { color: #7a5010; }
+
+.data-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.data-row:last-child { border-bottom: none; }
+.data-key { color: var(--text-muted); font-size: 12px; }
+.data-val { font-weight: 500; color: var(--text-dark); }
+.data-val.green { color: #3a6020; }
+.data-val.terra { color: var(--terra); }
+.data-val.amber { color: #7a5010; }
+.data-val.red { color: #902820; }
+
+.page-header { background: var(--olive-dark); padding: 60px 80px 50px; margin-top: 70px; }
+.page-header-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); margin-bottom: 10px; }
+.page-header-title { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300; color: var(--cream); }
+.page-header-sub { font-size: 13px; color: rgba(245,240,232,0.6); margin-top: 8px; }
+
+footer { background: var(--olive-dark); padding: 36px 80px; display: flex; justify-content: space-between; align-items: center; }
+.footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; letter-spacing: 0.15em; color: var(--cream); text-transform: uppercase; }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 11px; color: var(--olive-pale); text-decoration: none; letter-spacing: 0.08em; }
+.footer-legal { font-size: 10px; color: var(--olive-pale); }
+
+.progress-track { height: 4px; background: var(--cream-dark); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--olive-mid); }

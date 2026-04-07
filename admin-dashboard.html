@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Admin Dashboard</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { background: var(--cream); }
+  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
+  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto; }
+  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-pale); margin-top: 3px; }
+  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
+  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
+  .sidebar-badge { margin-left: auto; font-size: 9px; padding: 2px 6px; background: var(--terra); color: var(--white); }
+  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
+  .sidebar-item.active .sb-icon { background: var(--terra); }
+  .sidebar-spacer { flex: 1; }
+  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
+  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--olive-mid); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
+  .user-name { font-size: 11px; color: var(--cream); }
+  .user-role-lbl { font-size: 9px; color: var(--olive-pale); }
+
+  .main { padding: 32px 36px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
+
+  .stats-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .card-block { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; }
+  .card-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 0 8px 10px 0; border-bottom: 1px solid var(--border); text-align: left; }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:hover { background: rgba(61,79,46,0.02); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 10px 8px 10px 0; font-size: 12px; color: var(--text-dark); }
+  .td-muted { font-size: 11px; color: var(--text-muted); }
+
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding-bottom: 4px; }
+  .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .bar-pair { display: flex; gap: 2px; align-items: flex-end; width: 100%; }
+  .bar { width: 50%; border-radius: 1px 1px 0 0; transition: opacity 0.2s; }
+  .bar:hover { opacity: 0.8; }
+  .bar-a { background: var(--olive-mid); }
+  .bar-b { background: rgba(61,79,46,0.25); }
+  .bar-label { font-size: 8px; color: var(--text-muted); }
+  .chart-legend { display: flex; gap: 14px; margin-top: 8px; }
+  .leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-muted); }
+  .leg-dot { width: 10px; height: 6px; }
+
+  .funnel-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .funnel-label { font-size: 11px; color: var(--text-muted); width: 110px; flex-shrink: 0; }
+  .funnel-track { flex: 1; height: 10px; background: var(--cream-dark); overflow: hidden; }
+  .funnel-fill { height: 100%; }
+  .funnel-pct { font-size: 11px; color: var(--text-dark); width: 32px; text-align: right; font-weight: 500; }
+
+  .api-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .api-name { font-size: 11px; color: var(--text-muted); width: 80px; flex-shrink: 0; }
+  .api-track { flex: 1; height: 6px; background: var(--cream-dark); overflow: hidden; }
+  .api-fill { height: 100%; }
+  .api-fill.ok { background: var(--olive-mid); }
+  .api-fill.warn { background: #ba7517; }
+  .api-ms { font-size: 10px; color: var(--text-muted); width: 40px; text-align: right; }
+  .health-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .health-ok { background: #3a6020; }
+  .health-warn { background: #ba7517; }
+
+  .perm-matrix table { font-size: 11px; }
+  .perm-matrix th { font-size: 10px; padding-bottom: 8px; }
+  .perm-matrix td { padding: 5px 8px 5px 0; border-bottom: 1px solid var(--border); }
+  .perm-tag { display: inline-block; padding: 2px 6px; font-size: 9px; font-weight: 500; letter-spacing: 0.08em; }
+  .pt-a { background: rgba(61,79,46,0.1); color: var(--olive-mid); }
+  .pt-m { background: rgba(58,96,32,0.1); color: #3a6020; }
+  .pt-s { background: rgba(180,120,30,0.1); color: #7a5010; }
+  .pt-c { background: rgba(139,90,60,0.1); color: var(--terra); }
+  .pt-p { background: rgba(80,60,140,0.1); color: #4a3a8a; }
+  .pt-none { color: var(--text-muted); font-size:10px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><a href="index.html">Manor</a></div>
+  <div class="nav-links">
+    <a href="index.html">Website</a>
+    <a href="admin-dashboard.html" class="active">Admin</a>
+    <a href="physician-dashboard.html">Physician</a>
+    <a href="coordinator-dashboard.html">Coordinator</a>
+    <a href="login.html">Sign out</a>
+  </div>
+  <div class="nav-right">
+    <div style="font-size:11px;color:var(--text-muted);">Admin</div>
+    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--olive-dark);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--cream);font-weight:600;">AD</div>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="sidebar-logo">Manor<div class="sidebar-role">Admin portal</div></div>
+    <div class="sidebar-section">Main</div>
+    <div class="sidebar-item active"><div class="sb-icon"></div>Overview</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Bookings</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Clients</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Schedule</div>
+    <div class="sidebar-section">People</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Staff</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Roles & access</div>
+    <div class="sidebar-section">Reports</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Revenue</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Funnels</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Loyalty</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Lifecycle</div>
+    <div class="sidebar-section">System</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>API health</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Sync logs</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Settings</div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="user-av">AD</div>
+      <div><div class="user-name">Admin</div><div class="user-role-lbl">Full access</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div><div class="page-title">Overview</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">Monday, 6 Apr 2026</div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm">Mar 2026</button>
+        <button class="btn btn-terra btn-sm">+ New booking</button>
+      </div>
+    </div>
+
+    <div class="stats-4">
+      <div class="stat-card"><div class="stat-label">Today's bookings</div><div class="stat-value">24</div><div class="stat-sub positive">↑ 12% vs last week</div></div>
+      <div class="stat-card"><div class="stat-label">Revenue MTD</div><div class="stat-value">€18.4k</div><div class="stat-sub positive">↑ 8% vs last month</div></div>
+      <div class="stat-card"><div class="stat-label">Cancellation rate</div><div class="stat-value">6.2%</div><div class="stat-sub warning">↑ 1.1% this week</div></div>
+      <div class="stat-card"><div class="stat-label">Zenoti sync</div><div class="stat-value" style="font-size:16px;color:#3a6020;">Healthy</div><div class="stat-sub positive">Last sync: 2 min ago</div></div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card-block">
+        <div class="card-block-title">Revenue vs bookings <span style="font-size:10px;font-weight:400;color:var(--text-muted);">Last 7 weeks</span></div>
+        <div class="bar-chart">
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:44px;"></div><div class="bar bar-b" style="height:30px;"></div></div><div class="bar-label">W1</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:52px;"></div><div class="bar bar-b" style="height:38px;"></div></div><div class="bar-label">W2</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:64px;"></div><div class="bar bar-b" style="height:50px;"></div></div><div class="bar-label">W3</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:48px;"></div><div class="bar bar-b" style="height:35px;"></div></div><div class="bar-label">W4</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:72px;"></div><div class="bar bar-b" style="height:58px;"></div></div><div class="bar-label">W5</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:58px;"></div><div class="bar bar-b" style="height:44px;"></div></div><div class="bar-label">W6</div></div>
+          <div class="bar-wrap"><div class="bar-pair"><div class="bar bar-a" style="height:78px;"></div><div class="bar bar-b" style="height:62px;"></div></div><div class="bar-label">W7</div></div>
+        </div>
+        <div class="chart-legend">
+          <div class="leg"><div class="leg-dot" style="background:var(--olive-mid);"></div>Revenue</div>
+          <div class="leg"><div class="leg-dot" style="background:rgba(61,79,46,0.25);"></div>Bookings</div>
+        </div>
+      </div>
+
+      <div class="card-block">
+        <div class="card-block-title">Conversion funnels</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;">Wellness programme</div>
+        <div class="funnel-row"><div class="funnel-label">Landing visit</div><div class="funnel-track"><div class="funnel-fill" style="width:100%;background:var(--olive-mid);"></div></div><div class="funnel-pct">100%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Intake started</div><div class="funnel-track"><div class="funnel-fill" style="width:68%;background:var(--olive-mid);"></div></div><div class="funnel-pct">68%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Consult booked</div><div class="funnel-track"><div class="funnel-fill" style="width:45%;background:var(--olive-light);"></div></div><div class="funnel-pct">45%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Enrolled</div><div class="funnel-track"><div class="funnel-fill" style="width:28%;background:var(--olive-pale);"></div></div><div class="funnel-pct">28%</div></div>
+        <div class="divider" style="margin:12px 0 10px;"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;">Med spa bookings</div>
+        <div class="funnel-row"><div class="funnel-label">Sessions</div><div class="funnel-track"><div class="funnel-fill" style="width:100%;background:var(--terra);"></div></div><div class="funnel-pct">100%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Completed</div><div class="funnel-track"><div class="funnel-fill" style="width:88%;background:var(--terra);"></div></div><div class="funnel-pct">88%</div></div>
+        <div class="funnel-row"><div class="funnel-label">Rebooked</div><div class="funnel-track"><div class="funnel-fill" style="width:52%;background:var(--terra-light);"></div></div><div class="funnel-pct">52%</div></div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card-block">
+        <div class="card-block-title">Recent bookings <a href="#" style="font-size:10px;font-weight:400;color:var(--olive-light);text-decoration:none;">View all</a></div>
+        <table>
+          <thead><tr><th>Client</th><th>Service</th><th>Therapist</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Anna K.</strong></td><td class="td-muted">Hydra facial</td><td class="td-muted">Sophie M.</td><td class="td-muted">Today 10:00</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+            <tr><td><strong>James L.</strong></td><td class="td-muted">Massage</td><td class="td-muted">Anya K.</td><td class="td-muted">Today 11:30</td><td><span class="badge badge-amber">Pending</span></td></tr>
+            <tr><td><strong>Sarah M.</strong></td><td class="td-muted">Laser treatment</td><td class="td-muted">Sophie M.</td><td class="td-muted">Today 14:00</td><td><span class="badge badge-green">Confirmed</span></td></tr>
+            <tr><td><strong>Tom B.</strong></td><td class="td-muted">Express facial</td><td class="td-muted">Anya K.</td><td class="td-muted">Today 15:30</td><td><span class="badge badge-red">Cancelled</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-block">
+        <div class="card-block-title">Zenoti API health <span style="display:flex;align-items:center;gap:5px;"><span class="health-dot health-ok"></span><span style="font-size:10px;color:#3a6020;font-weight:400;">All systems operational</span></span></div>
+        <div class="api-row"><div class="api-name">Guest profile</div><div class="api-track"><div class="api-fill ok" style="width:28%;"></div></div><div class="api-ms">142ms</div><span class="health-dot health-ok"></span></div>
+        <div class="api-row"><div class="api-name">Appointments</div><div class="api-track"><div class="api-fill ok" style="width:50%;"></div></div><div class="api-ms">248ms</div><span class="health-dot health-ok"></span></div>
+        <div class="api-row"><div class="api-name">Availability</div><div class="api-track"><div class="api-fill warn" style="width:75%;"></div></div><div class="api-ms">372ms</div><span class="health-dot health-warn"></span></div>
+        <div class="api-row"><div class="api-name">Loyalty</div><div class="api-track"><div class="api-fill ok" style="width:35%;"></div></div><div class="api-ms">172ms</div><span class="health-dot health-ok"></span></div>
+        <div class="api-row"><div class="api-name">Memberships</div><div class="api-track"><div class="api-fill ok" style="width:42%;"></div></div><div class="api-ms">208ms</div><span class="health-dot health-ok"></span></div>
+        <div class="divider"></div>
+        <div style="font-size:10px;color:var(--text-muted);">Availability endpoint response time elevated. Monitoring.</div>
+      </div>
+    </div>
+
+    <div class="card-block">
+      <div class="card-block-title">Role & permission matrix</div>
+      <div class="perm-matrix">
+        <table>
+          <thead><tr><th>Module / permission</th><th>Admin</th><th>Manager</th><th>Staff</th><th>Physician</th><th>Coordinator</th></tr></thead>
+          <tbody>
+            <tr><td>Overview & reports</td><td><span class="perm-tag pt-a">Admin</span></td><td><span class="perm-tag pt-m">Mgr</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td></tr>
+            <tr><td>Bookings management</td><td><span class="perm-tag pt-a">Admin</span></td><td><span class="perm-tag pt-m">Mgr</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td></tr>
+            <tr><td>Schedule (all staff)</td><td><span class="perm-tag pt-a">Admin</span></td><td><span class="perm-tag pt-m">Mgr</span></td><td><span class="perm-tag pt-s">Own only</span></td><td><span class="perm-tag pt-p">Own only</span></td><td class="pt-none">—</td></tr>
+            <tr><td>Client management</td><td><span class="perm-tag pt-a">Admin</span></td><td><span class="perm-tag pt-m">Mgr</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td><span class="perm-tag pt-c">Logistics only</span></td></tr>
+            <tr><td>Staff management</td><td><span class="perm-tag pt-a">Admin</span></td><td><span class="perm-tag pt-m">Mgr</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td></tr>
+            <tr><td>Roles & permissions</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td></tr>
+            <tr><td>Lab results & chart</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td><span class="perm-tag pt-p">Physician</span></td><td class="pt-none">—</td></tr>
+            <tr><td>Prescriptions</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td><span class="perm-tag pt-p">Physician</span></td><td class="pt-none">—</td></tr>
+            <tr><td>Payment links</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td><td><span class="perm-tag pt-c">Coordinator</span></td></tr>
+            <tr><td>Shipments & auto-ship</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td><td><span class="perm-tag pt-c">Coordinator</span></td></tr>
+            <tr><td>API health & settings</td><td><span class="perm-tag pt-a">Admin</span></td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td><td class="pt-none">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:14px;margin-top:4px;">
+      <a href="physician-dashboard.html" class="btn btn-olive" style="flex:1;text-align:center;">Physician portal →</a>
+      <a href="coordinator-dashboard.html" class="btn btn-terra" style="flex:1;text-align:center;">Coordinator portal →</a>
+      <a href="portal.html" class="btn btn-ghost" style="flex:1;text-align:center;">Patient portal →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">Manor</div>
+  <div class="footer-links">
+    <a href="index.html">Website</a>
+    <a href="physician-dashboard.html">Physician</a>
+    <a href="coordinator-dashboard.html">Coordinator</a>
+    <a href="login.html">Sign out</a>
+  </div>
+  <div class="footer-legal">© 2026 Manor Medspa · Admin portal</div>
+</footer>
+
+</body>
+</html>

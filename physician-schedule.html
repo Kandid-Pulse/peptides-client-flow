@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Physician Schedule</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { background: var(--cream); }
+  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
+  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); }
+  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
+  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-pale); margin-top: 3px; }
+  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
+  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
+  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
+  .sidebar-item.locked { opacity: 0.3; cursor: not-allowed; }
+  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
+  .sidebar-item.active .sb-icon { background: var(--terra); }
+  .sidebar-spacer { flex: 1; }
+  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
+  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--terra-light); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
+  .user-name { font-size: 11px; color: var(--cream); }
+  .user-role-label { font-size: 9px; color: var(--olive-pale); }
+
+  .main { padding: 32px 36px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
+
+  .legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+  .leg-swatch { width: 14px; height: 10px; }
+
+  .schedule-grid { background: var(--white); border: 1px solid var(--border); overflow: hidden; }
+  .sched-header { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid var(--border); }
+  .sched-th { padding: 10px 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); text-align: center; border-right: 1px solid var(--border); }
+  .sched-th:last-child { border-right: none; }
+  .sched-th.today { background: rgba(61,79,46,0.05); color: var(--olive-mid); }
+  .sched-row { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid var(--border); }
+  .sched-row:last-child { border-bottom: none; }
+  .sched-time { padding: 8px 6px; font-size: 9px; color: var(--text-muted); text-align: right; border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: flex-end; padding-top: 10px; }
+  .sched-cell { min-height: 52px; padding: 4px; border-right: 1px solid var(--border); }
+  .sched-cell:last-child { border-right: none; }
+  .event { padding: 5px 7px; font-size: 10px; font-weight: 500; margin-bottom: 2px; cursor: pointer; transition: opacity 0.15s; }
+  .event:hover { opacity: 0.85; }
+  .ev-zenoti { background: rgba(61,79,46,0.08); color: var(--olive-mid); border-left: 2px solid var(--olive-mid); }
+  .ev-consult { background: rgba(61,79,46,0.12); color: var(--olive-dark); border-left: 2px solid var(--olive-dark); }
+  .ev-doxy { background: rgba(139,90,60,0.1); color: var(--terra-dark); border-left: 2px solid var(--terra); }
+  .ev-blocked { background: rgba(180,120,30,0.1); color: #7a5010; border-left: 2px solid #ba7517; }
+  .ev-conflict { background: rgba(160,50,40,0.1); color: #902820; border-left: 2px solid #c03020; }
+  .ev-checkin { background: rgba(58,96,32,0.08); color: #3a6020; border-left: 2px solid #639922; }
+  .ev-free { background: var(--cream); color: var(--text-muted); border-left: 2px solid var(--border-strong); }
+
+  .conflict-bar { background: rgba(160,50,40,0.08); border: 1px solid rgba(160,50,40,0.25); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .conflict-text { font-size: 12px; color: #902820; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><a href="index.html">Manor</a></div>
+  <div class="nav-links">
+    <a href="physician-dashboard.html">Queue</a>
+    <a href="physician-schedule.html" class="active">Schedule</a>
+  </div>
+  <div class="nav-right">
+    <div style="font-size:11px;color:var(--text-muted);">Jordyn (NP)</div>
+    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--terra-light);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:600;">JN</div>
+  </div>
+</nav>
+
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="sidebar-logo">Manor<div class="sidebar-role">Physician portal</div></div>
+    <div class="sidebar-section">Wellness</div>
+    <div class="sidebar-item" onclick="window.location.href='physician-dashboard.html'"><div class="sb-icon"></div>Patient queue</div>
+    <div class="sidebar-item active"><div class="sb-icon"></div>My schedule</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Lab results</div>
+    <div class="sidebar-item"><div class="sb-icon"></div>Prescriptions</div>
+    <div class="sidebar-section">Schedule</div>
+    <div class="sidebar-item" onclick="document.getElementById('availModal').style.display='block'"><div class="sb-icon"></div>Availability</div>
+    <div class="sidebar-item" onclick="document.getElementById('blockModal').style.display='block'"><div class="sb-icon"></div>Block time</div>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="user-av">JN</div>
+      <div><div class="user-name">Jordyn (NP)</div><div class="user-role-label">Physician</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div><div class="page-title">My schedule</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">Week of 24–28 Mar 2026</div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm">← Prev</button>
+        <button class="btn btn-ghost btn-sm">24–28 Mar</button>
+        <button class="btn btn-ghost btn-sm">Next →</button>
+        <button class="btn btn-ghost btn-sm" style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--olive-mid);"></span>Sync Zenoti</button>
+        <button class="btn btn-olive btn-sm" onclick="document.getElementById('blockModal').style.display='block'">+ Block time</button>
+      </div>
+    </div>
+
+    <div class="conflict-bar">
+      <div class="conflict-text">⚠ Wed 26 Mar 10:30 am — Zenoti booking overlaps a wellness consult. Review required.</div>
+      <button class="btn btn-sm" style="background:rgba(160,50,40,0.1);color:#902820;border:1px solid rgba(160,50,40,0.2);" onclick="resolveConflict()">Resolve</button>
+    </div>
+
+    <div class="legend">
+      <div class="leg"><div class="leg-swatch ev-zenoti"></div>Zenoti booking</div>
+      <div class="leg"><div class="leg-swatch ev-consult"></div>Wellness consult</div>
+      <div class="leg"><div class="leg-swatch ev-doxy"></div>Doxy.me session</div>
+      <div class="leg"><div class="leg-swatch ev-checkin"></div>Check-in review</div>
+      <div class="leg"><div class="leg-swatch ev-blocked"></div>Blocked</div>
+      <div class="leg"><div class="leg-swatch ev-conflict"></div>Conflict</div>
+    </div>
+
+    <div class="schedule-grid">
+      <div class="sched-header">
+        <div class="sched-th"></div>
+        <div class="sched-th">Mon 24</div>
+        <div class="sched-th today">Tue 25</div>
+        <div class="sched-th">Wed 26</div>
+        <div class="sched-th">Thu 27</div>
+        <div class="sched-th">Fri 28</div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">9:00</div>
+        <div class="sched-cell"><div class="event ev-consult">Wellness consult<div style="font-weight:300;">Sarah M.</div></div></div>
+        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Facial</div></div></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-consult">Wellness consult<div style="font-weight:300;">New patient</div></div></div>
+        <div class="sched-cell"></div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">10:00</div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-conflict">⚠ CONFLICT<div style="font-weight:300;">Zenoti + Consult</div></div></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-doxy">Doxy.me<div style="font-weight:300;">J. Dawson</div></div></div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">11:00</div>
+        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Massage</div></div></div>
+        <div class="sched-cell"><div class="event ev-checkin">Check-in review<div style="font-weight:300;">Tom A.</div></div></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Facial</div></div></div>
+        <div class="sched-cell"></div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">14:00</div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-doxy">Doxy.me session<div style="font-weight:300;">Maria T.</div></div></div>
+        <div class="sched-cell"><div class="event ev-blocked">Blocked — personal</div></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell"><div class="event ev-checkin">Check-in review<div style="font-weight:300;">Sarah M.</div></div></div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">15:00</div>
+        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
+        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
+        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
+        <div class="sched-cell"></div>
+        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Conflict modal -->
+<div id="conflictModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:40px;">
+  <div style="background:var(--white);max-width:560px;width:100%;padding:32px;position:relative;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--text-dark);margin-bottom:4px;">Schedule conflict</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Wed 26 Mar · 10:30 am — Choose which event takes priority</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="padding:14px;border:2px solid var(--olive-mid);background:rgba(61,79,46,0.04);cursor:pointer;" onclick="resolveKeep('zenoti')">
+        <div class="badge badge-olive-light" style="margin-bottom:8px;">Zenoti booking</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-dark);margin-bottom:3px;">Classic glow facial</div>
+        <div style="font-size:11px;color:var(--text-muted);">Client: Sarah M. · 60 min · Booked 3 days ago</div>
+      </div>
+      <div style="padding:14px;border:1px solid var(--border);cursor:pointer;" onclick="resolveKeep('wellness')">
+        <div class="badge badge-terra" style="margin-bottom:8px;">Wellness consult</div>
+        <div style="font-size:13px;font-weight:500;color:var(--text-dark);margin-bottom:3px;">New patient consult</div>
+        <div style="font-size:11px;color:var(--text-muted);">Patient: John D. · 45 min · Booked today</div>
+      </div>
+    </div>
+    <div class="warn-banner"><div class="banner-body" style="font-size:11px;">Keeping a Zenoti booking will not cancel it in Zenoti. Keeping the wellness consult will notify the patient to reschedule the Zenoti booking.</div></div>
+    <button class="btn btn-ghost" onclick="document.getElementById('conflictModal').style.display='none'" style="margin-top:8px;">Dismiss — resolve manually</button>
+  </div>
+</div>
+
+<!-- Availability modal -->
+<div id="availModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;overflow-y:auto;padding:40px;">
+  <div style="background:var(--white);max-width:520px;margin:0 auto;padding:32px;position:relative;">
+    <button onclick="document.getElementById('availModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);">×</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">My availability</div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Weekly working hours</div>
+    <div id="avail-days"></div>
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Consult slot settings</div>
+      <div class="form-row" style="margin-top:10px;">
+        <div class="form-group"><label class="form-label">Duration</label><select class="form-select"><option selected>45 minutes</option><option>30 minutes</option></select></div>
+        <div class="form-group"><label class="form-label">Buffer</label><select class="form-select"><option selected>15 minutes</option><option>10 minutes</option></select></div>
+      </div>
+    </div>
+    <button class="btn btn-terra" style="width:100%;margin-top:16px;text-align:center;" onclick="document.getElementById('availModal').style.display='none'">Save changes</button>
+  </div>
+</div>
+
+<!-- Block time modal -->
+<div id="blockModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;overflow-y:auto;padding:40px;">
+  <div style="background:var(--white);max-width:460px;margin:0 auto;padding:32px;position:relative;">
+    <button onclick="document.getElementById('blockModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);">×</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">Block time</div>
+    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" value="2026-03-31"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Start time</label><input class="form-input" type="time" value="14:00"></div>
+      <div class="form-group"><label class="form-label">End time</label><input class="form-input" type="time" value="17:00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Reason (internal)</label><input class="form-input" placeholder="e.g. Personal, CPD, Conference"></div>
+    <div class="warn-banner"><div class="banner-label">Impact check</div><div class="banner-body">2 wellness consults will need rescheduling. Patients will be notified automatically on save.</div></div>
+    <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="saveBlock()">Save block</button>
+  </div>
+</div>
+
+<script>
+  // Build availability day rows
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const defaults = [
+    {on:true,s:'09:00',e:'17:00'},{on:true,s:'09:00',e:'17:00'},{on:true,s:'10:00',e:'16:00'},
+    {on:true,s:'09:00',e:'17:00'},{on:true,s:'09:00',e:'13:00'},{on:false},{on:false}
+  ];
+  const container = document.getElementById('avail-days');
+  days.forEach((d,i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);';
+    const def = defaults[i];
+    row.innerHTML = `<span style="font-size:12px;color:var(--text-muted);width:32px;">${d}</span>
+      <input type="checkbox" ${def.on?'checked':''} style="cursor:pointer;">
+      ${def.on ? `<input type="time" value="${def.s}" class="form-input" style="flex:1;height:32px;"><span style="color:var(--text-muted);font-size:12px;">to</span><input type="time" value="${def.e}" class="form-input" style="flex:1;height:32px;">` : `<span style="font-size:12px;color:var(--text-muted);font-style:italic;">Not available</span>`}`;
+    container.appendChild(row);
+  });
+
+  function resolveConflict() {
+    document.getElementById('conflictModal').style.display = 'flex';
+  }
+  function resolveKeep(choice) {
+    document.getElementById('conflictModal').style.display = 'none';
+    alert(`Keeping ${choice === 'zenoti' ? 'Zenoti booking' : 'wellness consult'}. The other event will be flagged for rescheduling.`);
+  }
+  function saveBlock() {
+    document.getElementById('blockModal').style.display = 'none';
+    alert('Time block saved. Affected patients have been notified.');
+  }
+</script>
+</body>
+</html>

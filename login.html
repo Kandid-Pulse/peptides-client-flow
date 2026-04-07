@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Sign In</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { background: var(--cream); display: flex; min-height: 100vh; }
+  .login-left {
+    width: 45%; background: var(--olive-dark); display: flex; flex-direction: column; justify-content: center; padding: 80px 60px;
+    position: relative; overflow: hidden;
+  }
+  .login-left::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; border-radius: 50%; background: rgba(255,255,255,0.02); }
+  .login-brand { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; letter-spacing: 0.15em; color: var(--cream); text-transform: uppercase; text-decoration: none; display: block; margin-bottom: 60px; }
+  .login-headline { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 300; color: var(--cream); line-height: 1.15; margin-bottom: 20px; }
+  .login-headline em { font-style: italic; }
+  .login-body { font-size: 13px; color: rgba(245,240,232,0.55); line-height: 1.7; }
+
+  .login-right {
+    flex: 1; display: flex; align-items: center; justify-content: center; padding: 60px;
+  }
+  .login-box { width: 100%; max-width: 400px; }
+  .login-box-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; color: var(--text-dark); margin-bottom: 6px; }
+  .login-box-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 36px; }
+
+  .radio-group { display: flex; gap: 0; margin-bottom: 28px; border: 1px solid var(--border); }
+  .radio-opt { flex: 1; padding: 10px; text-align: center; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
+  .radio-opt.active { background: var(--olive-dark); color: var(--cream); }
+
+  .forgot { font-size: 11px; color: var(--olive-light); text-decoration: none; float: right; margin-top: 6px; }
+  .login-submit { width: 100%; padding: 13px; background: var(--terra); color: var(--white); font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; margin-top: 24px; transition: background 0.2s; }
+  .login-submit:hover { background: var(--terra-dark); }
+  .login-footer { text-align: center; margin-top: 24px; font-size: 12px; color: var(--text-muted); }
+  .login-footer a { color: var(--olive-mid); text-decoration: none; }
+
+  .demo-links { margin-top: 40px; padding: 20px; background: rgba(61,79,46,0.06); border: 1px solid var(--border); }
+  .demo-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .demo-btn { display: block; padding: 8px 12px; margin-bottom: 6px; font-size: 11px; color: var(--olive-mid); background: var(--white); border: 1px solid var(--border); text-decoration: none; text-align: center; letter-spacing: 0.06em; transition: all 0.2s; }
+  .demo-btn:hover { background: var(--olive-dark); color: var(--cream); border-color: var(--olive-dark); }
+</style>
+</head>
+<body>
+
+<div class="login-left">
+  <a href="index.html" class="login-brand">Manor</a>
+  <h1 class="login-headline">Your wellness,<br><em>guided by science</em></h1>
+  <p class="login-body">Physician-prescribed peptide protocols based on your blood work, delivered to your door with ongoing clinical support.</p>
+</div>
+
+<div class="login-right">
+  <div class="login-box">
+    <div class="login-box-title">Welcome back</div>
+    <div class="login-box-sub">Sign in to your programme portal</div>
+
+    <div class="radio-group">
+      <div class="radio-opt active" onclick="setRole('patient',this)">Patient</div>
+      <div class="radio-opt" onclick="setRole('physician',this)">Physician</div>
+      <div class="radio-opt" onclick="setRole('coordinator',this)">Coordinator</div>
+      <div class="radio-opt" onclick="setRole('admin',this)">Admin</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email address</label>
+      <input class="form-input" type="email" value="patient@manor.com" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" value="••••••••">
+      <a href="#" class="forgot">Forgot password?</a>
+    </div>
+
+    <button class="login-submit" id="loginBtn" onclick="handleLogin()">Sign in to manor</button>
+
+    <div class="login-footer">
+      New patient? <a href="intake.html">Start your programme →</a>
+    </div>
+
+    <div class="demo-links">
+      <div class="demo-label">Demo — jump to any view</div>
+      <a href="portal.html" class="demo-btn">Patient portal</a>
+      <a href="intake.html" class="demo-btn">Patient intake flow</a>
+      <a href="physician-dashboard.html" class="demo-btn">Physician dashboard</a>
+      <a href="coordinator-dashboard.html" class="demo-btn">Coordinator dashboard</a>
+      <a href="admin-dashboard.html" class="demo-btn">Admin dashboard</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentRole = 'patient';
+  function setRole(role, el) {
+    currentRole = role;
+    document.querySelectorAll('.radio-opt').forEach(e => e.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function handleLogin() {
+    const routes = {
+      patient: 'portal.html',
+      physician: 'physician-dashboard.html',
+      coordinator: 'coordinator-dashboard.html',
+      admin: 'admin-dashboard.html'
+    };
+    window.location.href = routes[currentRole];
+  }
+</script>
+</body>
+</html>

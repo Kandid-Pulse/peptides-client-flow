@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Start Your Programme</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { background: var(--white); }
+  .intake-layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
+
+  .intake-sidebar { background: var(--olive-dark); padding: 40px 28px; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto; }
+  .sidebar-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--cream); margin-bottom: 32px; }
+  .step-nav { display: flex; flex-direction: column; gap: 2px; }
+  .step-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; transition: background 0.2s; }
+  .step-item:hover { background: rgba(255,255,255,0.05); }
+  .step-item.active { background: rgba(255,255,255,0.08); }
+  .step-circle { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(245,240,232,0.25); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: rgba(245,240,232,0.4); flex-shrink: 0; transition: all 0.2s; }
+  .step-item.done .step-circle { background: var(--olive-mid); border-color: var(--olive-mid); color: var(--cream); }
+  .step-item.active .step-circle { background: var(--terra); border-color: var(--terra); color: var(--cream); }
+  .step-text { font-size: 12px; color: rgba(245,240,232,0.45); transition: color 0.2s; }
+  .step-item.done .step-text { color: rgba(245,240,232,0.6); }
+  .step-item.active .step-text { color: var(--cream); font-weight: 500; }
+  .step-divider { width: 1px; height: 16px; background: rgba(245,240,232,0.1); margin-left: 23px; }
+
+  .intake-main { padding: 50px 60px; max-width: 720px; }
+  .step-header { margin-bottom: 36px; }
+  .step-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-light); margin-bottom: 8px; }
+  .step-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 400; color: var(--text-dark); margin-bottom: 8px; }
+  .step-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  .goal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .goal-card { padding: 16px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+  .goal-card:hover { border-color: var(--olive-light); }
+  .goal-card.selected { border-color: var(--olive-mid); background: rgba(61,79,46,0.04); }
+  .goal-title { font-size: 12px; font-weight: 500; color: var(--text-dark); margin-bottom: 3px; }
+  .goal-sub { font-size: 11px; color: var(--text-muted); }
+  .goal-card.selected .goal-title { color: var(--olive-mid); }
+
+  .slot-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .slot-card { padding: 14px; border: 1px solid var(--border); cursor: pointer; text-align: center; transition: all 0.2s; }
+  .slot-card:hover { border-color: var(--olive-light); }
+  .slot-card.selected { border-color: var(--olive-mid); background: rgba(61,79,46,0.04); }
+  .slot-card.unavail { opacity: 0.4; cursor: not-allowed; }
+  .slot-day { font-size: 12px; font-weight: 500; color: var(--text-dark); }
+  .slot-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .consent-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+  .consent-item { display: flex; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; align-items: flex-start; }
+  .consent-item.checked { border-color: rgba(61,79,46,0.3); background: rgba(61,79,46,0.03); }
+  .consent-check { width: 18px; height: 18px; border: 1px solid var(--border); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .consent-item.checked .consent-check { background: var(--olive-mid); border-color: var(--olive-mid); }
+  .consent-check-mark { font-size: 10px; color: var(--cream); display: none; }
+  .consent-item.checked .consent-check-mark { display: block; }
+  .consent-text { font-size: 13px; color: var(--text-dark); line-height: 1.5; }
+  .consent-item.checked .consent-text { color: var(--olive-mid); }
+
+  .sig-area { border: 1px dashed var(--border-strong); height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; background: var(--cream); cursor: crosshair; position: relative; }
+  .sig-hint { font-size: 12px; color: var(--text-muted); }
+  .sig-line { width: 160px; height: 1px; background: var(--border-strong); }
+  .sig-signed { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--olive-dark); display: none; }
+
+  .payment-summary { background: var(--cream); padding: 20px 22px; margin-bottom: 20px; }
+  .payment-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text-dark); margin-bottom: 12px; }
+  .payment-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); background: var(--white); cursor: pointer; margin-bottom: 8px; }
+  .payment-card.selected { border-color: var(--olive-mid); }
+  .card-icon { width: 36px; height: 22px; background: var(--cream-dark); border-radius: 2px; }
+  .card-info { flex: 1; font-size: 12px; color: var(--text-dark); }
+  .card-sub { font-size: 11px; color: var(--text-muted); }
+  .radio-check { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .payment-card.selected .radio-check { border-color: var(--olive-mid); background: var(--olive-mid); }
+  .radio-inner { width: 6px; height: 6px; border-radius: 50%; background: var(--cream); }
+
+  .step-actions { display: flex; gap: 12px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+
+  .success-state { display: none; text-align: center; padding: 60px 20px; }
+  .success-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(61,79,46,0.1); border: 1px solid rgba(61,79,46,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; }
+  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 400; color: var(--text-dark); margin-bottom: 10px; }
+  .success-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand"><a href="index.html">Manor</a></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#" class="active">Programme intake</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="btn btn-ghost btn-sm">Save & exit</a>
+  </div>
+</nav>
+
+<div class="intake-layout">
+  <div class="intake-sidebar">
+    <div class="sidebar-title">Your application</div>
+    <div class="step-nav" id="stepNav">
+      <div class="step-item done" onclick="goStep(1)">
+        <div class="step-circle">✓</div>
+        <div class="step-text">Account created</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-item active" id="nav1" onclick="goStep(1)">
+        <div class="step-circle">2</div>
+        <div class="step-text">Health profile</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-item" id="nav2" onclick="goStep(2)">
+        <div class="step-circle">3</div>
+        <div class="step-text">Goals & lifestyle</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-item" id="nav3" onclick="goStep(3)">
+        <div class="step-circle">4</div>
+        <div class="step-text">Book consult</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-item" id="nav4" onclick="goStep(4)">
+        <div class="step-circle">5</div>
+        <div class="step-text">Review & consent</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-item" id="nav5" onclick="goStep(5)">
+        <div class="step-circle">6</div>
+        <div class="step-text">Payment & enrol</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intake-main" id="intakeMain">
+
+    <!-- Step 1: Health profile -->
+    <div id="step1">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 2 of 6 — health profile</div>
+        <h2 class="step-title">Tell us about yourself</h2>
+        <p class="step-sub">Your health profile stays within your clinical record and will not be shared with third parties.</p>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First name</label>
+          <input class="form-input filled" type="text" value="Sarah">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last name</label>
+          <input class="form-input filled" type="text" value="Mitchell">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date of birth</label>
+          <input class="form-input" type="date" value="1986-03-14">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Biological sex</label>
+          <select class="form-select">
+            <option>Female</option>
+            <option>Male</option>
+            <option>Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label class="form-label">Height (cm)</label>
+          <input class="form-input" type="number" placeholder="165">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Weight (kg)</label>
+          <input class="form-input" type="number" placeholder="68">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Blood type</label>
+          <select class="form-select"><option>Unknown</option><option>A+</option><option>B+</option><option>O+</option><option>AB+</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Known medical conditions (optional)</label>
+        <textarea class="form-textarea" placeholder="List any conditions, past surgeries, or current medications…"></textarea>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-terra" onclick="goStep(2)">Save & continue →</button>
+        <a href="index.html" class="btn btn-ghost">Back</a>
+      </div>
+    </div>
+
+    <!-- Step 2: Goals -->
+    <div id="step2" style="display:none;">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 3 of 6 — goals & lifestyle</div>
+        <h2 class="step-title">What are you working towards?</h2>
+        <p class="step-sub">Choose your primary wellness goal. This helps your physician design the most appropriate protocol.</p>
+      </div>
+      <div class="goal-grid">
+        <div class="goal-card selected" onclick="toggleGoal(this)">
+          <div class="goal-title">Weight loss</div>
+          <div class="goal-sub">Body composition & metabolic</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="goal-title">Energy & sleep</div>
+          <div class="goal-sub">Recovery & rest quality</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="goal-title">Longevity</div>
+          <div class="goal-sub">Healthspan focus</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="goal-title">Muscle & strength</div>
+          <div class="goal-sub">Performance & recovery</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="goal-title">Hormone balance</div>
+          <div class="goal-sub">Men's & women's health</div>
+        </div>
+        <div class="goal-card" onclick="toggleGoal(this)">
+          <div class="goal-title">Healing & repair</div>
+          <div class="goal-sub">Joint & tissue recovery</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Activity level</label>
+        <select class="form-select">
+          <option>Sedentary (desk job, little exercise)</option>
+          <option selected>Lightly active (1–3 days/week)</option>
+          <option>Moderately active (3–5 days/week)</option>
+          <option>Very active (6–7 days/week)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Current supplements or medications (optional)</label>
+        <textarea class="form-textarea" placeholder="e.g. Vitamin D, Metformin…"></textarea>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-terra" onclick="goStep(3)">Save & continue →</button>
+        <button class="btn btn-ghost" onclick="goStep(1)">Back</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Book consult -->
+    <div id="step3" style="display:none;">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 4 of 6 — book your consult</div>
+        <h2 class="step-title">Choose a consultation slot</h2>
+        <p class="step-sub">All consults are virtual via Doxy.me with Jordyn (NP). 45 minutes. You'll receive a link by email before your appointment.</p>
+      </div>
+      <div class="info-banner">
+        <div class="banner-label">Complete labs before your consult</div>
+        <div class="banner-body">Your lab requisition will be sent immediately after booking. Please visit any LabCorp location at least 48hrs before your appointment so your physician can review results in advance.</div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:500;">March 2026</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-ghost btn-sm">← Prev</button>
+          <button class="btn btn-ghost btn-sm">Next →</button>
+        </div>
+      </div>
+      <div class="slot-grid">
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Mon 24 Mar</div><div class="slot-time">10:00 am</div></div>
+        <div class="slot-card selected" onclick="selectSlot(this)"><div class="slot-day">Tue 25 Mar</div><div class="slot-time">2:00 pm</div></div>
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Tue 25 Mar</div><div class="slot-time">4:30 pm</div></div>
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Wed 26 Mar</div><div class="slot-time">9:00 am</div></div>
+        <div class="slot-card unavail"><div class="slot-day">Wed 26 Mar</div><div class="slot-time">11:00 am</div></div>
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Thu 27 Mar</div><div class="slot-time">1:00 pm</div></div>
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Thu 27 Mar</div><div class="slot-time">3:30 pm</div></div>
+        <div class="slot-card" onclick="selectSlot(this)"><div class="slot-day">Fri 28 Mar</div><div class="slot-time">9:30 am</div></div>
+        <div class="slot-card unavail"><div class="slot-day">Fri 28 Mar</div><div class="slot-time">11:00 am</div></div>
+      </div>
+      <div class="info-banner" style="background:rgba(61,79,46,0.06);">
+        <div class="banner-label">Selected</div>
+        <div class="banner-body">Tue 25 Mar 2026 · 2:00 pm · 45-min virtual consult · Jordyn (NP) via Doxy.me</div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-terra" onclick="goStep(4)">Confirm booking →</button>
+        <button class="btn btn-ghost" onclick="goStep(2)">Back</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Consent -->
+    <div id="step4" style="display:none;">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 5 of 6 — review & consent</div>
+        <h2 class="step-title">Programme agreement</h2>
+        <p class="step-sub">Please read and confirm each item. All items must be checked before you can sign and proceed.</p>
+      </div>
+      <div class="consent-list">
+        <div class="consent-item" onclick="toggleConsent(this)">
+          <div class="consent-check"><span class="consent-check-mark">✓</span></div>
+          <div class="consent-text">This programme involves prescription peptides ordered by a licensed physician. Dosage is set by my physician and must not be altered by me.</div>
+        </div>
+        <div class="consent-item" onclick="toggleConsent(this)">
+          <div class="consent-check"><span class="consent-check-mark">✓</span></div>
+          <div class="consent-text">Auto-ship will renew automatically at my chosen interval. I understand the cost and schedule agreed at enrolment.</div>
+        </div>
+        <div class="consent-item" onclick="toggleConsent(this)">
+          <div class="consent-check"><span class="consent-check-mark">✓</span></div>
+          <div class="consent-text">Cancellation of auto-ship requires 60 days written notice. Shipments continue and are billed during the notice period.</div>
+        </div>
+        <div class="consent-item" onclick="toggleConsent(this)">
+          <div class="consent-check"><span class="consent-check-mark">✓</span></div>
+          <div class="consent-text">Lab results must be renewed annually to continue the programme. Auto-ship pauses automatically if labs expire.</div>
+        </div>
+        <div class="consent-item" onclick="toggleConsent(this)">
+          <div class="consent-check"><span class="consent-check-mark">✓</span></div>
+          <div class="consent-text">I have read and agree to the full programme terms, privacy policy, and clinical consent document.</div>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Draw your signature below</div>
+      <div class="sig-area" id="sigArea" onclick="signConsent()">
+        <div class="sig-hint" id="sigHint">Click or touch to sign</div>
+        <div class="sig-line"></div>
+        <div class="sig-hint" style="font-size:11px;" id="sigName">Your full legal name</div>
+        <div class="sig-signed" id="sigDisplay">Sarah Mitchell</div>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:20px;">Signed agreements are stored securely with timestamp. Date: 25 Mar 2026</div>
+      <div class="step-actions">
+        <button class="btn btn-terra" id="consentBtn" onclick="goStep(5)" style="opacity:0.4; pointer-events:none;">Confirm & proceed to payment →</button>
+        <button class="btn btn-ghost" onclick="goStep(3)">Back</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Payment -->
+    <div id="step5" style="display:none;">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 6 of 6 — payment & enrolment</div>
+        <h2 class="step-title">Complete your enrolment</h2>
+        <p class="step-sub">Review your programme details and complete payment to receive your prescription.</p>
+      </div>
+      <div class="payment-summary">
+        <div class="payment-title">Programme summary</div>
+        <div class="data-row"><span class="data-key">Programme</span><span class="data-val">90-day wellness cycle</span></div>
+        <div class="data-row"><span class="data-key">Peptide</span><span class="data-val">Sermorelin 300mcg (physician-prescribed)</span></div>
+        <div class="data-row"><span class="data-key">Auto-ship interval</span><span class="data-val">Every 90 days</span></div>
+        <div class="data-row"><span class="data-key">Auto-pay</span><span class="data-val">€350 per cycle</span></div>
+        <div class="data-row"><span class="data-key">Cancellation policy</span><span class="data-val">60 days notice (auto-ship only)</span></div>
+        <div class="divider"></div>
+        <div class="data-row" style="font-size:16px;"><span class="data-key" style="font-size:14px; font-weight:600; color:var(--text-dark);">Total today</span><span class="data-val" style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--terra);">€350</span></div>
+      </div>
+      <div class="warn-banner">
+        <div class="banner-label">60-day cancellation policy</div>
+        <div class="banner-body">You may cancel auto-ship by giving 60 days written notice at any time from your patient portal. Shipments continue during the notice period.</div>
+      </div>
+      <div style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">Payment method</div>
+      <div class="payment-card selected">
+        <div class="card-icon"></div>
+        <div>
+          <div class="card-info">Visa ending in 4242</div>
+          <div class="card-sub">Default card · Expires 03/28</div>
+        </div>
+        <div class="radio-check"><div class="radio-inner"></div></div>
+      </div>
+      <div class="payment-card" style="border-style: dashed; opacity:0.6;">
+        <div style="font-size:12px; color:var(--text-muted); text-align:center; width:100%;">+ Add new payment method</div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-terra" onclick="completeEnrolment()" style="padding:14px 36px; font-size:12px;">Pay €350 & enrol in programme →</button>
+        <button class="btn btn-ghost" onclick="goStep(4)">Back</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div id="stepSuccess" class="success-state">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">You're enrolled!</h2>
+      <p class="success-sub">Your prescription has been sent to the pharmacy. Your physician has been notified.<br>Expect your first shipment in 3–5 business days.</p>
+      <div class="card" style="max-width:400px; margin:0 auto 24px; text-align:left;">
+        <div class="data-row"><span class="data-key">Programme</span><span class="data-val">Sermorelin 300mcg · 90 days</span></div>
+        <div class="data-row"><span class="data-key">First shipment</span><span class="data-val green">Dispatching in 3–5 days</span></div>
+        <div class="data-row"><span class="data-key">Next auto-ship</span><span class="data-val">25 Jun 2026</span></div>
+        <div class="data-row"><span class="data-key">Physician</span><span class="data-val">Jordyn (NP) · Manor Wellness</span></div>
+      </div>
+      <a href="portal.html" class="btn btn-olive" style="padding:14px 36px;">Go to my programme portal →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let consentChecked = 0;
+  let isSigned = false;
+
+  function goStep(n) {
+    document.querySelectorAll('[id^=step]').forEach(el => el.style.display = 'none');
+    document.getElementById('stepSuccess').style.display = 'none';
+    const el = document.getElementById('step'+n);
+    if(el) el.style.display = 'block';
+    currentStep = n;
+    updateNav();
+    window.scrollTo(0,0);
+  }
+
+  function updateNav() {
+    for(let i=1;i<=5;i++){
+      const nav = document.getElementById('nav'+i);
+      if(!nav) continue;
+      nav.classList.remove('active','done');
+      if(i < currentStep) nav.classList.add('done');
+      else if(i === currentStep) nav.classList.add('active');
+      const circle = nav.querySelector('.step-circle');
+      if(i < currentStep) circle.textContent = '✓';
+      else circle.textContent = i+1;
+    }
+  }
+
+  function toggleGoal(el) {
+    document.querySelectorAll('.goal-card').forEach(g => g.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectSlot(el) {
+    document.querySelectorAll('.slot-card:not(.unavail)').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleConsent(el) {
+    el.classList.toggle('checked');
+    consentChecked = document.querySelectorAll('.consent-item.checked').length;
+    checkConsentReady();
+  }
+
+  function signConsent() {
+    isSigned = true;
+    document.getElementById('sigHint').style.display = 'none';
+    document.getElementById('sigLine') && (document.getElementById('sigLine').style.display = 'none');
+    document.getElementById('sigName').style.display = 'none';
+    document.getElementById('sigDisplay').style.display = 'block';
+    document.getElementById('sigArea').style.background = 'rgba(61,79,46,0.04)';
+    document.getElementById('sigArea').style.borderColor = 'rgba(61,79,46,0.3)';
+    document.querySelector('.sig-line').style.display = 'none';
+    document.querySelector('.sig-hint').style.display = 'none';
+    checkConsentReady();
+  }
+
+  function checkConsentReady() {
+    const btn = document.getElementById('consentBtn');
+    if(consentChecked >= 5 && isSigned) {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  }
+
+  function completeEnrolment() {
+    document.querySelectorAll('[id^=step]').forEach(el => el.style.display = 'none');
+    document.getElementById('stepSuccess').style.display = 'block';
+    // update all nav to done
+    for(let i=1;i<=5;i++){
+      const nav = document.getElementById('nav'+i);
+      if(nav){ nav.classList.remove('active'); nav.classList.add('done'); nav.querySelector('.step-circle').textContent='✓'; }
+    }
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
