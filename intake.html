@@ -389,6 +389,34 @@
             border-top: 1px solid var(--border);
         }
 
+        .yn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .yn-option {
+            padding: 9px 22px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .yn-option:hover {
+            border-color: var(--olive-light);
+            color: var(--text-dark);
+        }
+
+        .yn-option.selected {
+            border-color: var(--olive-mid);
+            background: rgba(61, 79, 46, 0.05);
+            color: var(--olive-mid);
+        }
+
         .success-state {
             display: none;
             text-align: center;
@@ -459,17 +487,7 @@
                 <div class="step-divider"></div>
                 <div class="step-item" id="nav3" onclick="goStep(3)">
                     <div class="step-circle">4</div>
-                    <div class="step-text">Book consult</div>
-                </div>
-                <div class="step-divider"></div>
-                <div class="step-item" id="nav4" onclick="goStep(4)">
-                    <div class="step-circle">5</div>
                     <div class="step-text">Review & consent</div>
-                </div>
-                <div class="step-divider"></div>
-                <div class="step-item" id="nav5" onclick="goStep(5)">
-                    <div class="step-circle">6</div>
-                    <div class="step-text">Payment & enrol</div>
                 </div>
             </div>
         </div>
@@ -479,7 +497,7 @@
             <!-- Step 1: Health profile -->
             <div id="step1">
                 <div class="step-header">
-                    <div class="step-eyebrow">Step 2 of 6 — health profile</div>
+                    <div class="step-eyebrow">Step 2 of 4 — health profile</div>
                     <h2 class="step-title">Tell us about yourself</h2>
                     <p class="step-sub">Your health profile stays within your clinical record and will not be shared
                         with third parties.</p>
@@ -514,9 +532,15 @@
                         <input class="form-input" type="number" placeholder="165">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Weight (kg)</label>
+                        <label class="form-label">Current weight (kg)</label>
                         <input class="form-input" type="number" placeholder="68">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Goal weight (kg)</label>
+                        <input class="form-input" type="number" placeholder="60">
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Blood type</label>
                         <select class="form-select">
@@ -527,11 +551,26 @@
                             <option>AB+</option>
                         </select>
                     </div>
+                    <div class="form-group"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Known medical conditions (optional)</label>
+                    <label class="form-label">Known medical conditions</label>
                     <textarea class="form-textarea"
-                        placeholder="List any conditions, past surgeries, or current medications…"></textarea>
+                        placeholder="List any diagnosed conditions or past surgeries…"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Do you or any family members have a history of medullary thyroid cancer?</label>
+                    <div class="yn-group">
+                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Do you have a personal diagnosis of diabetes, thyroid cancer, irritable bowel disease, renal impairment, hepatic impairment, or gallstones?</label>
+                    <div class="yn-group">
+                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                    </div>
                 </div>
                 <div class="step-actions">
                     <button class="btn btn-terra" onclick="goStep(2)">Save & continue →</button>
@@ -542,7 +581,7 @@
             <!-- Step 2: Goals -->
             <div id="step2" style="display:none;">
                 <div class="step-header">
-                    <div class="step-eyebrow">Step 3 of 6 — goals & lifestyle</div>
+                    <div class="step-eyebrow">Step 3 of 4 — goals & lifestyle</div>
                     <h2 class="step-title">What are you working towards?</h2>
                     <p class="step-sub">Choose your primary wellness goal. This helps your provider design the most
                         appropriate protocol.</p>
@@ -583,8 +622,16 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Current supplements or medications (optional)</label>
-                    <textarea class="form-textarea" placeholder="e.g. Vitamin D, Metformin…"></textarea>
+                    <label class="form-label">Current diet</label>
+                    <textarea class="form-textarea" placeholder="Describe your typical daily eating habits…"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current medications & supplements</label>
+                    <textarea class="form-textarea" placeholder="List all prescription and over-the-counter medications or supplements…"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">What do you most want to accomplish with your health right now?</label>
+                    <textarea class="form-textarea" placeholder="e.g. Lose weight, sleep better, reduce stress, come off medications, more energy…"></textarea>
                 </div>
                 <div class="step-actions">
                     <button class="btn btn-terra" onclick="goStep(3)">Save & continue →</button>
@@ -592,81 +639,10 @@
                 </div>
             </div>
 
-            <!-- Step 3: Book consult -->
+            <!-- Step 3: Consent -->
             <div id="step3" style="display:none;">
                 <div class="step-header">
-                    <div class="step-eyebrow">Step 4 of 6 — book your consult</div>
-                    <h2 class="step-title">Choose a consultation slot</h2>
-                    <p class="step-sub">All consults are virtual via Doxy.me with Jordyn (NP). 45 minutes. You'll
-                        receive a link by email before your appointment.</p>
-                </div>
-                <div class="info-banner">
-                    <div class="banner-label">Complete labs before your consult</div>
-                    <div class="banner-body">Your lab requisition will be sent immediately after booking. Please visit
-                        any LabCorp location at least 48hrs before your appointment so your provider can review results
-                        in advance.</div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                    <div style="font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:500;">March 2026
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-ghost btn-sm">← Prev</button>
-                        <button class="btn btn-ghost btn-sm">Next →</button>
-                    </div>
-                </div>
-                <div class="slot-grid">
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Mon 24 Mar</div>
-                        <div class="slot-time">10:00 am</div>
-                    </div>
-                    <div class="slot-card selected" onclick="selectSlot(this)">
-                        <div class="slot-day">Tue 25 Mar</div>
-                        <div class="slot-time">2:00 pm</div>
-                    </div>
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Tue 25 Mar</div>
-                        <div class="slot-time">4:30 pm</div>
-                    </div>
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Wed 26 Mar</div>
-                        <div class="slot-time">9:00 am</div>
-                    </div>
-                    <div class="slot-card unavail">
-                        <div class="slot-day">Wed 26 Mar</div>
-                        <div class="slot-time">11:00 am</div>
-                    </div>
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Thu 27 Mar</div>
-                        <div class="slot-time">1:00 pm</div>
-                    </div>
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Thu 27 Mar</div>
-                        <div class="slot-time">3:30 pm</div>
-                    </div>
-                    <div class="slot-card" onclick="selectSlot(this)">
-                        <div class="slot-day">Fri 28 Mar</div>
-                        <div class="slot-time">9:30 am</div>
-                    </div>
-                    <div class="slot-card unavail">
-                        <div class="slot-day">Fri 28 Mar</div>
-                        <div class="slot-time">11:00 am</div>
-                    </div>
-                </div>
-                <div class="info-banner" style="background:rgba(61,79,46,0.06);">
-                    <div class="banner-label">Selected</div>
-                    <div class="banner-body">Tue 25 Mar 2026 · 2:00 pm · 45-min virtual consult · Jordyn (NP) via
-                        Doxy.me</div>
-                </div>
-                <div class="step-actions">
-                    <button class="btn btn-terra" onclick="goStep(4)">Confirm booking →</button>
-                    <button class="btn btn-ghost" onclick="goStep(2)">Back</button>
-                </div>
-            </div>
-
-            <!-- Step 4: Consent -->
-            <div id="step4" style="display:none;">
-                <div class="step-header">
-                    <div class="step-eyebrow">Step 5 of 6 — review & consent</div>
+                    <div class="step-eyebrow">Step 4 of 4 — review & consent</div>
                     <h2 class="step-title">Program agreement</h2>
                     <p class="step-sub">Please read and confirm each item. All items must be checked before you can sign
                         and proceed.</p>
@@ -708,83 +684,21 @@
                 <div style="font-size:11px; color:var(--text-muted); margin-bottom:20px;">Signed agreements are stored
                     securely with timestamp. Date: 25 Mar 2026</div>
                 <div class="step-actions">
-                    <button class="btn btn-terra" id="consentBtn" onclick="goStep(5)"
-                        style="opacity:0.4; pointer-events:none;">Confirm & proceed to payment →</button>
-                    <button class="btn btn-ghost" onclick="goStep(3)">Back</button>
-                </div>
-            </div>
-
-            <!-- Step 5: Payment -->
-            <div id="step5" style="display:none;">
-                <div class="step-header">
-                    <div class="step-eyebrow">Step 6 of 6 — payment & enrolment</div>
-                    <h2 class="step-title">Complete your enrolment</h2>
-                    <p class="step-sub">Review your program details and complete payment to receive your prescription.
-                    </p>
-                </div>
-                <div class="payment-summary">
-                    <div class="payment-title">Program summary</div>
-                    <div class="data-row"><span class="data-key">Program</span><span class="data-val">90-day wellness
-                            cycle</span></div>
-                    <div class="data-row"><span class="data-key">Peptide</span><span class="data-val">Sermorelin 300mcg
-                            (provider-prescribed)</span></div>
-                    <div class="data-row"><span class="data-key">Auto-ship interval</span><span class="data-val">Every
-                            90 days</span></div>
-                    <div class="data-row"><span class="data-key">Auto-pay</span><span class="data-val">€350 per
-                            cycle</span></div>
-                    <div class="data-row"><span class="data-key">Cancellation policy</span><span class="data-val">60
-                            days notice (auto-ship only)</span></div>
-                    <div class="divider"></div>
-                    <div class="data-row" style="font-size:16px;"><span class="data-key"
-                            style="font-size:14px; font-weight:600; color:var(--text-dark);">Total today</span><span
-                            class="data-val"
-                            style="font-family:'Cormorant Garamond',serif; font-size:24px; color:var(--terra);">€350</span>
-                    </div>
-                </div>
-                <div class="warn-banner">
-                    <div class="banner-label">60-day cancellation policy</div>
-                    <div class="banner-body">You may cancel auto-ship by giving 60 days written notice at any time from
-                        your patient portal. Shipments continue during the notice period.</div>
-                </div>
-                <div
-                    style="font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px;">
-                    Payment method</div>
-                <div class="payment-card selected">
-                    <div class="card-icon"></div>
-                    <div>
-                        <div class="card-info">Visa ending in 4242</div>
-                        <div class="card-sub">Default card · Expires 03/28</div>
-                    </div>
-                    <div class="radio-check">
-                        <div class="radio-inner"></div>
-                    </div>
-                </div>
-                <div class="payment-card" style="border-style: dashed; opacity:0.6;">
-                    <div style="font-size:12px; color:var(--text-muted); text-align:center; width:100%;">+ Add new
-                        payment method</div>
-                </div>
-                <div class="step-actions">
-                    <button class="btn btn-terra" onclick="completeEnrolment()"
-                        style="padding:14px 36px; font-size:12px;">Pay €350 & enrol in program →</button>
-                    <button class="btn btn-ghost" onclick="goStep(4)">Back</button>
+                    <button class="btn btn-terra" id="consentBtn" onclick="completeEnrolment()"
+                        style="opacity:0.4; pointer-events:none;">Submit application →</button>
+                    <button class="btn btn-ghost" onclick="goStep(2)">Back</button>
                 </div>
             </div>
 
             <!-- Success -->
             <div id="stepSuccess" class="success-state">
                 <div class="success-icon">✓</div>
-                <h2 class="success-title">You're enrolled!</h2>
-                <p class="success-sub">Your prescription has been sent to the pharmacy. Your provider has been
-                    notified.<br>Expect your first shipment in 3–5 business days.</p>
+                <h2 class="success-title">Application submitted!</h2>
+                <p class="success-sub">Thank you — your application is with our wellness team. A coordinator will be in touch shortly to schedule your pre-screening call. Your provider consultation will be booked following that.</p>
                 <div class="card" style="max-width:400px; margin:0 auto 24px; text-align:left;">
-                    <div class="data-row"><span class="data-key">Program</span><span class="data-val">Sermorelin
-                            300mcg · 90 days</span></div>
-                    <div class="data-row"><span class="data-key">First shipment</span><span
-                            class="data-val green">Dispatching in 3–5 days</span></div>
-                    <div class="data-row"><span class="data-key">Next auto-ship</span><span class="data-val">25 Jun
-                            2026</span></div>
-                    <div class="data-row"><span class="data-key">Provider</span><span class="data-val">Jordyn (NP) ·
-                            Manor Wellness</span></div>
+                    <div class="data-row"><span class="data-key">Program</span><span class="data-val">Sermorelin 300mcg · 90 days</span></div>
+                    <div class="data-row"><span class="data-key">Status</span><span class="data-val" style="color:var(--olive-mid);">Under review</span></div>
+                    <div class="data-row"><span class="data-key">Next step</span><span class="data-val">Coordinator pre-screening call</span></div>
                 </div>
                 <a href="portal.html" class="btn btn-olive" style="padding:14px 36px;">Go to my program portal →</a>
             </div>
@@ -808,7 +722,7 @@
         }
 
         function updateNav() {
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 3; i++) {
                 const nav = document.getElementById('nav' + i);
                 if (!nav) continue;
                 nav.classList.remove('active', 'done');
@@ -825,8 +739,9 @@
             el.classList.add('selected');
         }
 
-        function selectSlot(el) {
-            document.querySelectorAll('.slot-card:not(.unavail)').forEach(s => s.classList.remove('selected'));
+        function toggleYN(el) {
+            const group = el.closest('.yn-group');
+            group.querySelectorAll('.yn-option').forEach(o => o.classList.remove('selected'));
             el.classList.add('selected');
         }
 
@@ -861,7 +776,7 @@
             document.querySelectorAll('[id^=step]:not(#stepNav)').forEach(el => el.style.display = 'none');
             document.getElementById('stepSuccess').style.display = 'block';
             // update all nav to done
-            for (let i = 1; i <= 5; i++) {
+            for (let i = 1; i <= 3; i++) {
                 const nav = document.getElementById('nav' + i);
                 if (nav) { nav.classList.remove('active'); nav.classList.add('done'); nav.querySelector('.step-circle').textContent = '✓'; }
             }
