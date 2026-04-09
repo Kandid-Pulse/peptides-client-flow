@@ -177,7 +177,7 @@
             <div class="locked-notice"><span class="lock-icon">🔒</span>Lab results are not visible to the coordinator role</div>
             <div class="locked-notice"><span class="lock-icon">🔒</span>Prescription details are not visible to the coordinator role</div>
             <div class="locked-notice"><span class="lock-icon">🔒</span>Clinical notes are not visible to the coordinator role</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Clinical data access is restricted to the physician role. You can see that a prescription exists and has been approved — not its content.</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Clinical data access is restricted to the provider role. You can see that a prescription exists and has been approved — not its content.</div>
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@
       <div class="topbar"><div class="page-title">Patient queue</div><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm">Search</button><button class="btn btn-ghost btn-sm">Filter by stage</button></div></div>
       <div class="card-block">
         <table>
-          <thead><tr><th>Patient</th><th>Programme</th><th>Stage</th><th>Payment</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Patient</th><th>Program</th><th>Stage</th><th>Payment</th><th>Actions</th></tr></thead>
           <tbody>
             <tr><td><strong>John Dawson</strong><div class="td-muted">New patient</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-terra">Awaiting link</span></td><td class="td-muted">—</td><td class="td-actions"><button class="action-btn primary" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
             <tr><td><strong>Maria Torres</strong><div class="td-muted">Active · Day 55</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-amber">Awaiting dispatch</span></td><td><span class="badge badge-green">Paid</span></td><td class="td-actions"><button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
@@ -218,7 +218,7 @@
         <div class="card-block">
           <div class="card-block-title">Create new link</div>
           <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>John Dawson (Rx approved)</option><option>Select patient…</option></select></div>
-          <div class="info-banner"><div class="banner-label">Rx approved · Jordyn (NP)</div><div class="banner-body">Programme: 90-day wellness · Amount: €350 · Auto-ship enrolled</div></div>
+          <div class="info-banner"><div class="banner-label">Rx approved · Jordyn (NP)</div><div class="banner-body">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled</div></div>
           <div class="form-group"><label class="form-label">Send via</label>
             <div style="display:flex;gap:6px;">
               <div style="flex:1;padding:8px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>
@@ -272,7 +272,7 @@
         <div>
           <div class="card-block" style="margin-bottom:14px;">
             <div class="card-block-title">Record cancellation notice</div>
-            <div class="warn-banner"><div class="banner-label">Important</div><div class="banner-body">Recording a notice does NOT cancel the programme. It starts the 60-day window. Admin confirms final cancellation.</div></div>
+            <div class="warn-banner"><div class="banner-label">Important</div><div class="banner-body">Recording a notice does NOT cancel the program. It starts the 60-day window. Admin confirms final cancellation.</div></div>
             <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>Select patient…</option><option>Emma Walsh</option></select></div>
             <div class="form-group"><label class="form-label">Notice received date</label><input class="form-input" type="date" value="2026-03-25"></div>
             <div class="form-group"><label class="form-label">Channel</label><select class="form-select"><option>Email</option><option>Phone call</option><option>In-person</option></select></div>
@@ -291,7 +291,7 @@
     <button onclick="document.getElementById('paymentModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;">×</button>
     <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:6px;">Send payment link</div>
     <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;" id="payModalPatient">Patient: —</div>
-    <div class="info-banner"><div class="banner-label">Rx approved by Jordyn (NP)</div><div class="banner-body">Programme: 90-day wellness · Amount: €350 · Auto-ship enrolled at 90-day intervals</div></div>
+    <div class="info-banner"><div class="banner-label">Rx approved by Jordyn (NP)</div><div class="banner-body">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled at 90-day intervals</div></div>
     <div class="form-group"><label class="form-label">Send to</label><input class="form-input" value="patient@email.com"></div>
     <div style="display:flex;gap:6px;margin-bottom:14px;">
       <div style="flex:1;padding:9px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>

@@ -45,17 +45,17 @@
 <div class="login-left">
   <a href="index.html" class="login-brand">Manor</a>
   <h1 class="login-headline">Your wellness,<br><em>guided by science</em></h1>
-  <p class="login-body">Physician-prescribed peptide protocols based on your blood work, delivered to your door with ongoing clinical support.</p>
+  <p class="login-body">Provider-prescribed peptide protocols based on your blood work, delivered to your door with ongoing clinical support.</p>
 </div>
 
 <div class="login-right">
   <div class="login-box">
     <div class="login-box-title">Welcome back</div>
-    <div class="login-box-sub">Sign in to your programme portal</div>
+    <div class="login-box-sub">Sign in to your program portal</div>
 
     <div class="radio-group">
       <div class="radio-opt active" onclick="setRole('patient',this)">Patient</div>
-      <div class="radio-opt" onclick="setRole('physician',this)">Physician</div>
+      <div class="radio-opt" onclick="setRole('provider',this)">Provider</div>
       <div class="radio-opt" onclick="setRole('coordinator',this)">Coordinator</div>
       <div class="radio-opt" onclick="setRole('admin',this)">Admin</div>
     </div>
@@ -73,14 +73,14 @@
     <button class="login-submit" id="loginBtn" onclick="handleLogin()">Sign in to manor</button>
 
     <div class="login-footer">
-      New patient? <a href="intake.html">Start your programme →</a>
+      New patient? <a href="intake.html">Start your program →</a>
     </div>
 
     <div class="demo-links">
       <div class="demo-label">Demo — jump to any view</div>
       <a href="portal.html" class="demo-btn">Patient portal</a>
       <a href="intake.html" class="demo-btn">Patient intake flow</a>
-      <a href="physician-dashboard.html" class="demo-btn">Physician dashboard</a>
+      <a href="provider-dashboard.html" class="demo-btn">Provider dashboard</a>
       <a href="coordinator-dashboard.html" class="demo-btn">Coordinator dashboard</a>
       <a href="admin-dashboard.html" class="demo-btn">Admin dashboard</a>
     </div>
@@ -97,7 +97,7 @@
   function handleLogin() {
     const routes = {
       patient: 'portal.html',
-      physician: 'physician-dashboard.html',
+      provider: 'provider-dashboard.html',
       coordinator: 'coordinator-dashboard.html',
       admin: 'admin-dashboard.html'
     };

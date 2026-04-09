@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manor — My Programme</title>
+<title>Manor — My Program</title>
 <link rel="stylesheet" href="shared.css">
 <style>
   body { background: var(--cream); }
@@ -79,7 +79,7 @@
   <div class="nav-brand"><a href="index.html">Manor</a></div>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="portal.html" class="active">My programme</a>
+    <a href="portal.html" class="active">My Program</a>
     <a href="#">Messages</a>
   </div>
   <div class="nav-right" style="position:relative;">
@@ -91,7 +91,7 @@
       <div class="notif-header"><span>Notifications</span><span style="font-size:10px; color:var(--olive-light); cursor:pointer;">Mark all read</span></div>
       <div class="notif-item">
         <div class="notif-icon" style="background:rgba(61,79,46,0.08);"></div>
-        <div class="notif-body"><div class="notif-title">Physician note — protocol update</div><div class="notif-sub">Jordyn reviewed your check-in. All on track at 300mcg.</div></div>
+        <div class="notif-body"><div class="notif-title">Provider note — protocol update</div><div class="notif-sub">Jordyn reviewed your check-in. All on track at 300mcg.</div></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="notif-time">2h</span><div class="notif-unread"></div></div>
       </div>
       <div class="notif-item">
@@ -112,9 +112,9 @@
 
 <div class="portal-layout">
   <div class="portal-sidebar">
-    <div class="sidebar-section">Programme</div>
+    <div class="sidebar-section">Program</div>
     <a href="portal.html" class="sidebar-item active"><div class="sidebar-dot"></div>Overview</a>
-    <a href="#" class="sidebar-item" onclick="showTab('protocol'); return false;"><div class="sidebar-dot"></div>My protocol</a>
+    <a href="#" class="sidebar-item" onclick="showTab('protocol'); return false;"><div class="sidebar-dot"></div>My prescription</a>
     <a href="#" class="sidebar-item" onclick="showTab('shipments'); return false;"><div class="sidebar-dot"></div>Shipments</a>
     <a href="#" class="sidebar-item"><div class="sidebar-dot"></div>Lab results</a>
     <div class="sidebar-section">Account</div>
@@ -131,15 +131,15 @@
   <div class="portal-main">
     <div class="portal-topbar">
       <div>
-        <div class="portal-greeting">My programme</div>
-        <div class="portal-sub">Enrolled 26 Jan 2026 · Physician: Jordyn (NP) · Manor Wellness</div>
+        <div class="portal-greeting">My Program</div>
+        <div class="portal-sub">Enrolled 26 Jan 2026 · Provider: Jordyn (NP) · Manor Wellness</div>
       </div>
       <a href="intake.html#refill" class="btn btn-terra">Request early refill</a>
     </div>
 
     <div class="tab-nav">
       <div class="tab-item active" onclick="showTab('overview')">Overview</div>
-      <div class="tab-item" onclick="showTab('protocol')">My protocol</div>
+      <div class="tab-item" onclick="showTab('protocol')">My prescription</div>
       <div class="tab-item" onclick="showTab('shipments')">Shipments</div>
       <div class="tab-item" onclick="showTab('checkin')">Check-in</div>
     </div>
@@ -148,7 +148,7 @@
     <div class="tab-content active" id="tab-overview">
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">Programme progress</div>
+          <div class="stat-label">Program progress</div>
           <div class="stat-value">Day 24</div>
           <div class="stat-sub positive">of 90-day cycle</div>
         </div>
@@ -166,7 +166,7 @@
 
       <div class="prog-card">
         <div class="prog-header">
-          <div class="prog-title">Sermorelin 300mcg · 90-day programme</div>
+          <div class="prog-title">Sermorelin 300mcg · 90-day program</div>
           <span class="badge badge-olive">Active · Auto-ship on</span>
         </div>
         <div class="prog-bar"><div class="prog-fill"></div></div>
@@ -174,7 +174,7 @@
         <div class="detail-grid">
           <div class="detail-item"><div class="detail-label">Dosage</div><div class="detail-value">300mcg daily</div></div>
           <div class="detail-item"><div class="detail-label">Route</div><div class="detail-value">Subcutaneous</div></div>
-          <div class="detail-item"><div class="detail-label">Programme cost</div><div class="detail-value terra">€350 / 90 days</div></div>
+          <div class="detail-item"><div class="detail-label">Program cost</div><div class="detail-value terra">€350 / 90 days</div></div>
         </div>
       </div>
 
@@ -188,21 +188,21 @@
         <div class="mini-card">
           <div class="mini-card-title">Upcoming</div>
           <div class="data-row"><span class="data-key">4-week check-in</span><span class="data-val amber">Due 23 Feb</span></div>
-          <div class="data-row"><span class="data-key">Physician review</span><span class="data-val">Jordyn will review</span></div>
+          <div class="data-row"><span class="data-key">Provider review</span><span class="data-val">Jordyn will review</span></div>
           <div class="data-row"><span class="data-key">Lab renewal</span><span class="data-val green">Mar 2027</span></div>
         </div>
       </div>
 
       <div class="info-banner">
         <div class="banner-label">Dosage reminder</div>
-        <div class="banner-body">Inject Sermorelin 300mcg subcutaneously each evening before bed. Rotate injection sites. Do not alter your dosage — only your physician can modify your prescription.</div>
+        <div class="banner-body">Inject Sermorelin 300mcg subcutaneously each evening before bed. Rotate injection sites. Do not alter your dosage — only your Provider can modify your prescription.</div>
       </div>
     </div>
 
     <!-- Protocol Tab -->
     <div class="tab-content" id="tab-protocol">
       <div class="prog-card">
-        <div class="prog-header"><div class="prog-title">Prescribed protocol</div><span class="badge badge-olive-light">Physician approved · 26 Jan 2026</span></div>
+        <div class="prog-header"><div class="prog-title">Prescribed protocol</div><span class="badge badge-olive-light">Provider approved · 26 Jan 2026</span></div>
         <div class="data-row"><span class="data-key">Peptide</span><span class="data-val">Sermorelin 300mcg</span></div>
         <div class="data-row"><span class="data-key">Dosage</span><span class="data-val">300mcg per dose</span></div>
         <div class="data-row"><span class="data-key">Frequency</span><span class="data-val">Once daily · subcutaneous injection</span></div>
@@ -210,7 +210,7 @@
         <div class="data-row"><span class="data-key">Best time</span><span class="data-val">Evening · before bed</span></div>
         <div class="data-row"><span class="data-key">Prescribed by</span><span class="data-val">Jordyn (NP) · Manor Wellness</span></div>
       </div>
-      <div class="info-banner"><div class="banner-label">Important</div><div class="banner-body">Your dosage has been set specifically for your lab results and health profile. Never adjust your dose. If you have concerns, message your physician through the portal.</div></div>
+      <div class="info-banner"><div class="banner-label">Important</div><div class="banner-body">Your dosage has been set specifically for your lab results and health profile. Never adjust your dose. If you have concerns, message your Provider through the portal.</div></div>
     </div>
 
     <!-- Shipments Tab -->
@@ -246,7 +246,7 @@
           <select class="form-select"><option selected>Easy to follow</option><option>Slightly confusing</option><option>Difficult</option></select>
         </div>
         <div class="form-group">
-          <label class="form-label">Any other notes for your physician</label>
+          <label class="form-label">Any other notes for your Provider</label>
           <textarea class="form-textarea" placeholder="Optional — anything else Jordyn should know…"></textarea>
         </div>
         <button class="btn btn-terra" onclick="submitCheckin()">Submit check-in to Jordyn →</button>
@@ -259,7 +259,7 @@
   <div class="footer-brand">Manor</div>
   <div class="footer-links">
     <a href="index.html">Home</a>
-    <a href="portal.html">My programme</a>
+    <a href="portal.html">My Program</a>
     <a href="login.html">Sign out</a>
   </div>
   <div class="footer-legal">© 2026 Manor Medspa</div>
