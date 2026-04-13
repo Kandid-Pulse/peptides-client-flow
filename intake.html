@@ -417,6 +417,40 @@
             color: var(--olive-mid);
         }
 
+        .form-section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 20px;
+        }
+
+        .form-section-divider::before,
+        .form-section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .form-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .screening-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 20px;
+            padding: 10px 14px;
+            background: var(--cream);
+            border-left: 2px solid var(--olive-light);
+        }
+
         .success-state {
             display: none;
             text-align: center;
@@ -558,15 +592,42 @@
                     <textarea class="form-textarea"
                         placeholder="List any diagnosed conditions or past surgeries…"></textarea>
                 </div>
+
+                <div class="form-section-divider">
+                    <span class="form-section-label">Medical screening</span>
+                </div>
+                <p class="screening-note">Please answer yes or no to each item. Your provider will discuss any "yes" answers in detail during your consultation.</p>
+
                 <div class="form-group">
-                    <label class="form-label">Do you or any family members have a history of medullary thyroid cancer?</label>
+                    <label class="form-label">History of seizures, migraines, metal implants, or IUD?</label>
                     <div class="yn-group">
                         <div class="yn-option" onclick="toggleYN(this)">Yes</div>
                         <div class="yn-option selected" onclick="toggleYN(this)">No</div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Do you have a personal diagnosis of diabetes, thyroid cancer, irritable bowel disease, renal impairment, hepatic impairment, or gallstones?</label>
+                    <label class="form-label">History of hernia, diastasis recti, or skin cancer?</label>
+                    <div class="yn-group">
+                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">History of autoimmune disorders, keloid scarring, vitiligo, or cold sores?</label>
+                    <div class="yn-group">
+                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Currently pregnant or breastfeeding?</label>
+                    <div class="yn-group">
+                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Any vaccinations in the past two weeks?</label>
                     <div class="yn-group">
                         <div class="yn-option" onclick="toggleYN(this)">Yes</div>
                         <div class="yn-option selected" onclick="toggleYN(this)">No</div>
@@ -587,31 +648,154 @@
                         appropriate protocol.</p>
                 </div>
                 <div class="goal-grid">
-                    <div class="goal-card selected" onclick="toggleGoal(this)">
+                    <div class="goal-card selected" data-goal="glp1" onclick="toggleGoal(this)">
                         <div class="goal-title">Weight loss</div>
                         <div class="goal-sub">Body composition & metabolic</div>
                     </div>
-                    <div class="goal-card" onclick="toggleGoal(this)">
+                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
                         <div class="goal-title">Energy & sleep</div>
                         <div class="goal-sub">Recovery & rest quality</div>
                     </div>
-                    <div class="goal-card" onclick="toggleGoal(this)">
+                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
                         <div class="goal-title">Longevity</div>
                         <div class="goal-sub">Healthspan focus</div>
                     </div>
-                    <div class="goal-card" onclick="toggleGoal(this)">
+                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
                         <div class="goal-title">Muscle & strength</div>
                         <div class="goal-sub">Performance & recovery</div>
                     </div>
-                    <div class="goal-card" onclick="toggleGoal(this)">
+                    <div class="goal-card" data-goal="testosterone" onclick="toggleGoal(this)">
                         <div class="goal-title">Hormone balance</div>
                         <div class="goal-sub">Men's & women's health</div>
                     </div>
-                    <div class="goal-card" onclick="toggleGoal(this)">
+                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
                         <div class="goal-title">Healing & repair</div>
                         <div class="goal-sub">Joint & tissue recovery</div>
                     </div>
                 </div>
+
+                <!-- GLP-1 additional screening (Weight loss) -->
+                <div id="glp1Questions">
+                    <div class="form-section-divider">
+                        <span class="form-section-label">Additional screening — GLP-1</span>
+                    </div>
+                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
+                    <div class="form-group">
+                        <label class="form-label">History of pancreatitis, irritable bowel disease, or ulcerative colitis?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Personal or family history of medullary thyroid cancer?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">History of gallstones or gallbladder disease?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Diagnosed with diabetes (Type 1 or Type 2)?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Peptides additional screening (Energy & sleep / Longevity / Muscle & strength / Healing & repair) -->
+                <div id="peptideQuestions" style="display:none;">
+                    <div class="form-section-divider">
+                        <span class="form-section-label">Additional screening — Peptides</span>
+                    </div>
+                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
+                    <div class="form-group">
+                        <label class="form-label">History of major depression, bipolar disorder, manic episodes, psychosis, or suicidal thoughts/ideations?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Any other psychiatric diagnosis?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Active cancer or personal history of cancer?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">History of pituitary conditions, head trauma, or fluid retention?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Currently using corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testosterone additional screening (Hormone balance) -->
+                <div id="testosteroneQuestions" style="display:none;">
+                    <div class="form-section-divider">
+                        <span class="form-section-label">Additional screening — Testosterone</span>
+                    </div>
+                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
+                    <div class="form-group">
+                        <label class="form-label">History of obstructive sleep apnea?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Personal history of prostate or breast cancer?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">History of erectile dysfunction?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">History of significant cardiovascular disease, or first-degree relative with prostate cancer?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Currently trying to conceive?</label>
+                        <div class="yn-group">
+                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
+                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Activity level</label>
                     <select class="form-select">
@@ -737,6 +921,10 @@
         function toggleGoal(el) {
             document.querySelectorAll('.goal-card').forEach(g => g.classList.remove('selected'));
             el.classList.add('selected');
+            const goal = el.dataset.goal;
+            document.getElementById('glp1Questions').style.display = goal === 'glp1' ? 'block' : 'none';
+            document.getElementById('peptideQuestions').style.display = goal === 'peptides' ? 'block' : 'none';
+            document.getElementById('testosteroneQuestions').style.display = goal === 'testosterone' ? 'block' : 'none';
         }
 
         function toggleYN(el) {
