@@ -357,14 +357,69 @@
               </div>
             </div>
 
-            <div class="ps-section-title">Medical history</div>
+            <div class="ps-section-title">GFE Medical Screening</div>
             <div class="ro-label" style="margin-bottom:4px;">Known medical conditions</div>
             <div class="ro-field" id="ps-conditions" style="margin-bottom:10px;min-height:48px;"></div>
             <div class="ro-label" style="margin-bottom:4px;">Current medications &amp; supplements</div>
             <div class="ro-field" id="ps-meds" style="margin-bottom:10px;min-height:48px;"></div>
             <div class="ro-pair">
-              <div><div class="ro-label">Family history — medullary thyroid cancer?</div><div class="ro-field" id="ps-thyroid"></div></div>
-              <div><div class="ro-label">Diagnosis: diabetes / thyroid / IBD / renal / hepatic / gallstones?</div><div class="ro-field" id="ps-diag"></div></div>
+              <div><div class="ro-label">Seizures, migraines, metal implants, or IUD?</div><div class="ro-field" id="ps-gfe-seizures"></div></div>
+              <div><div class="ro-label">Hernia, diastasis recti, or skin cancer?</div><div class="ro-field" id="ps-gfe-hernia"></div></div>
+            </div>
+            <div class="ro-pair">
+              <div><div class="ro-label">Autoimmune, keloid, vitiligo, or cold sores?</div><div class="ro-field" id="ps-gfe-autoimmune"></div></div>
+              <div><div class="ro-label">Pregnant or breastfeeding?</div><div class="ro-field" id="ps-gfe-pregnant"></div></div>
+            </div>
+            <div class="ro-pair">
+              <div><div class="ro-label">Vaccines in past two weeks?</div><div class="ro-field" id="ps-gfe-vaccines"></div></div>
+              <div></div>
+            </div>
+
+            <!-- GLP-1 additional screening -->
+            <div id="ps-glp1-section" style="display:none;">
+              <div class="ps-section-title">Additional Screening — GLP-1</div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Pancreatitis, IBD, or ulcerative colitis?</div><div class="ro-field" id="ps-glp1-ibd"></div></div>
+                <div><div class="ro-label">Personal/family medullary thyroid cancer?</div><div class="ro-field" id="ps-glp1-thyroid"></div></div>
+              </div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Gallstones or gallbladder disease?</div><div class="ro-field" id="ps-glp1-gallstones"></div></div>
+                <div><div class="ro-label">Diagnosed with diabetes (Type 1 or 2)?</div><div class="ro-field" id="ps-glp1-diabetes"></div></div>
+              </div>
+            </div>
+
+            <!-- Peptides additional screening -->
+            <div id="ps-peptide-section" style="display:none;">
+              <div class="ps-section-title">Additional Screening — Peptides</div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Depression, bipolar, psychosis, or suicidal ideation?</div><div class="ro-field" id="ps-pep-psych"></div></div>
+                <div><div class="ro-label">Any other psychiatric diagnosis?</div><div class="ro-field" id="ps-pep-psych2"></div></div>
+              </div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Active or history of cancer?</div><div class="ro-field" id="ps-pep-cancer"></div></div>
+                <div><div class="ro-label">Pituitary conditions, head trauma, or fluid retention?</div><div class="ro-field" id="ps-pep-pituitary"></div></div>
+              </div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</div><div class="ro-field" id="ps-pep-drugs"></div></div>
+                <div></div>
+              </div>
+            </div>
+
+            <!-- Testosterone additional screening -->
+            <div id="ps-test-section" style="display:none;">
+              <div class="ps-section-title">Additional Screening — Testosterone</div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Obstructive sleep apnea?</div><div class="ro-field" id="ps-test-apnea"></div></div>
+                <div><div class="ro-label">Personal history of prostate or breast cancer?</div><div class="ro-field" id="ps-test-cancer"></div></div>
+              </div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Erectile dysfunction?</div><div class="ro-field" id="ps-test-ed"></div></div>
+                <div><div class="ro-label">Significant cardiovascular disease or 1st-degree relative with prostate cancer?</div><div class="ro-field" id="ps-test-cardio"></div></div>
+              </div>
+              <div class="ro-pair">
+                <div><div class="ro-label">Currently trying to conceive?</div><div class="ro-field" id="ps-test-conceive"></div></div>
+                <div></div>
+              </div>
             </div>
 
             <div class="ps-section-title">Goals &amp; lifestyle</div>
@@ -483,8 +538,10 @@
       name: 'Sarah Mitchell', dob: '14 Mar 1986', height: '165 cm', sex: 'Female',
       weight: 68, goalWeight: 60,
       conditions: 'None reported', meds: 'Vitamin D 2000 IU daily',
-      thyroid: 'No', diag: 'No',
-      goal: 'Weight loss', activity: 'Lightly active (1–3 days/week)',
+      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
+      goal: 'Weight loss', goalType: 'glp1',
+      glp1Ibd: 'No', glp1Thyroid: 'No', glp1Gallstones: 'No', glp1Diabetes: 'No',
+      activity: 'Lightly active (1–3 days/week)',
       diet: 'Currently working on meal planning. ~150g protein per day.',
       narrative: 'Wants to lose weight and improve energy levels.'
     },
@@ -492,8 +549,10 @@
       name: 'John Dawson', dob: '3 Jul 1979', height: '180 cm', sex: 'Male',
       weight: 102, goalWeight: 85,
       conditions: 'Hypertension (managed)', meds: 'Amlodipine 5mg',
-      thyroid: 'No', diag: 'No',
-      goal: 'Weight loss', activity: 'Sedentary (desk job, little exercise)',
+      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
+      goal: 'Weight loss', goalType: 'glp1',
+      glp1Ibd: 'No', glp1Thyroid: 'No', glp1Gallstones: 'No', glp1Diabetes: 'No',
+      activity: 'Sedentary (desk job, little exercise)',
       diet: 'Eats out frequently. High sodium intake.',
       narrative: 'Wants to lose weight and come off blood pressure medication.'
     },
@@ -501,8 +560,10 @@
       name: 'Maria Torres', dob: '19 Nov 1990', height: '158 cm', sex: 'Female',
       weight: 74, goalWeight: 62,
       conditions: 'PCOS', meds: 'Metformin 500mg, Inositol supplement',
-      thyroid: 'No', diag: 'No',
-      goal: 'Hormone balance', activity: 'Moderately active (3–5 days/week)',
+      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
+      goal: 'Hormone balance', goalType: 'testosterone',
+      testApnea: 'No', testCancer: 'No', testEd: 'No', testCardio: 'No', testConceive: 'No',
+      activity: 'Moderately active (3–5 days/week)',
       diet: 'Low carb, intermittent fasting.',
       narrative: 'Wants to improve hormone balance and lose weight with PCOS.'
     }
@@ -539,8 +600,36 @@
     document.getElementById('ps-goal-bmi').textContent = goalBmi;
     document.getElementById('ps-conditions').textContent = p.conditions;
     document.getElementById('ps-meds').textContent = p.meds;
-    document.getElementById('ps-thyroid').textContent = p.thyroid;
-    document.getElementById('ps-diag').textContent = p.diag;
+    document.getElementById('ps-gfe-seizures').textContent = p.gfeSeizures;
+    document.getElementById('ps-gfe-hernia').textContent = p.gfeHernia;
+    document.getElementById('ps-gfe-autoimmune').textContent = p.gfeAutoimmune;
+    document.getElementById('ps-gfe-pregnant').textContent = p.gfePregnant;
+    document.getElementById('ps-gfe-vaccines').textContent = p.gfeVaccines;
+
+    // Show/hide & populate goal-specific section
+    ['ps-glp1-section','ps-peptide-section','ps-test-section'].forEach(id => document.getElementById(id).style.display = 'none');
+    if (p.goalType === 'glp1') {
+      document.getElementById('ps-glp1-section').style.display = 'block';
+      document.getElementById('ps-glp1-ibd').textContent = p.glp1Ibd;
+      document.getElementById('ps-glp1-thyroid').textContent = p.glp1Thyroid;
+      document.getElementById('ps-glp1-gallstones').textContent = p.glp1Gallstones;
+      document.getElementById('ps-glp1-diabetes').textContent = p.glp1Diabetes;
+    } else if (p.goalType === 'peptides') {
+      document.getElementById('ps-peptide-section').style.display = 'block';
+      document.getElementById('ps-pep-psych').textContent = p.pepPsych;
+      document.getElementById('ps-pep-psych2').textContent = p.pepPsych2;
+      document.getElementById('ps-pep-cancer').textContent = p.pepCancer;
+      document.getElementById('ps-pep-pituitary').textContent = p.pepPituitary;
+      document.getElementById('ps-pep-drugs').textContent = p.pepDrugs;
+    } else if (p.goalType === 'testosterone') {
+      document.getElementById('ps-test-section').style.display = 'block';
+      document.getElementById('ps-test-apnea').textContent = p.testApnea;
+      document.getElementById('ps-test-cancer').textContent = p.testCancer;
+      document.getElementById('ps-test-ed').textContent = p.testEd;
+      document.getElementById('ps-test-cardio').textContent = p.testCardio;
+      document.getElementById('ps-test-conceive').textContent = p.testConceive;
+    }
+
     document.getElementById('ps-goal').textContent = p.goal;
     document.getElementById('ps-activity').textContent = p.activity;
     document.getElementById('ps-diet').textContent = p.diet;
