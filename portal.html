@@ -71,6 +71,52 @@
   .tab-item.active { color: var(--olive-dark); border-bottom-color: var(--olive-dark); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
+
+  /* Shop */
+  .shop-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+  .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .product-card { background: var(--white); border: 1px solid var(--border); padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; transition: border-color 0.2s; }
+  .product-card:hover { border-color: var(--olive-light); }
+  .product-tag { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-mid); background: rgba(61,79,46,0.07); padding: 3px 8px; }
+  .product-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text-dark); line-height: 1.2; }
+  .product-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; flex: 1; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .product-price { font-size: 16px; font-weight: 600; color: var(--text-dark); }
+  .product-price span { font-size: 11px; font-weight: 400; color: var(--text-muted); }
+  .btn-add { font-size: 11px; padding: 7px 16px; background: var(--olive-dark); color: var(--cream); border: none; cursor: pointer; letter-spacing: 0.06em; font-family: 'Jost', sans-serif; transition: background 0.2s; }
+  .btn-add:hover { background: var(--olive-mid); }
+  .btn-add.added { background: var(--olive-mid); }
+
+  .cart-panel { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; position: sticky; top: 90px; }
+  .cart-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .cart-empty { text-align: center; padding: 32px 0; font-size: 13px; color: var(--text-muted); }
+  .cart-items { display: flex; flex-direction: column; gap: 0; }
+  .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .cart-item-name { flex: 1; font-size: 12px; color: var(--text-dark); font-weight: 500; }
+  .cart-item-sub { font-size: 10px; color: var(--text-muted); }
+  .qty-control { display: flex; align-items: center; gap: 6px; }
+  .qty-btn { width: 22px; height: 22px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; line-height: 1; transition: all 0.2s; font-family: 'Jost', sans-serif; }
+  .qty-btn:hover { border-color: var(--olive-mid); color: var(--olive-mid); }
+  .qty-val { font-size: 12px; font-weight: 500; color: var(--text-dark); min-width: 14px; text-align: center; }
+  .cart-item-price { font-size: 12px; font-weight: 600; color: var(--text-dark); min-width: 40px; text-align: right; }
+  .cart-divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .cart-subtotal { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 14px; }
+  .cart-note { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+
+  /* Checkout modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,31,20,0.55); z-index: 300; align-items: center; justify-content: center; padding: 40px; }
+  .modal-box { background: var(--white); max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
+  .modal-header { padding: 24px 28px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; color: var(--text-dark); }
+  .modal-close { width: 30px; height: 30px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .modal-body { padding: 24px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .modal-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .modal-order-item { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dark); padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .modal-order-item:last-child { border-bottom: none; }
+  .modal-total { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; color: var(--text-dark); margin-top: 12px; }
+  .modal-footer { padding: 0 28px 28px; }
+  .order-success { display: none; text-align: center; padding: 48px 28px; }
+  .order-success-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(61,79,46,0.1); border: 1px solid rgba(61,79,46,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 22px; }
 </style>
 </head>
 <body>
@@ -118,6 +164,7 @@
     <a href="#" class="sidebar-item" onclick="showTab('shipments'); return false;"><div class="sidebar-dot"></div>Shipments</a>
     <a href="#" class="sidebar-item"><div class="sidebar-dot"></div>Lab results</a>
     <div class="sidebar-section">Account</div>
+    <a href="#" class="sidebar-item" onclick="showTab('shop'); return false;"><div class="sidebar-dot"></div>Shop <div class="sidebar-badge">New</div></a>
     <a href="#" class="sidebar-item"><div class="sidebar-dot"></div>Auto-ship settings</a>
     <a href="#" class="sidebar-item"><div class="sidebar-dot"></div>Messages <div class="sidebar-badge">2</div></a>
     <a href="#" class="sidebar-item"><div class="sidebar-dot"></div>Billing</a>
@@ -142,6 +189,7 @@
       <div class="tab-item" onclick="showTab('protocol')">My prescription</div>
       <div class="tab-item" onclick="showTab('shipments')">Shipments</div>
       <div class="tab-item" onclick="showTab('checkin')">Check-in</div>
+      <div class="tab-item" onclick="showTab('shop')">Shop</div>
     </div>
 
     <!-- Overview Tab -->
@@ -252,6 +300,76 @@
         <button class="btn btn-terra" onclick="submitCheckin()">Submit check-in to Jordyn →</button>
       </div>
     </div>
+
+    <!-- Shop Tab -->
+    <div class="tab-content" id="tab-shop">
+      <div style="margin-bottom:20px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--text-dark);margin-bottom:4px;">Wellness supplements</div>
+        <div style="font-size:13px;color:var(--text-muted);">Curated OTC products that complement your program. Shipped directly to you.</div>
+      </div>
+      <div class="shop-layout">
+        <div class="product-grid" id="productGrid">
+          <!-- Products rendered by JS -->
+        </div>
+        <div class="cart-panel" id="cartPanel">
+          <div class="cart-title">Your cart <span id="cartCount" style="background:var(--terra);color:var(--white);font-size:9px;padding:2px 7px;display:none;">0</span></div>
+          <div class="cart-empty" id="cartEmpty">No items yet.<br>Add a product to get started.</div>
+          <div class="cart-items" id="cartItems"></div>
+          <div id="cartSummary" style="display:none;">
+            <div class="cart-divider"></div>
+            <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">€0</span></div>
+            <div class="cart-note">Free shipping on orders over €60. Standard delivery 3–5 days.</div>
+            <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="openCheckout()">Proceed to checkout →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Checkout modal -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal-box">
+    <div id="checkoutForm">
+      <div class="modal-header">
+        <div class="modal-title">Checkout</div>
+        <button class="modal-close" onclick="closeCheckout()">×</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="modal-section-label">Order summary</div>
+          <div id="modalOrderItems"></div>
+          <div class="modal-total"><span>Total</span><span id="modalTotal">€0</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.5;">Free standard shipping · 3–5 business days<br>All supplements are OTC and do not require a prescription.</div>
+        </div>
+        <div>
+          <div class="modal-section-label">Shipping address</div>
+          <div class="form-group"><label class="form-label">Full name</label><input class="form-input" value="Sarah Mitchell"></div>
+          <div class="form-group"><label class="form-label">Address</label><input class="form-input" placeholder="Street address"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">City</label><input class="form-input" placeholder="City"></div>
+            <div class="form-group"><label class="form-label">Postcode</label><input class="form-input" placeholder="Postcode"></div>
+          </div>
+          <div class="modal-section-label" style="margin-top:16px;">Payment</div>
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);margin-bottom:10px;">
+            <div style="width:36px;height:22px;background:var(--cream-dark);border-radius:2px;"></div>
+            <div style="flex:1;font-size:12px;color:var(--text-dark);">Card ending 4242</div>
+            <div style="font-size:10px;color:var(--olive-mid);">Default</div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">To update your payment method, visit Billing in your account settings.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-terra" style="width:100%;text-align:center;padding:14px;" onclick="placeOrder()">Place order →</button>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:8px;text-align:center;">Your card will be charged when you click Place order. Supplements are non-refundable once dispatched.</div>
+      </div>
+    </div>
+    <div class="order-success" id="orderSuccess">
+      <div class="order-success-icon">✓</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--text-dark);margin-bottom:8px;">Order placed!</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6;">Your supplements are on their way. You'll receive a dispatch confirmation by email within 24 hours. Standard delivery 3–5 business days.</p>
+      <button class="btn btn-olive" onclick="closeCheckout()">Back to portal</button>
+    </div>
   </div>
 </div>
 
@@ -270,7 +388,7 @@
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-'+name).classList.add('active');
-    const tabs = {'overview':0,'protocol':1,'shipments':2,'checkin':3};
+    const tabs = {'overview':0,'protocol':1,'shipments':2,'checkin':3,'shop':4};
     document.querySelectorAll('.tab-item')[tabs[name]]?.classList.add('active');
   }
   function toggleNotif() {
@@ -290,6 +408,101 @@
       document.getElementById('notifDropdown').style.display = 'none';
     }
   });
+
+  // ── Shop & Cart ──────────────────────────────────────────────
+  const products = [
+    { id: 1, tag: 'Daily foundation',  name: 'Vitamin D3 + K2',         desc: 'Immunity, bone health & mood. 5000 IU D3 paired with MK-7 K2 for optimal co-factor absorption.',                                    price: 24 },
+    { id: 2, tag: 'Sleep & recovery',  name: 'Magnesium Glycinate',      desc: 'Superior absorption form for deeper sleep, muscle recovery & cortisol regulation. 400mg elemental magnesium.',                       price: 28 },
+    { id: 3, tag: 'Skin & joints',     name: 'Marine Collagen Peptides', desc: 'Wild-caught, hydrolysed type I & III collagen. Supports skin elasticity, joint integrity & gut lining.',                           price: 49 },
+    { id: 4, tag: 'Longevity',         name: 'NAD+ Booster',             desc: 'Nicotinamide riboside + resveratrol for cellular energy production, mitochondrial health & longevity support.',                     price: 62 },
+    { id: 5, tag: 'Cardiovascular',    name: 'Omega-3 High-EPA',         desc: 'Pharmaceutical-grade fish oil concentrate. Cardiovascular, cognitive & anti-inflammatory support.',                                  price: 36 },
+    { id: 6, tag: 'GLP-1 support',     name: 'Berberine 500mg',          desc: 'Clinically studied for blood sugar balance & metabolic support. Commonly recommended alongside GLP-1 protocols.',                    price: 33 },
+    { id: 7, tag: 'Hormone support',   name: 'Zinc & Copper Balance',    desc: 'Hormone, immune & reproductive support. Optimally balanced ratio — ideal alongside testosterone protocols.',                        price: 19 },
+    { id: 8, tag: 'Stress & recovery', name: 'Ashwagandha KSM-66',       desc: 'Clinically studied adaptogen for cortisol balance, stress resilience & recovery. Full-spectrum root extract.',                       price: 29 },
+  ];
+  const cart = {};
+
+  function renderProducts() {
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = products.map(p => `
+      <div class="product-card">
+        <div><span class="product-tag">${p.tag}</span></div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">€${p.price} <span>/ bottle</span></div>
+          <button class="btn-add" id="btn-${p.id}" onclick="addToCart(${p.id})">Add to cart</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    const btn = document.getElementById('btn-'+id);
+    btn.textContent = 'Added ✓';
+    btn.classList.add('added');
+    setTimeout(() => { btn.textContent = 'Add to cart'; btn.classList.remove('added'); }, 1200);
+    renderCart();
+  }
+
+  function updateQty(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function renderCart() {
+    const ids = Object.keys(cart);
+    const count = ids.reduce((s, id) => s + cart[id], 0);
+    const subtotal = ids.reduce((s, id) => s + products.find(p => p.id == id).price * cart[id], 0);
+
+    document.getElementById('cartEmpty').style.display = ids.length ? 'none' : 'block';
+    document.getElementById('cartSummary').style.display = ids.length ? 'block' : 'none';
+    document.getElementById('cartSubtotal').textContent = '€' + subtotal;
+    const badge = document.getElementById('cartCount');
+    badge.style.display = ids.length ? 'inline' : 'none';
+    badge.textContent = count;
+
+    document.getElementById('cartItems').innerHTML = ids.map(id => {
+      const p = products.find(p => p.id == id);
+      return `<div class="cart-item">
+        <div style="flex:1;"><div class="cart-item-name">${p.name}</div><div class="cart-item-sub">€${p.price} each</div></div>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="updateQty(${id},-1)">−</button>
+          <span class="qty-val">${cart[id]}</span>
+          <button class="qty-btn" onclick="updateQty(${id},1)">+</button>
+        </div>
+        <div class="cart-item-price">€${p.price * cart[id]}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function openCheckout() {
+    const ids = Object.keys(cart);
+    const total = ids.reduce((s, id) => s + products.find(p => p.id == id).price * cart[id], 0);
+    document.getElementById('modalOrderItems').innerHTML = ids.map(id => {
+      const p = products.find(p => p.id == id);
+      return `<div class="modal-order-item"><span>${p.name} × ${cart[id]}</span><span>€${p.price * cart[id]}</span></div>`;
+    }).join('');
+    document.getElementById('modalTotal').textContent = '€' + total;
+    document.getElementById('checkoutForm').style.display = 'block';
+    document.getElementById('orderSuccess').style.display = 'none';
+    document.getElementById('checkoutModal').style.display = 'flex';
+  }
+
+  function closeCheckout() {
+    document.getElementById('checkoutModal').style.display = 'none';
+  }
+
+  function placeOrder() {
+    Object.keys(cart).forEach(k => delete cart[k]);
+    renderCart();
+    document.getElementById('checkoutForm').style.display = 'none';
+    document.getElementById('orderSuccess').style.display = 'block';
+  }
+
+  renderProducts();
+
 </script>
 </body>
 </html>
