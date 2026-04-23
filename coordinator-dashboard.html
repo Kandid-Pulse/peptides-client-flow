@@ -4,687 +4,485 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manor — Coordinator Dashboard</title>
-<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tw.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
 <style>
-  body { background: var(--cream); }
-  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
-  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto; }
-  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
-  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--terra-light); margin-top: 3px; }
-  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
-  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
-  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
-  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
-  .sidebar-item.locked { opacity: 0.3; cursor: not-allowed; }
-  .sidebar-badge { margin-left: auto; font-size: 9px; padding: 2px 6px; background: var(--terra); color: var(--white); }
-  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
-  .sidebar-item.active .sb-icon { background: var(--terra); }
-  .sidebar-spacer { flex: 1; }
-  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
-  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--terra); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
-  .user-name { font-size: 11px; color: var(--cream); }
-  .user-role-lbl { font-size: 9px; color: var(--terra-light); }
-
-  .main { padding: 32px 36px; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
-
-  .greeting { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); margin-bottom: 4px; }
-  .greeting-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
-
-  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
-
-  .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
-  .card-block { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; margin-bottom: 16px; }
-  .card-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   table { width: 100%; border-collapse: collapse; }
-  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 0 8px 10px 0; border-bottom: 1px solid var(--border); text-align: left; }
-  tbody tr { border-bottom: 1px solid var(--border); }
+  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #7a8a6a; padding: 0 8px 10px 0; border-bottom: 1px solid rgba(61,79,46,0.15); text-align: left; }
+  tbody tr { border-bottom: 1px solid rgba(61,79,46,0.15); }
   tbody tr:hover { background: rgba(61,79,46,0.02); }
   tbody tr:last-child { border-bottom: none; }
-  tbody td { padding: 10px 8px 10px 0; font-size: 12px; color: var(--text-dark); }
-  .td-muted { font-size: 11px; color: var(--text-muted); }
-  .td-actions { display: flex; gap: 5px; }
-  .action-btn { font-size: 10px; padding: 4px 8px; border: 1px solid var(--border); background: none; cursor: pointer; color: var(--text-muted); transition: all 0.2s; font-family: 'Jost', sans-serif; letter-spacing: 0.06em; }
-  .action-btn:hover { background: var(--olive-dark); color: var(--cream); border-color: var(--olive-dark); }
-  .action-btn.primary { background: var(--terra); color: var(--white); border-color: var(--terra); }
-  .action-btn.primary:hover { background: var(--terra-dark); }
-
-  .notif-list { display: flex; flex-direction: column; }
-  .notif-item { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
-  .notif-item:last-child { border-bottom: none; }
-  .ni-icon { width: 26px; height: 26px; background: var(--cream); flex-shrink: 0; }
-  .ni-title { font-size: 12px; font-weight: 500; color: var(--text-dark); margin-bottom: 2px; }
-  .ni-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
-  .ni-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
-  .ni-unread { width: 6px; height: 6px; border-radius: 50%; background: var(--terra); flex-shrink: 0; margin-top: 4px; }
-
-  .locked-notice { background: rgba(61,79,46,0.03); border: 1px solid var(--border); padding: 10px 12px; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .lock-icon { font-size: 12px; }
-
-  .autoship-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-  .autoship-item:last-child { border-bottom: none; }
-
-  .ro-field { background: var(--cream); border: 1px solid var(--border); padding: 8px 11px; font-size: 12px; color: var(--text-dark); min-height: 34px; }
-  .ro-field.muted { color: var(--text-muted); font-style: italic; }
-  .ro-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .ro-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
-  .bmi-highlight { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--text-dark); }
-  .bmi-sub { font-size: 10px; color: var(--text-muted); }
-
-  .check-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; font-size: 12px; color: var(--text-dark); }
-  .check-item:hover { border-color: var(--olive-light); }
-  .check-item.checked { border-color: rgba(61,79,46,0.3); background: rgba(61,79,46,0.03); color: var(--olive-mid); }
-  .check-box { width: 16px; height: 16px; border: 1px solid var(--border); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: transparent; transition: all 0.2s; }
-  .check-item.checked .check-box { background: var(--olive-mid); border-color: var(--olive-mid); color: var(--cream); }
-
-  .method-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
-  .method-opt { flex: 1; padding: 9px; border: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
-  .method-opt:hover { border-color: var(--olive-light); }
-  .method-opt.selected { border-color: var(--olive-mid); background: rgba(61,79,46,0.05); color: var(--olive-mid); font-weight: 500; }
-
-  .ps-section-title { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 10px 8px 10px 0; font-size: 12px; color: #1a1f14; }
+  /* JS-toggled sidebar active */
+  .sidebar-item.active { color: #f5f0e8 !important; background: rgba(255,255,255,0.08) !important; border-left: 2px solid #8b5a3c; }
+  .sidebar-item.active .sb-icon { background: #8b5a3c !important; }
+  /* check-item toggled */
+  .check-item.checked { border-color: rgba(61,79,46,0.3) !important; background: rgba(61,79,46,0.03); color: #3d4f2e; }
+  .check-item.checked .check-box { background: #3d4f2e; border-color: #3d4f2e; color: #f5f0e8; }
+  /* method-opt selected */
+  .method-opt.selected { border-color: #3d4f2e !important; background: rgba(61,79,46,0.05); color: #3d4f2e; font-weight: 500; }
+  /* custom select arrow */
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='none' stroke='%237a8a6a' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
 </style>
 </head>
-<body>
+<body class="font-sans bg-cream text-[#1a1f14]">
 
-<nav>
-  <div class="nav-brand"><a href="index.html">Manor</a></div>
-  <div class="nav-links">
-    <a href="index.html">Website</a>
-    <a href="coordinator-dashboard.html" class="active">Coordinator</a>
-    <a href="login.html">Sign out</a>
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-cream-white border-b border-olive-mid/15 px-10 h-[70px] flex items-center justify-between">
+  <a href="index.html" class="font-serif text-[26px] font-semibold tracking-[0.12em] text-olive-dark uppercase no-underline">Manor</a>
+  <div class="flex gap-7">
+    <a href="index.html"                    class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Website</a>
+    <a href="coordinator-dashboard.html"    class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-dark no-underline">Coordinator</a>
+    <a href="login.html"                    class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Sign out</a>
   </div>
-  <div class="nav-right">
-    <div style="font-size:11px;color:var(--text-muted);">Celeste (Coordinator)</div>
-    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--terra);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:600;">CE</div>
+  <div class="flex gap-3 items-center">
+    <span class="text-[11px] text-muted">Celeste (Coordinator)</span>
+    <div class="w-8 h-8 rounded-full bg-terra flex items-center justify-center text-[11px] text-cream-white font-semibold">CE</div>
   </div>
 </nav>
 
-<div class="admin-layout">
-  <div class="admin-sidebar">
-    <div class="sidebar-logo">Manor<div class="sidebar-role">Coordinator</div></div>
-    <div class="sidebar-section">My work</div>
-    <div class="sidebar-item active"><div class="sb-icon"></div>Dashboard</div>
-    <div class="sidebar-item" onclick="showView('queue')"><div class="sb-icon"></div>Patient queue</div>
-    <div class="sidebar-item" onclick="showView('payments')"><div class="sb-icon"></div>Payment links <div class="sidebar-badge">2</div></div>
-    <div class="sidebar-item" onclick="showView('shipments')"><div class="sb-icon"></div>Shipments</div>
-    <div class="sidebar-item" onclick="showView('autoship')"><div class="sb-icon"></div>Auto-ship</div>
-    <div class="sidebar-item" onclick="showView('prescreening')"><div class="sb-icon"></div>Pre-screening <div class="sidebar-badge" id="ps-badge">1</div></div>
-    <div class="sidebar-section">Locked</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Lab results</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Prescriptions</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Clinical notes</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Settings</div>
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-user">
-      <div class="user-av">CE</div>
-      <div><div class="user-name">Celeste</div><div class="user-role-lbl">Coordinator</div></div>
+<!-- LAYOUT -->
+<div class="grid mt-[70px] min-h-[calc(100vh-70px)]" style="grid-template-columns: 220px 1fr;">
+
+  <!-- Sidebar (dark olive) -->
+  <div class="bg-olive-dark flex flex-col sticky top-[70px] h-[calc(100vh-70px)] overflow-y-auto">
+    <div class="px-5 pt-6 pb-5 border-b border-cream/[0.08] font-serif text-[18px] font-semibold text-cream tracking-[0.1em] uppercase">
+      Manor<div class="text-[9px] font-sans font-normal tracking-[0.15em] uppercase text-terra-light mt-0.5">Coordinator</div>
+    </div>
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-3.5 pb-1.5">My work</div>
+    <div class="sidebar-item active flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Dashboard</div>
+    <div class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5" onclick="showView('queue')"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Patient queue</div>
+    <div class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5" onclick="showView('payments')"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Payment links<div class="ml-auto text-[9px] px-1.5 py-0.5 bg-terra text-cream-white">2</div></div>
+    <div class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5" onclick="showView('shipments')"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Shipments</div>
+    <div class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5" onclick="showView('autoship')"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Auto-ship</div>
+    <div class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/5" onclick="showView('prescreening')"><div class="sb-icon w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Pre-screening<span class="ml-auto text-[9px] px-1.5 py-0.5 bg-terra text-cream-white" id="ps-badge">1</span></div>
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-3.5 pb-1.5">Locked</div>
+    <div class="flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 opacity-30 cursor-not-allowed"><div class="w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Lab results</div>
+    <div class="flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 opacity-30 cursor-not-allowed"><div class="w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Prescriptions</div>
+    <div class="flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 opacity-30 cursor-not-allowed"><div class="w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Clinical notes</div>
+    <div class="flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-cream/55 opacity-30 cursor-not-allowed"><div class="w-3.5 h-3.5 rounded-sm bg-white/15 shrink-0"></div>Settings</div>
+    <div class="flex-1"></div>
+    <div class="px-5 py-3.5 border-t border-cream/[0.08] flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full bg-terra flex items-center justify-center text-[10px] text-cream-white font-semibold shrink-0">CE</div>
+      <div><div class="text-[11px] text-cream">Celeste</div><div class="text-[9px] text-terra-light">Coordinator</div></div>
     </div>
   </div>
 
-  <div class="main">
-    <!-- Dashboard view -->
-    <div id="view-dashboard">
-      <div class="greeting">Good morning, Celeste</div>
-      <div class="greeting-sub">Monday, 6 Apr 2026 · 3 patients need action today</div>
+  <!-- Main -->
+  <div class="px-9 py-8">
 
-      <div class="stats-row">
-        <div class="stat-card"><div class="stat-label">Active patients</div><div class="stat-value">14</div></div>
-        <div class="stat-card"><div class="stat-label">Links pending</div><div class="stat-value">2</div><div class="stat-sub warning">Awaiting payment</div></div>
-        <div class="stat-card"><div class="stat-label">Dispatching today</div><div class="stat-value">1</div><div class="stat-sub positive">Ready to ship</div></div>
-        <div class="stat-card"><div class="stat-label">Auto-ships due</div><div class="stat-value">3</div><div class="stat-sub">Next 7 days</div></div>
+    <!-- DASHBOARD VIEW -->
+    <div id="view-dashboard">
+      <div class="font-serif text-[28px] font-normal text-[#1a1f14] mb-1">Good morning, Celeste</div>
+      <div class="text-[12px] text-muted mb-6">Monday, 6 Apr 2026 · 3 patients need action today</div>
+
+      <div class="grid grid-cols-4 gap-3.5 mb-6">
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Active patients</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">14</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Links pending</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">2</div><div class="text-[11px] text-status-amber mt-1">Awaiting payment</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Dispatching today</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">1</div><div class="text-[11px] text-status-green mt-1">Ready to ship</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Auto-ships due</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">3</div><div class="text-[11px] text-muted mt-1">Next 7 days</div></div>
       </div>
 
-      <div class="main-grid">
+      <div class="grid gap-5" style="grid-template-columns: 1fr 320px;">
         <div>
-          <div class="card-block">
-            <div class="card-block-title">Action required <span class="badge badge-terra">3 items</span></div>
-            <div style="display:flex;flex-direction:column;gap:0;">
-              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
-                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">JD</div>
-                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">John Dawson</div><div style="font-size:11px;color:var(--text-muted);">Rx approved by Jordyn — send payment link</div></div>
-                <span class="badge badge-terra">Awaiting link</span>
-                <button class="action-btn primary" onclick="openPaymentModal('John Dawson')">Send link</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">
-                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">MT</div>
-                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">Maria Torres</div><div style="font-size:11px;color:var(--text-muted);">Payment received — confirm dispatch to pharmacy</div></div>
-                <span class="badge badge-amber">Awaiting dispatch</span>
-                <button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-                <div style="width:32px;height:32px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--olive-mid);flex-shrink:0;">SM</div>
-                <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text-dark);">Sarah Mitchell</div><div style="font-size:11px;color:var(--text-muted);">Auto-ship due in 3 days — confirm with pharmacy</div></div>
-                <span class="badge badge-amber">Auto-ship due</span>
-                <button class="action-btn" onclick="showView('autoship')">Review</button>
-              </div>
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5 mb-4">
+            <div class="flex justify-between items-center text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">
+              Action required
+              <span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">3 items</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-olive-mid/15">
+              <div class="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-[11px] font-semibold text-olive-mid shrink-0">JD</div>
+              <div class="flex-1"><div class="text-[13px] font-medium">John Dawson</div><div class="text-[11px] text-muted">Rx approved by Jordyn — send payment link</div></div>
+              <span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting link</span>
+              <button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans tracking-[0.06em] hover:bg-terra-dark transition-colors" onclick="openPaymentModal('John Dawson')">Send link</button>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-olive-mid/15">
+              <div class="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-[11px] font-semibold text-olive-mid shrink-0">MT</div>
+              <div class="flex-1"><div class="text-[13px] font-medium">Maria Torres</div><div class="text-[11px] text-muted">Payment received — confirm dispatch to pharmacy</div></div>
+              <span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting dispatch</span>
+              <button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans tracking-[0.06em] hover:bg-terra-dark transition-colors" onclick="confirmDispatch('Maria Torres')">Dispatch</button>
+            </div>
+            <div class="flex items-center gap-3 py-3">
+              <div class="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-[11px] font-semibold text-olive-mid shrink-0">SM</div>
+              <div class="flex-1"><div class="text-[13px] font-medium">Sarah Mitchell</div><div class="text-[11px] text-muted">Auto-ship due in 3 days — confirm with pharmacy</div></div>
+              <span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Auto-ship due</span>
+              <button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all" onclick="showView('autoship')">Review</button>
             </div>
           </div>
-
-          <div class="card-block">
-            <div class="card-block-title">Upcoming auto-ships</div>
-            <div class="autoship-item"><span>Sarah Mitchell</span><span class="badge badge-amber">28 Mar · 90 days · €350</span></div>
-            <div class="autoship-item"><span>John Dawson</span><span>2 Apr · 90 days · €350</span></div>
-            <div class="autoship-item"><span>Maria Torres</span><span>10 Apr · 90 days · €350</span></div>
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+            <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Upcoming auto-ships</div>
+            <div class="flex justify-between items-center py-2.5 border-b border-olive-mid/15 text-[12px]"><span>Sarah Mitchell</span><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">28 Mar · 90 days · €350</span></div>
+            <div class="flex justify-between items-center py-2.5 border-b border-olive-mid/15 text-[12px]"><span>John Dawson</span><span class="text-muted text-[12px]">2 Apr · 90 days · €350</span></div>
+            <div class="flex justify-between items-center py-2.5 text-[12px]"><span>Maria Torres</span><span class="text-muted text-[12px]">10 Apr · 90 days · €350</span></div>
           </div>
         </div>
 
         <div>
-          <div class="card-block">
-            <div class="card-block-title">Notifications</div>
-            <div class="notif-list">
-              <div class="notif-item">
-                <div class="ni-icon" style="background:rgba(61,79,46,0.08);"></div>
-                <div style="flex:1;"><div class="ni-title">Rx approved — John Dawson</div><div class="ni-sub">Jordyn approved. Ready to send payment link.</div></div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">5m</span><div class="ni-unread"></div></div>
-              </div>
-              <div class="notif-item">
-                <div class="ni-icon" style="background:rgba(58,96,32,0.08);"></div>
-                <div style="flex:1;"><div class="ni-title">Payment received</div><div class="ni-sub">Maria Torres paid €350. Advance to dispatch.</div></div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">1h</span><div class="ni-unread"></div></div>
-              </div>
-              <div class="notif-item">
-                <div class="ni-icon" style="background:rgba(180,120,30,0.08);"></div>
-                <div style="flex:1;"><div class="ni-title">Auto-ship due in 3 days</div><div class="ni-sub">Sarah Mitchell · 28 Mar · Confirm pharmacy</div></div>
-                <span class="ni-time">3h</span>
-              </div>
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5 mb-4">
+            <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Notifications</div>
+            <div class="flex gap-2.5 py-3 border-b border-olive-mid/15">
+              <div class="w-[26px] h-[26px] bg-olive-mid/10 shrink-0"></div>
+              <div class="flex-1"><div class="text-[12px] font-medium mb-0.5">Rx approved — John Dawson</div><div class="text-[11px] text-muted leading-[1.4]">Jordyn approved. Ready to send payment link.</div></div>
+              <div class="flex flex-col items-end gap-1"><span class="text-[10px] text-muted">5m</span><div class="w-1.5 h-1.5 rounded-full bg-terra"></div></div>
+            </div>
+            <div class="flex gap-2.5 py-3 border-b border-olive-mid/15">
+              <div class="w-[26px] h-[26px] bg-status-green/10 shrink-0"></div>
+              <div class="flex-1"><div class="text-[12px] font-medium mb-0.5">Payment received</div><div class="text-[11px] text-muted leading-[1.4]">Maria Torres paid €350. Advance to dispatch.</div></div>
+              <div class="flex flex-col items-end gap-1"><span class="text-[10px] text-muted">1h</span><div class="w-1.5 h-1.5 rounded-full bg-terra"></div></div>
+            </div>
+            <div class="flex gap-2.5 py-3">
+              <div class="w-[26px] h-[26px] bg-status-amber/10 shrink-0"></div>
+              <div class="flex-1"><div class="text-[12px] font-medium mb-0.5">Auto-ship due in 3 days</div><div class="text-[11px] text-muted leading-[1.4]">Sarah Mitchell · 28 Mar · Confirm pharmacy</div></div>
+              <span class="text-[10px] text-muted">3h</span>
             </div>
           </div>
-
-          <div class="card-block">
-            <div class="card-block-title">Clinical data access</div>
-            <div class="locked-notice"><span class="lock-icon">🔒</span>Lab results are not visible to the coordinator role</div>
-            <div class="locked-notice"><span class="lock-icon">🔒</span>Prescription details are not visible to the coordinator role</div>
-            <div class="locked-notice"><span class="lock-icon">🔒</span>Clinical notes are not visible to the coordinator role</div>
-            <div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;">Clinical data access is restricted to the provider role. You can see that a prescription exists and has been approved — not its content.</div>
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+            <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Clinical data access</div>
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-olive-mid/[0.03] border border-olive-mid/15 text-[11px] text-muted mb-2">🔒 Lab results are not visible to the coordinator role</div>
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-olive-mid/[0.03] border border-olive-mid/15 text-[11px] text-muted mb-2">🔒 Prescription details are not visible to the coordinator role</div>
+            <div class="flex items-center gap-2 px-3 py-2.5 bg-olive-mid/[0.03] border border-olive-mid/15 text-[11px] text-muted mb-2">🔒 Clinical notes are not visible to the coordinator role</div>
+            <div class="text-[10px] text-muted mt-2 leading-[1.5]">Clinical data access is restricted to the provider role. You can see that a prescription exists and has been approved — not its content.</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Queue view -->
+    <!-- QUEUE VIEW -->
     <div id="view-queue" style="display:none;">
-      <div class="topbar"><div class="page-title">Patient queue</div><div style="display:flex;gap:8px;"><button class="btn btn-ghost btn-sm">Search</button><button class="btn btn-ghost btn-sm">Filter by stage</button></div></div>
-      <div class="card-block">
+      <div class="flex items-center justify-between mb-6">
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">Patient queue</div>
+        <div class="flex gap-2">
+          <button class="px-3 py-1.5 text-[10px] font-medium tracking-[0.06em] uppercase border border-olive-mid/25 text-muted bg-transparent cursor-pointer hover:border-olive-mid/50 transition-all">Search</button>
+          <button class="px-3 py-1.5 text-[10px] font-medium tracking-[0.06em] uppercase border border-olive-mid/25 text-muted bg-transparent cursor-pointer hover:border-olive-mid/50 transition-all">Filter by stage</button>
+        </div>
+      </div>
+      <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
         <table>
           <thead><tr><th>Patient</th><th>Program</th><th>Stage</th><th>Payment</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><strong>John Dawson</strong><div class="td-muted">New patient</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-terra">Awaiting link</span></td><td class="td-muted">—</td><td class="td-actions"><button class="action-btn primary" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
-            <tr><td><strong>Maria Torres</strong><div class="td-muted">Active · Day 55</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-amber">Awaiting dispatch</span></td><td><span class="badge badge-green">Paid</span></td><td class="td-actions"><button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
-            <tr><td><strong>Sarah Mitchell</strong><div class="td-muted">Active · Day 24</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-olive">Active</span></td><td><span class="badge badge-green">Auto-pay on</span></td><td class="td-actions"><button class="action-btn" onclick="showView('shipments')">View</button></td></tr>
-            <tr><td><strong>Tom Allen</strong><div class="td-muted">Active · Day 78</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-olive">Active</span></td><td><span class="badge badge-green">Auto-pay on</span></td><td class="td-actions"><button class="action-btn">View</button></td></tr>
-            <tr><td><strong>Emma Walsh</strong><div class="td-muted">Lab expired</div></td><td class="td-muted">90-day · €350</td><td><span class="badge badge-red">Paused</span></td><td class="td-muted">On hold</td><td class="td-actions"><button class="action-btn">Flag</button></td></tr>
+            <tr><td><strong>John Dawson</strong><div class="text-[11px] text-muted">New patient</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting link</span></td><td class="text-[11px] text-muted">—</td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
+            <tr><td><strong>Maria Torres</strong><div class="text-[11px] text-muted">Active · Day 55</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting dispatch</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Paid</span></td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
+            <tr><td><strong>Sarah Mitchell</strong><div class="text-[11px] text-muted">Active · Day 24</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all" onclick="showView('shipments')">View</button></td></tr>
+            <tr><td><strong>Tom Allen</strong><div class="text-[11px] text-muted">Active · Day 78</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">View</button></td></tr>
+            <tr><td><strong>Emma Walsh</strong><div class="text-[11px] text-muted">Lab expired</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Paused</span></td><td class="text-[11px] text-muted">On hold</td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">Flag</button></td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Payment links view -->
+    <!-- PAYMENTS VIEW -->
     <div id="view-payments" style="display:none;">
-      <div class="topbar"><div class="page-title">Payment links</div><button class="btn btn-terra btn-sm" onclick="openPaymentModal('')">+ New link</button></div>
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
-        <div class="card-block">
-          <div class="card-block-title">All links</div>
+      <div class="flex items-center justify-between mb-6">
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">Payment links</div>
+        <button class="px-4 py-1.5 bg-terra text-cream-white font-sans text-[10px] font-medium tracking-[0.1em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="openPaymentModal('')">+ New link</button>
+      </div>
+      <div class="grid gap-5" style="grid-template-columns: 1fr 360px;">
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">All links</div>
           <table>
             <thead><tr><th>Patient</th><th>Amount</th><th>Sent</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
-              <tr><td><strong>John Dawson</strong></td><td>€350</td><td class="td-muted">Just now</td><td><span class="badge badge-amber">Pending</span></td><td class="td-actions"><button class="action-btn">Resend</button><button class="action-btn">Void</button></td></tr>
-              <tr><td><strong>Maria Torres</strong></td><td>€350</td><td class="td-muted">2 Jan</td><td><span class="badge badge-green">Paid</span></td><td></td></tr>
-              <tr><td><strong>Sarah M.</strong></td><td>€350</td><td class="td-muted">26 Jan</td><td><span class="badge badge-green">Paid</span></td><td></td></tr>
+              <tr><td><strong>John Dawson</strong></td><td>€350</td><td class="text-[11px] text-muted">Just now</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Pending</span></td><td class="flex gap-1"><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all">Resend</button><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all">Void</button></td></tr>
+              <tr><td><strong>Maria Torres</strong></td><td>€350</td><td class="text-[11px] text-muted">2 Jan</td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Paid</span></td><td></td></tr>
+              <tr><td><strong>Sarah M.</strong></td><td>€350</td><td class="text-[11px] text-muted">26 Jan</td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Paid</span></td><td></td></tr>
             </tbody>
           </table>
         </div>
-        <div class="card-block">
-          <div class="card-block-title">Create new link</div>
-          <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>John Dawson (Rx approved)</option><option>Select patient…</option></select></div>
-          <div class="info-banner"><div class="banner-label">Rx approved · Jordyn (NP)</div><div class="banner-body">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled</div></div>
-          <div class="form-group"><label class="form-label">Send via</label>
-            <div style="display:flex;gap:6px;">
-              <div style="flex:1;padding:8px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>
-              <div style="flex:1;padding:8px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">SMS</div>
-              <div style="flex:1;padding:8px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">In-app</div>
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Create new link</div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Patient</label><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>John Dawson (Rx approved)</option><option>Select patient…</option></select></div>
+          <div class="bg-olive-mid/[0.06] border border-olive-mid/15 px-4 py-3.5 mb-4"><div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-olive-mid mb-1">Rx approved · Jordyn (NP)</div><div class="text-[12px] text-olive-light leading-[1.6]">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled</div></div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Send via</label>
+            <div class="flex gap-1.5">
+              <div class="flex-1 py-2 border border-olive-mid bg-olive-mid/[0.04] text-center text-[11px] text-olive-mid cursor-pointer">Email</div>
+              <div class="flex-1 py-2 border border-olive-mid/25 text-center text-[11px] text-muted cursor-pointer hover:border-olive-mid transition-colors">SMS</div>
+              <div class="flex-1 py-2 border border-olive-mid/25 text-center text-[11px] text-muted cursor-pointer hover:border-olive-mid transition-colors">In-app</div>
             </div>
           </div>
-          <div class="form-group"><label class="form-label">Link expiry</label><select class="form-select"><option>48 hours</option><option>24 hours</option><option>7 days</option></select></div>
-          <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="sendLink()">Send payment link</button>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Link expiry</label><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>48 hours</option><option>24 hours</option><option>7 days</option></select></div>
+          <button class="w-full py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="sendLink()">Send payment link</button>
         </div>
       </div>
     </div>
 
-    <!-- Shipments view -->
+    <!-- SHIPMENTS VIEW -->
     <div id="view-shipments" style="display:none;">
-      <div class="topbar"><div class="page-title">Shipments</div><button class="btn btn-olive btn-sm" onclick="recordDispatch()">+ Record dispatch</button></div>
-      <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
-        <div class="stat-card"><div class="stat-label">Total shipped</div><div class="stat-value">22</div></div>
-        <div class="stat-card"><div class="stat-label">In transit</div><div class="stat-value">3</div></div>
-        <div class="stat-card"><div class="stat-label">Pending dispatch</div><div class="stat-value">1</div><div class="stat-sub warning">Action needed</div></div>
-        <div class="stat-card"><div class="stat-label">Flagged</div><div class="stat-value">1</div><div class="stat-sub warning">Needs resolve</div></div>
+      <div class="flex items-center justify-between mb-6">
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">Shipments</div>
+        <button class="px-4 py-1.5 bg-olive-dark text-cream font-sans text-[10px] font-medium tracking-[0.1em] uppercase border-none cursor-pointer hover:bg-olive-mid transition-colors" onclick="recordDispatch()">+ Record dispatch</button>
       </div>
-      <div class="card-block">
+      <div class="grid grid-cols-4 gap-3.5 mb-6">
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Total shipped</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">22</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">In transit</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">3</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Pending dispatch</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">1</div><div class="text-[11px] text-status-amber mt-1">Action needed</div></div>
+        <div class="bg-cream px-[18px] py-4"><div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Flagged</div><div class="font-serif text-[32px] font-normal text-[#1a1f14] leading-none">1</div><div class="text-[11px] text-status-amber mt-1">Needs resolve</div></div>
+      </div>
+      <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
         <table>
           <thead><tr><th>Patient</th><th>Shipment</th><th>Dispatched</th><th>Status</th><th>Tracking</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><strong>Maria Torres</strong></td><td class="td-muted">Cycle 2</td><td class="td-muted">Today</td><td><span class="badge badge-amber">Pending</span></td><td class="td-muted">—</td><td class="td-actions"><button class="action-btn primary" onclick="confirmDispatch('Maria Torres')">Dispatch now</button></td></tr>
-            <tr><td><strong>Sarah Mitchell</strong></td><td class="td-muted">Cycle 1</td><td class="td-muted">28 Jan</td><td><span class="badge badge-green">Delivered</span></td><td class="td-muted">TRK-20260128</td><td></td></tr>
-            <tr><td><strong>Tom Allen</strong></td><td class="td-muted">Cycle 1</td><td class="td-muted">25 Jan</td><td><span class="badge badge-red">Flagged</span></td><td class="td-muted">TRK-20260125</td><td class="td-actions"><button class="action-btn" onclick="resolveFlag()">Resolve</button></td></tr>
+            <tr><td><strong>Maria Torres</strong></td><td class="text-[11px] text-muted">Cycle 2</td><td class="text-[11px] text-muted">Today</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Pending</span></td><td class="text-[11px] text-muted">—</td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="confirmDispatch('Maria Torres')">Dispatch now</button></td></tr>
+            <tr><td><strong>Sarah Mitchell</strong></td><td class="text-[11px] text-muted">Cycle 1</td><td class="text-[11px] text-muted">28 Jan</td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Delivered</span></td><td class="text-[11px] text-muted">TRK-20260128</td><td></td></tr>
+            <tr><td><strong>Tom Allen</strong></td><td class="text-[11px] text-muted">Cycle 1</td><td class="text-[11px] text-muted">25 Jan</td><td><span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Flagged</span></td><td class="text-[11px] text-muted">TRK-20260125</td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all" onclick="resolveFlag()">Resolve</button></td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Auto-ship view -->
+    <!-- AUTO-SHIP VIEW -->
     <div id="view-autoship" style="display:none;">
-      <div class="topbar"><div class="page-title">Auto-ship management</div></div>
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;">
-        <div class="card-block">
-          <div class="card-block-title">Active schedules</div>
+      <div class="font-serif text-[28px] font-normal text-[#1a1f14] mb-6">Auto-ship management</div>
+      <div class="grid gap-5" style="grid-template-columns: 1fr 360px;">
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Active schedules</div>
           <table>
             <thead><tr><th>Patient</th><th>Interval</th><th>Next ship</th><th>Status</th><th>Actions</th></tr></thead>
             <tbody>
-              <tr><td><strong>Sarah Mitchell</strong></td><td class="td-muted">90 days</td><td class="td-muted">28 Mar</td><td><span class="badge badge-olive">Active</span></td><td class="td-actions"><button class="action-btn">Pause</button></td></tr>
-              <tr><td><strong>John Dawson</strong></td><td class="td-muted">90 days</td><td class="td-muted">2 Apr</td><td><span class="badge badge-olive">Active</span></td><td class="td-actions"><button class="action-btn">Pause</button></td></tr>
-              <tr><td><strong>Maria Torres</strong></td><td class="td-muted">90 days</td><td class="td-muted">5 Apr</td><td><span class="badge badge-amber">Paused</span></td><td class="td-actions"><button class="action-btn primary">Resume</button></td></tr>
-              <tr><td><strong>Emma Walsh</strong></td><td class="td-muted">90 days</td><td class="td-muted">On hold</td><td><span class="badge badge-red">Notice recv.</span></td><td class="td-actions"><button class="action-btn">View</button></td></tr>
+              <tr><td><strong>Sarah Mitchell</strong></td><td class="text-[11px] text-muted">90 days</td><td class="text-[11px] text-muted">28 Mar</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all">Pause</button></td></tr>
+              <tr><td><strong>John Dawson</strong></td><td class="text-[11px] text-muted">90 days</td><td class="text-[11px] text-muted">2 Apr</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all">Pause</button></td></tr>
+              <tr><td><strong>Maria Torres</strong></td><td class="text-[11px] text-muted">90 days</td><td class="text-[11px] text-muted">5 Apr</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Paused</span></td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors">Resume</button></td></tr>
+              <tr><td><strong>Emma Walsh</strong></td><td class="text-[11px] text-muted">90 days</td><td class="text-[11px] text-muted">On hold</td><td><span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Notice recv.</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream transition-all">View</button></td></tr>
             </tbody>
           </table>
         </div>
-        <div>
-          <div class="card-block" style="margin-bottom:14px;">
-            <div class="card-block-title">Record cancellation notice</div>
-            <div class="warn-banner"><div class="banner-label">Important</div><div class="banner-body">Recording a notice does NOT cancel the program. It starts the 60-day window. Admin confirms final cancellation.</div></div>
-            <div class="form-group"><label class="form-label">Patient</label><select class="form-select"><option>Select patient…</option><option>Emma Walsh</option></select></div>
-            <div class="form-group"><label class="form-label">Notice received date</label><input class="form-input" type="date" value="2026-03-25"></div>
-            <div class="form-group"><label class="form-label">Channel</label><select class="form-select"><option>Email</option><option>Phone call</option><option>In-person</option></select></div>
-            <div class="info-banner"><div class="banner-label">Final cancellation date</div><div class="banner-body" style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;color:var(--text-dark);">24 May 2026 <span style="font-family:'Jost',sans-serif;font-size:11px;color:var(--text-muted);">60 days from notice</span></div></div>
-            <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="alert('Cancellation notice recorded. Final ship date: 24 May 2026.')">Record notice</button>
-          </div>
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Record cancellation notice</div>
+          <div class="bg-terra/[0.06] border border-terra/20 px-4 py-3.5 mb-4"><div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-status-amber mb-1">Important</div><div class="text-[12px] text-status-amber leading-[1.6]">Recording a notice does NOT cancel the program. It starts the 60-day window. Admin confirms final cancellation.</div></div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Patient</label><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>Select patient…</option><option>Emma Walsh</option></select></div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Notice received date</label><input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid" type="date" value="2026-03-25"></div>
+          <div class="mb-4"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Channel</label><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>Email</option><option>Phone call</option><option>In-person</option></select></div>
+          <div class="bg-olive-mid/[0.06] border border-olive-mid/15 px-4 py-3.5 mb-4"><div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-olive-mid mb-1">Final cancellation date</div><div class="font-serif text-[18px] font-medium text-[#1a1f14]">24 May 2026 <span class="font-sans text-[11px] text-muted">60 days from notice</span></div></div>
+          <button class="w-full py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="alert('Cancellation notice recorded. Final ship date: 24 May 2026.')">Record notice</button>
         </div>
       </div>
     </div>
 
-    <!-- Pre-screening view -->
+    <!-- PRE-SCREENING VIEW -->
     <div id="view-prescreening" style="display:none;">
-      <div class="topbar">
-        <div class="page-title">Pre-screening call</div>
-        <div style="font-size:12px;color:var(--text-muted);">Complete during or immediately after the call with the patient</div>
+      <div class="flex items-center justify-between mb-6">
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">Pre-screening call</div>
+        <div class="text-[12px] text-muted">Complete during or immediately after the call with the patient</div>
       </div>
-
-      <div style="display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;">
-
-        <!-- Left: client intake data (read-only) -->
-        <div class="card-block">
-          <div class="card-block-title">Client intake data <span style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;text-transform:none;">Read-only — submitted by patient</span></div>
-
-          <div class="form-group" style="margin-bottom:14px;">
-            <label class="form-label">Select patient</label>
-            <select class="form-select" id="ps-patient-select" onchange="loadPatient(this.value)">
+      <div class="grid gap-5 items-start" style="grid-template-columns: 1fr 380px;">
+        <!-- Left: intake data (read-only) -->
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="flex justify-between items-center text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">
+            Client intake data <span class="text-[10px] text-muted font-normal tracking-normal normal-case">Read-only — submitted by patient</span>
+          </div>
+          <div class="mb-3.5"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Select patient</label>
+            <select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer" id="ps-patient-select" onchange="loadPatient(this.value)">
               <option value="">— Select patient —</option>
               <option value="sarah">Sarah Mitchell</option>
               <option value="john">John Dawson</option>
               <option value="maria">Maria Torres</option>
             </select>
           </div>
-
           <div id="ps-intake-data" style="display:none;">
-            <div class="ro-pair">
-              <div><div class="ro-label">Full name</div><div class="ro-field" id="ps-name"></div></div>
-              <div><div class="ro-label">Date of birth</div><div class="ro-field" id="ps-dob"></div></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Full name</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] text-[#1a1f14]" id="ps-name"></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Date of birth</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] text-[#1a1f14]" id="ps-dob"></div></div>
             </div>
-            <div class="ro-pair">
-              <div><div class="ro-label">Height</div><div class="ro-field" id="ps-height"></div></div>
-              <div><div class="ro-label">Biological sex</div><div class="ro-field" id="ps-sex"></div></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Height</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-height"></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Biological sex</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-sex"></div></div>
             </div>
-            <div class="ro-pair">
-              <div><div class="ro-label">Current weight</div><div class="ro-field" id="ps-weight"></div></div>
-              <div><div class="ro-label">Goal weight</div><div class="ro-field" id="ps-goal-weight"></div></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Current weight</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-weight"></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Goal weight</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-goal-weight"></div></div>
             </div>
-            <div class="ro-pair">
-              <div>
-                <div class="ro-label">Current BMI</div>
-                <div class="ro-field" style="display:flex;align-items:baseline;gap:8px;">
-                  <span class="bmi-highlight" id="ps-bmi">—</span>
-                  <span class="bmi-sub" id="ps-bmi-cat"></span>
-                </div>
-              </div>
-              <div>
-                <div class="ro-label">Goal BMI</div>
-                <div class="ro-field" style="display:flex;align-items:baseline;gap:8px;">
-                  <span class="bmi-highlight" id="ps-goal-bmi">—</span>
-                </div>
-              </div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Current BMI</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 flex items-baseline gap-2"><span class="font-serif text-[20px] font-medium text-[#1a1f14]" id="ps-bmi">—</span><span class="text-[10px] text-muted" id="ps-bmi-cat"></span></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Goal BMI</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 flex items-baseline gap-2"><span class="font-serif text-[20px] font-medium text-[#1a1f14]" id="ps-goal-bmi">—</span></div></div>
             </div>
-
-            <div class="ps-section-title">GFE Medical Screening</div>
-            <div class="ro-label" style="margin-bottom:4px;">Known medical conditions</div>
-            <div class="ro-field" id="ps-conditions" style="margin-bottom:10px;min-height:48px;"></div>
-            <div class="ro-label" style="margin-bottom:4px;">Current medications &amp; supplements</div>
-            <div class="ro-field" id="ps-meds" style="margin-bottom:10px;min-height:48px;"></div>
-            <div class="ro-pair">
-              <div><div class="ro-label">Seizures, migraines, metal implants, or IUD?</div><div class="ro-field" id="ps-gfe-seizures"></div></div>
-              <div><div class="ro-label">Hernia, diastasis recti, or skin cancer?</div><div class="ro-field" id="ps-gfe-hernia"></div></div>
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">GFE Medical Screening</div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Known medical conditions</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] mb-2.5 min-h-[48px]" id="ps-conditions"></div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Current medications &amp; supplements</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] mb-2.5 min-h-[48px]" id="ps-meds"></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Seizures, migraines, metal implants, or IUD?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-gfe-seizures"></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Hernia, diastasis recti, or skin cancer?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-gfe-hernia"></div></div>
             </div>
-            <div class="ro-pair">
-              <div><div class="ro-label">Autoimmune, keloid, vitiligo, or cold sores?</div><div class="ro-field" id="ps-gfe-autoimmune"></div></div>
-              <div><div class="ro-label">Pregnant or breastfeeding?</div><div class="ro-field" id="ps-gfe-pregnant"></div></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Autoimmune, keloid, vitiligo, or cold sores?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-gfe-autoimmune"></div></div>
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Pregnant or breastfeeding?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-gfe-pregnant"></div></div>
             </div>
-            <div class="ro-pair">
-              <div><div class="ro-label">Vaccines in past two weeks?</div><div class="ro-field" id="ps-gfe-vaccines"></div></div>
+            <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+              <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Vaccines in past two weeks?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-gfe-vaccines"></div></div>
               <div></div>
             </div>
-
-            <!-- GLP-1 additional screening -->
+            <!-- Goal-specific sections -->
             <div id="ps-glp1-section" style="display:none;">
-              <div class="ps-section-title">Additional Screening — GLP-1</div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Pancreatitis, IBD, or ulcerative colitis?</div><div class="ro-field" id="ps-glp1-ibd"></div></div>
-                <div><div class="ro-label">Personal/family medullary thyroid cancer?</div><div class="ro-field" id="ps-glp1-thyroid"></div></div>
+              <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Additional Screening — GLP-1</div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Pancreatitis, IBD, or ulcerative colitis?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-glp1-ibd"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Personal/family medullary thyroid cancer?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-glp1-thyroid"></div></div>
               </div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Gallstones or gallbladder disease?</div><div class="ro-field" id="ps-glp1-gallstones"></div></div>
-                <div><div class="ro-label">Diagnosed with diabetes (Type 1 or 2)?</div><div class="ro-field" id="ps-glp1-diabetes"></div></div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Gallstones or gallbladder disease?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-glp1-gallstones"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Diagnosed with diabetes (Type 1 or 2)?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-glp1-diabetes"></div></div>
               </div>
             </div>
-
-            <!-- Peptides additional screening -->
             <div id="ps-peptide-section" style="display:none;">
-              <div class="ps-section-title">Additional Screening — Peptides</div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Depression, bipolar, psychosis, or suicidal ideation?</div><div class="ro-field" id="ps-pep-psych"></div></div>
-                <div><div class="ro-label">Any other psychiatric diagnosis?</div><div class="ro-field" id="ps-pep-psych2"></div></div>
+              <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Additional Screening — Peptides</div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Depression, bipolar, psychosis, or suicidal ideation?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-pep-psych"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Any other psychiatric diagnosis?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-pep-psych2"></div></div>
               </div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Active or history of cancer?</div><div class="ro-field" id="ps-pep-cancer"></div></div>
-                <div><div class="ro-label">Pituitary conditions, head trauma, or fluid retention?</div><div class="ro-field" id="ps-pep-pituitary"></div></div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Active or history of cancer?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-pep-cancer"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Pituitary conditions, head trauma, or fluid retention?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-pep-pituitary"></div></div>
               </div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</div><div class="ro-field" id="ps-pep-drugs"></div></div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-pep-drugs"></div></div>
                 <div></div>
               </div>
             </div>
-
-            <!-- Testosterone additional screening -->
             <div id="ps-test-section" style="display:none;">
-              <div class="ps-section-title">Additional Screening — Testosterone</div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Obstructive sleep apnea?</div><div class="ro-field" id="ps-test-apnea"></div></div>
-                <div><div class="ro-label">Personal history of prostate or breast cancer?</div><div class="ro-field" id="ps-test-cancer"></div></div>
+              <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Additional Screening — Testosterone</div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Obstructive sleep apnea?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-test-apnea"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Personal history of prostate or breast cancer?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-test-cancer"></div></div>
               </div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Erectile dysfunction?</div><div class="ro-field" id="ps-test-ed"></div></div>
-                <div><div class="ro-label">Significant cardiovascular disease or 1st-degree relative with prostate cancer?</div><div class="ro-field" id="ps-test-cardio"></div></div>
+              <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Erectile dysfunction?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-test-ed"></div></div>
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Significant cardiovascular disease or 1st-degree relative with prostate cancer?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-test-cardio"></div></div>
               </div>
-              <div class="ro-pair">
-                <div><div class="ro-label">Currently trying to conceive?</div><div class="ro-field" id="ps-test-conceive"></div></div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div><div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Currently trying to conceive?</div><div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px]" id="ps-test-conceive"></div></div>
                 <div></div>
               </div>
             </div>
-
-            <div class="ps-section-title">Goals &amp; lifestyle</div>
-            <div class="ro-label" style="margin-bottom:4px;">Primary wellness goal</div>
-            <div class="ro-field" id="ps-goal" style="margin-bottom:10px;"></div>
-            <div class="ro-label" style="margin-bottom:4px;">Activity level</div>
-            <div class="ro-field" id="ps-activity" style="margin-bottom:10px;"></div>
-            <div class="ro-label" style="margin-bottom:4px;">Current diet</div>
-            <div class="ro-field" id="ps-diet" style="margin-bottom:10px;min-height:48px;"></div>
-            <div class="ro-label" style="margin-bottom:4px;">What the patient wants to accomplish</div>
-            <div class="ro-field" id="ps-narrative" style="min-height:48px;"></div>
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Goals &amp; lifestyle</div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Primary wellness goal</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] mb-2.5" id="ps-goal"></div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Activity level</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] mb-2.5" id="ps-activity"></div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">Current diet</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] mb-2.5 min-h-[48px]" id="ps-diet"></div>
+            <div class="text-[10px] font-semibold tracking-[0.08em] uppercase text-muted mb-1">What the patient wants to accomplish</div>
+            <div class="bg-cream border border-olive-mid/25 px-3 py-2 text-[12px] min-h-[48px]" id="ps-narrative"></div>
           </div>
-
-          <div id="ps-empty" style="padding:32px 0;text-align:center;color:var(--text-muted);font-size:13px;">Select a patient above to view their intake data</div>
+          <div class="py-8 text-center text-[13px] text-muted" id="ps-empty">Select a patient above to view their intake data</div>
         </div>
 
         <!-- Right: coordinator form -->
-        <div>
-          <div class="card-block">
-            <div class="card-block-title">Coordinator form</div>
-
-            <div class="form-group">
-              <label class="form-label">Team member conducting call</label>
-              <input class="form-input" value="Celeste" readonly style="background:var(--cream);">
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Coordinator form</div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Team member conducting call</label><input class="w-full h-[42px] border border-olive-mid/25 bg-cream px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none" value="Celeste" readonly></div>
+          <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Pre-consultation method</label>
+            <div class="flex gap-1.5 method-toggle">
+              <div class="method-opt selected flex-1 py-2 border border-olive-mid/25 text-center text-[12px] text-muted cursor-pointer transition-all hover:border-olive-light" onclick="selectMethod(this)">Phone call</div>
+              <div class="method-opt flex-1 py-2 border border-olive-mid/25 text-center text-[12px] text-muted cursor-pointer transition-all hover:border-olive-light" onclick="selectMethod(this)">Virtual appointment</div>
             </div>
-
-            <div class="form-group">
-              <label class="form-label">Pre-consultation method</label>
-              <div class="method-toggle">
-                <div class="method-opt selected" onclick="selectMethod(this)">Phone call</div>
-                <div class="method-opt" onclick="selectMethod(this)">Virtual appointment</div>
-              </div>
-            </div>
-
-            <div class="ps-section-title">BMI qualification / eligibility</div>
-            <div class="check-list">
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>BMI &gt;29</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>26–29 Hypertension</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>26–29 Hyperlipidaemia</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>26–29 Chronic pain or other medical condition limiting exercise</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>26–29 PCOS</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>26–29 High blood glucose — NOT DIABETIC</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>BMI &lt;26 with semaglutide history — medical team approved</div>
-              <div class="check-item" onclick="toggleCheck(this)" style="border-color:rgba(180,60,40,0.2);"><div class="check-box">✓</div>NOT A CANDIDATE — BMI does not qualify</div>
-            </div>
-
-            <div class="ps-section-title">Confirmation &amp; verification</div>
-            <div class="check-list">
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Confirmed patient lives in an eligible state</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Patient understands cost of program and is prepared to pay at lab appointment</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Patient understands overall process for the program</div>
-            </div>
-
-            <div class="ps-section-title">Patient scheduling</div>
-            <div class="check-list">
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Patient scheduled for labs and virtual medical consultation</div>
-              <div class="check-item" onclick="toggleCheck(this)" style="border-color:rgba(180,60,40,0.15);"><div class="check-box">✓</div>No — not ready to proceed</div>
-            </div>
-
-            <div class="ps-section-title">Education provided</div>
-            <div class="check-list">
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Hydrate well for labs. Eat and take daily medications as normal</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Body scan — wear tight clothing, or will undress to undergarments</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Plan on being present for approx 30 minutes</div>
-              <div class="check-item" onclick="toggleCheck(this)"><div class="check-box">✓</div>Payment for labs and program will be collected at appointment</div>
-            </div>
-
-            <div class="ps-section-title">Lab order</div>
-            <div class="form-group">
-              <select class="form-select">
-                <option>— Select status —</option>
-                <option>Ordered — Draw site Manor</option>
-                <option>Ordered — Draw site LabCorp</option>
-                <option>Not yet ordered</option>
-              </select>
-            </div>
-
-            <div class="ps-section-title">Additional notes</div>
-            <div class="form-group">
-              <textarea class="form-textarea" placeholder="e.g. Discussed tirzepatide vs semaglutide. Patient experienced constipation with sema…" style="min-height:80px;"></textarea>
-            </div>
-
-            <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="savePrescreen()">Save &amp; mark complete</button>
           </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">BMI qualification / eligibility</div>
+          <div class="flex flex-col gap-1.5 mb-4">
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>BMI &gt;29</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>26–29 Hypertension</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>26–29 Hyperlipidaemia</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>26–29 Chronic pain or other medical condition limiting exercise</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>26–29 PCOS</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>26–29 High blood glucose — NOT DIABETIC</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>BMI &lt;26 with semaglutide history — medical team approved</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-status-red/20 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>NOT A CANDIDATE — BMI does not qualify</div>
+          </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Confirmation &amp; verification</div>
+          <div class="flex flex-col gap-1.5 mb-4">
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Confirmed patient lives in an eligible state</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Patient understands cost of program and is prepared to pay at lab appointment</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Patient understands overall process for the program</div>
+          </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Patient scheduling</div>
+          <div class="flex flex-col gap-1.5 mb-4">
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Patient scheduled for labs and virtual medical consultation</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-status-red/15 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>No — not ready to proceed</div>
+          </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Education provided</div>
+          <div class="flex flex-col gap-1.5 mb-4">
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Hydrate well for labs. Eat and take daily medications as normal</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Body scan — wear tight clothing, or will undress to undergarments</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Plan on being present for approx 30 minutes</div>
+            <div class="check-item flex items-start gap-2.5 px-3 py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] text-[#1a1f14] hover:border-olive-light" onclick="toggleCheck(this)"><div class="check-box w-4 h-4 border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center text-[9px] text-transparent transition-all">✓</div>Payment for labs and program will be collected at appointment</div>
+          </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Lab order</div>
+          <div class="mb-4"><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>— Select status —</option><option>Ordered — Draw site Manor</option><option>Ordered — Draw site LabCorp</option><option>Not yet ordered</option></select></div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mt-[18px] mb-2.5 pb-1.5 border-b border-olive-mid/15">Additional notes</div>
+          <div class="mb-4"><textarea class="w-full border border-olive-mid/25 bg-cream-white px-3.5 py-3 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-y min-h-[80px]" placeholder="e.g. Discussed tirzepatide vs semaglutide. Patient experienced constipation with sema…"></textarea></div>
+          <button class="w-full py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="savePrescreen()">Save &amp; mark complete</button>
         </div>
-
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- Payment link modal -->
-<div id="paymentModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:40px;">
-  <div style="background:var(--white);max-width:480px;width:100%;padding:32px;position:relative;">
-    <button onclick="document.getElementById('paymentModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;">×</button>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:6px;">Send payment link</div>
-    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;" id="payModalPatient">Patient: —</div>
-    <div class="info-banner"><div class="banner-label">Rx approved by Jordyn (NP)</div><div class="banner-body">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled at 90-day intervals</div></div>
-    <div class="form-group"><label class="form-label">Send to</label><input class="form-input" value="patient@email.com"></div>
-    <div style="display:flex;gap:6px;margin-bottom:14px;">
-      <div style="flex:1;padding:9px;border:1px solid var(--olive-mid);background:rgba(61,79,46,0.04);text-align:center;font-size:11px;color:var(--olive-mid);cursor:pointer;">Email</div>
-      <div style="flex:1;padding:9px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">SMS</div>
-      <div style="flex:1;padding:9px;border:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);cursor:pointer;">In-app</div>
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" class="fixed inset-0 bg-[#1a1f14]/50 z-[200] items-center justify-center p-10" style="display:none;">
+  <div class="bg-cream-white max-w-[480px] w-full p-8 relative">
+    <button class="absolute top-3.5 right-3.5 bg-transparent border border-olive-mid/25 w-7 h-7 cursor-pointer text-[14px] flex items-center justify-center hover:bg-cream transition-colors" onclick="document.getElementById('paymentModal').style.display='none'">×</button>
+    <div class="font-serif text-[24px] font-normal text-[#1a1f14] mb-1.5">Send payment link</div>
+    <div class="text-[12px] text-muted mb-5" id="payModalPatient">Patient: —</div>
+    <div class="bg-olive-mid/[0.06] border border-olive-mid/15 px-4 py-3.5 mb-4"><div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-olive-mid mb-1">Rx approved by Jordyn (NP)</div><div class="text-[12px] text-olive-light leading-[1.6]">Program: 90-day wellness · Amount: €350 · Auto-ship enrolled at 90-day intervals</div></div>
+    <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Send to</label><input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid" value="patient@email.com"></div>
+    <div class="flex gap-1.5 mb-3.5">
+      <div class="flex-1 py-2.5 border border-olive-mid bg-olive-mid/[0.04] text-center text-[11px] text-olive-mid cursor-pointer">Email</div>
+      <div class="flex-1 py-2.5 border border-olive-mid/25 text-center text-[11px] text-muted cursor-pointer hover:border-olive-mid transition-colors">SMS</div>
+      <div class="flex-1 py-2.5 border border-olive-mid/25 text-center text-[11px] text-muted cursor-pointer hover:border-olive-mid transition-colors">In-app</div>
     </div>
-    <div class="form-group"><label class="form-label">Expiry</label><select class="form-select"><option>48 hours</option></select></div>
-    <div class="form-group"><label class="form-label">Note to patient (optional)</label><input class="form-input" placeholder="e.g. Hi John, please complete payment to activate your prescription…"></div>
-    <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="sendPaymentLink()">Send payment link</button>
-    <div style="font-size:10px;color:var(--text-muted);margin-top:8px;text-align:center;">Clinical notes and prescription details are not visible to the coordinator</div>
+    <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Expiry</label><select class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer"><option>48 hours</option></select></div>
+    <div class="mb-[18px]"><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Note to patient (optional)</label><input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid" placeholder="e.g. Hi John, please complete payment to activate your prescription…"></div>
+    <button class="w-full py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="sendPaymentLink()">Send payment link</button>
+    <div class="text-[10px] text-muted mt-2 text-center">Clinical notes and prescription details are not visible to the coordinator</div>
   </div>
 </div>
 
 <script>
   const patientData = {
-    sarah: {
-      name: 'Sarah Mitchell', dob: '14 Mar 1986', height: '165 cm', sex: 'Female',
-      weight: 68, goalWeight: 60,
-      conditions: 'None reported', meds: 'Vitamin D 2000 IU daily',
-      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
-      goal: 'Weight loss', goalType: 'glp1',
-      glp1Ibd: 'No', glp1Thyroid: 'No', glp1Gallstones: 'No', glp1Diabetes: 'No',
-      activity: 'Lightly active (1–3 days/week)',
-      diet: 'Currently working on meal planning. ~150g protein per day.',
-      narrative: 'Wants to lose weight and improve energy levels.'
-    },
-    john: {
-      name: 'John Dawson', dob: '3 Jul 1979', height: '180 cm', sex: 'Male',
-      weight: 102, goalWeight: 85,
-      conditions: 'Hypertension (managed)', meds: 'Amlodipine 5mg',
-      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
-      goal: 'Weight loss', goalType: 'glp1',
-      glp1Ibd: 'No', glp1Thyroid: 'No', glp1Gallstones: 'No', glp1Diabetes: 'No',
-      activity: 'Sedentary (desk job, little exercise)',
-      diet: 'Eats out frequently. High sodium intake.',
-      narrative: 'Wants to lose weight and come off blood pressure medication.'
-    },
-    maria: {
-      name: 'Maria Torres', dob: '19 Nov 1990', height: '158 cm', sex: 'Female',
-      weight: 74, goalWeight: 62,
-      conditions: 'PCOS', meds: 'Metformin 500mg, Inositol supplement',
-      gfeSeizures: 'No', gfeHernia: 'No', gfeAutoimmune: 'No', gfePregnant: 'No', gfeVaccines: 'No',
-      goal: 'Hormone balance', goalType: 'testosterone',
-      testApnea: 'No', testCancer: 'No', testEd: 'No', testCardio: 'No', testConceive: 'No',
-      activity: 'Moderately active (3–5 days/week)',
-      diet: 'Low carb, intermittent fasting.',
-      narrative: 'Wants to improve hormone balance and lose weight with PCOS.'
-    }
+    sarah: { name:'Sarah Mitchell',dob:'14 Mar 1986',height:'165 cm',sex:'Female',weight:68,goalWeight:60,conditions:'None reported',meds:'Vitamin D 2000 IU daily',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Lightly active (1–3 days/week)',diet:'Currently working on meal planning. ~150g protein per day.',narrative:'Wants to lose weight and improve energy levels.' },
+    john:  { name:'John Dawson',dob:'3 Jul 1979',height:'180 cm',sex:'Male',weight:102,goalWeight:85,conditions:'Hypertension (managed)',meds:'Amlodipine 5mg',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Sedentary (desk job, little exercise)',diet:'Eats out frequently. High sodium intake.',narrative:'Wants to lose weight and come off blood pressure medication.' },
+    maria: { name:'Maria Torres',dob:'19 Nov 1990',height:'158 cm',sex:'Female',weight:74,goalWeight:62,conditions:'PCOS',meds:'Metformin 500mg, Inositol supplement',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Hormone balance',goalType:'testosterone',testApnea:'No',testCancer:'No',testEd:'No',testCardio:'No',testConceive:'No',activity:'Moderately active (3–5 days/week)',diet:'Low carb, intermittent fasting.',narrative:'Wants to improve hormone balance and lose weight with PCOS.' }
   };
-
-  function calcBMI(weightKg, heightCm) {
-    const h = heightCm / 100;
-    return (weightKg / (h * h)).toFixed(1);
-  }
-
-  function bmiCategory(bmi) {
-    if (bmi < 18.5) return 'Underweight';
-    if (bmi < 25) return 'Normal';
-    if (bmi < 30) return 'Overweight';
-    return 'Obese';
-  }
-
+  function calcBMI(w,h){const hm=h/100;return(w/(hm*hm)).toFixed(1);}
+  function bmiCategory(b){if(b<18.5)return'Underweight';if(b<25)return'Normal';if(b<30)return'Overweight';return'Obese';}
   function loadPatient(key) {
-    const p = patientData[key];
-    document.getElementById('ps-intake-data').style.display = p ? 'block' : 'none';
-    document.getElementById('ps-empty').style.display = p ? 'none' : 'block';
-    if (!p) return;
-    document.getElementById('ps-name').textContent = p.name;
-    document.getElementById('ps-dob').textContent = p.dob;
-    document.getElementById('ps-height').textContent = p.height;
-    document.getElementById('ps-sex').textContent = p.sex;
-    document.getElementById('ps-weight').textContent = p.weight + ' kg';
-    document.getElementById('ps-goal-weight').textContent = p.goalWeight + ' kg';
-    const heightNum = parseInt(p.height);
-    const bmi = calcBMI(p.weight, heightNum);
-    const goalBmi = calcBMI(p.goalWeight, heightNum);
-    document.getElementById('ps-bmi').textContent = bmi;
-    document.getElementById('ps-bmi-cat').textContent = bmiCategory(parseFloat(bmi));
-    document.getElementById('ps-goal-bmi').textContent = goalBmi;
-    document.getElementById('ps-conditions').textContent = p.conditions;
-    document.getElementById('ps-meds').textContent = p.meds;
-    document.getElementById('ps-gfe-seizures').textContent = p.gfeSeizures;
-    document.getElementById('ps-gfe-hernia').textContent = p.gfeHernia;
-    document.getElementById('ps-gfe-autoimmune').textContent = p.gfeAutoimmune;
-    document.getElementById('ps-gfe-pregnant').textContent = p.gfePregnant;
-    document.getElementById('ps-gfe-vaccines').textContent = p.gfeVaccines;
-
-    // Show/hide & populate goal-specific section
-    ['ps-glp1-section','ps-peptide-section','ps-test-section'].forEach(id => document.getElementById(id).style.display = 'none');
-    if (p.goalType === 'glp1') {
-      document.getElementById('ps-glp1-section').style.display = 'block';
-      document.getElementById('ps-glp1-ibd').textContent = p.glp1Ibd;
-      document.getElementById('ps-glp1-thyroid').textContent = p.glp1Thyroid;
-      document.getElementById('ps-glp1-gallstones').textContent = p.glp1Gallstones;
-      document.getElementById('ps-glp1-diabetes').textContent = p.glp1Diabetes;
-    } else if (p.goalType === 'peptides') {
-      document.getElementById('ps-peptide-section').style.display = 'block';
-      document.getElementById('ps-pep-psych').textContent = p.pepPsych;
-      document.getElementById('ps-pep-psych2').textContent = p.pepPsych2;
-      document.getElementById('ps-pep-cancer').textContent = p.pepCancer;
-      document.getElementById('ps-pep-pituitary').textContent = p.pepPituitary;
-      document.getElementById('ps-pep-drugs').textContent = p.pepDrugs;
-    } else if (p.goalType === 'testosterone') {
-      document.getElementById('ps-test-section').style.display = 'block';
-      document.getElementById('ps-test-apnea').textContent = p.testApnea;
-      document.getElementById('ps-test-cancer').textContent = p.testCancer;
-      document.getElementById('ps-test-ed').textContent = p.testEd;
-      document.getElementById('ps-test-cardio').textContent = p.testCardio;
-      document.getElementById('ps-test-conceive').textContent = p.testConceive;
-    }
-
-    document.getElementById('ps-goal').textContent = p.goal;
-    document.getElementById('ps-activity').textContent = p.activity;
-    document.getElementById('ps-diet').textContent = p.diet;
-    document.getElementById('ps-narrative').textContent = p.narrative;
+    const p=patientData[key];
+    document.getElementById('ps-intake-data').style.display=p?'block':'none';
+    document.getElementById('ps-empty').style.display=p?'none':'block';
+    if(!p)return;
+    document.getElementById('ps-name').textContent=p.name;
+    document.getElementById('ps-dob').textContent=p.dob;
+    document.getElementById('ps-height').textContent=p.height;
+    document.getElementById('ps-sex').textContent=p.sex;
+    document.getElementById('ps-weight').textContent=p.weight+' kg';
+    document.getElementById('ps-goal-weight').textContent=p.goalWeight+' kg';
+    const h=parseInt(p.height);const bmi=calcBMI(p.weight,h);const goalBmi=calcBMI(p.goalWeight,h);
+    document.getElementById('ps-bmi').textContent=bmi;document.getElementById('ps-bmi-cat').textContent=bmiCategory(parseFloat(bmi));document.getElementById('ps-goal-bmi').textContent=goalBmi;
+    document.getElementById('ps-conditions').textContent=p.conditions;document.getElementById('ps-meds').textContent=p.meds;
+    document.getElementById('ps-gfe-seizures').textContent=p.gfeSeizures;document.getElementById('ps-gfe-hernia').textContent=p.gfeHernia;document.getElementById('ps-gfe-autoimmune').textContent=p.gfeAutoimmune;document.getElementById('ps-gfe-pregnant').textContent=p.gfePregnant;document.getElementById('ps-gfe-vaccines').textContent=p.gfeVaccines;
+    ['ps-glp1-section','ps-peptide-section','ps-test-section'].forEach(id=>document.getElementById(id).style.display='none');
+    if(p.goalType==='glp1'){document.getElementById('ps-glp1-section').style.display='block';document.getElementById('ps-glp1-ibd').textContent=p.glp1Ibd;document.getElementById('ps-glp1-thyroid').textContent=p.glp1Thyroid;document.getElementById('ps-glp1-gallstones').textContent=p.glp1Gallstones;document.getElementById('ps-glp1-diabetes').textContent=p.glp1Diabetes;}
+    else if(p.goalType==='testosterone'){document.getElementById('ps-test-section').style.display='block';document.getElementById('ps-test-apnea').textContent=p.testApnea;document.getElementById('ps-test-cancer').textContent=p.testCancer;document.getElementById('ps-test-ed').textContent=p.testEd;document.getElementById('ps-test-cardio').textContent=p.testCardio;document.getElementById('ps-test-conceive').textContent=p.testConceive;}
+    document.getElementById('ps-goal').textContent=p.goal;document.getElementById('ps-activity').textContent=p.activity;document.getElementById('ps-diet').textContent=p.diet;document.getElementById('ps-narrative').textContent=p.narrative;
   }
-
-  function selectMethod(el) {
-    el.closest('.method-toggle').querySelectorAll('.method-opt').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-  }
-
-  function toggleCheck(el) {
-    el.classList.toggle('checked');
-  }
-
-  function savePrescreen() {
-    const badge = document.getElementById('ps-badge');
-    if (badge) badge.style.display = 'none';
-    alert('Pre-screening record saved.');
-  }
-
+  function selectMethod(el){el.closest('.method-toggle').querySelectorAll('.method-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
+  function toggleCheck(el){el.classList.toggle('checked');}
+  function savePrescreen(){const b=document.getElementById('ps-badge');if(b)b.style.display='none';alert('Pre-screening record saved.');}
   function showView(name) {
-    ['dashboard','queue','payments','shipments','autoship','prescreening'].forEach(v => {
-      document.getElementById('view-'+v).style.display = 'none';
-    });
-    document.getElementById('view-'+name).style.display = 'block';
-    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+    ['dashboard','queue','payments','shipments','autoship','prescreening'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    document.getElementById('view-'+name).style.display='block';
+    document.querySelectorAll('.sidebar-item').forEach(item=>item.classList.remove('active'));
   }
-
-  function openPaymentModal(patient) {
-    document.getElementById('payModalPatient').textContent = 'Patient: ' + patient;
-    document.getElementById('paymentModal').style.display = 'flex';
-  }
-
-  function sendPaymentLink() {
-    document.getElementById('paymentModal').style.display = 'none';
-    alert('Payment link sent. You will be notified when the patient completes payment.');
-  }
-
-  function sendLink() {
-    alert('Payment link sent to patient.');
-  }
-
-  function confirmDispatch(patient) {
-    const ref = 'TRK-' + Date.now().toString().slice(-8);
-    alert(`Dispatch confirmed for ${patient}.\nTracking ref: ${ref}\nPharmacy notified via automated route.\nPatient will receive dosage instructions by email.`);
-  }
-
-  function resolveFlag() {
-    alert('Shipment flag resolved. Updated status to in-transit.');
-  }
-
-  function recordDispatch() {
-    alert('Dispatch recorded.');
-  }
+  function openPaymentModal(patient){document.getElementById('payModalPatient').textContent='Patient: '+patient;document.getElementById('paymentModal').style.display='flex';}
+  function sendPaymentLink(){document.getElementById('paymentModal').style.display='none';alert('Payment link sent. You will be notified when the patient completes payment.');}
+  function sendLink(){alert('Payment link sent to patient.');}
+  function confirmDispatch(patient){const ref='TRK-'+Date.now().toString().slice(-8);alert(`Dispatch confirmed for ${patient}.\nTracking ref: ${ref}\nPharmacy notified via automated route.\nPatient will receive dosage instructions by email.`);}
+  function resolveFlag(){alert('Shipment flag resolved. Updated status to in-transit.');}
+  function recordDispatch(){alert('Dispatch recorded.');}
 </script>
 </body>
 </html>

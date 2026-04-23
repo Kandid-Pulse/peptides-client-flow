@@ -4,183 +4,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manor — Provider Dashboard</title>
-<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tw.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
 <style>
-  body { background: var(--cream); }
-  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
-  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto; }
-  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
-  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-pale); margin-top: 3px; }
-  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
-  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
-  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
-  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
-  .sidebar-item.locked { opacity: 0.3; cursor: not-allowed; }
-  .sidebar-badge { margin-left: auto; font-size: 9px; padding: 2px 6px; background: var(--terra); color: var(--white); }
-  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
-  .sidebar-item.active .sb-icon { background: var(--terra); }
-  .sidebar-spacer { flex: 1; }
-  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
-  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--terra-light); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
-  .user-name { font-size: 11px; color: var(--cream); }
-  .user-role { font-size: 9px; color: var(--olive-pale); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .admin-main { padding: 32px 36px; }
-  .admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
-  .admin-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
-  .admin-actions { display: flex; gap: 10px; }
+  /* Sidebar active */
+  .sidebar-item.active { color: #f5f0e8 !important; background: rgba(255,255,255,0.08) !important; border-left: 2px solid #8b5a3c; }
+  .sidebar-item.active .sb-icon { background: #8b5a3c !important; }
 
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
-
-  .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
-  .card-block { background: var(--white); border: 1px solid var(--border); padding: 20px 22px; margin-bottom: 16px; }
-  .card-block-title { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
-
+  /* Tables */
   table { width: 100%; border-collapse: collapse; }
-  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 0 10px 10px 0; border-bottom: 1px solid var(--border); text-align: left; }
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  thead th { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7a8a6a; padding: 0 10px 10px 0; border-bottom: 1px solid #ddd8cc; text-align: left; }
+  tbody tr { border-bottom: 1px solid #ddd8cc; transition: background 0.15s; }
   tbody tr:hover { background: rgba(61,79,46,0.02); }
   tbody tr:last-child { border-bottom: none; }
-  tbody td { padding: 11px 10px 11px 0; font-size: 12px; color: var(--text-dark); }
-  .td-muted { color: var(--text-muted); }
-  .td-action { display: flex; gap: 6px; }
-  .action-link { font-size: 11px; color: var(--olive-mid); text-decoration: none; cursor: pointer; padding: 4px 8px; border: 1px solid var(--border); transition: all 0.2s; }
-  .action-link:hover { background: var(--olive-dark); color: var(--cream); border-color: var(--olive-dark); }
+  tbody td { padding: 11px 10px 11px 0; font-size: 12px; color: #1a1f14; }
 
-  .notif-list { display: flex; flex-direction: column; gap: 0; }
-  .notif-item { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--border); }
-  .notif-item:last-child { border-bottom: none; }
-  .ni-icon { width: 28px; height: 28px; background: var(--cream); flex-shrink: 0; }
-  .ni-body { flex: 1; }
-  .ni-title { font-size: 12px; font-weight: 500; color: var(--text-dark); margin-bottom: 2px; }
-  .ni-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
-  .ni-time { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
-  .ni-unread { width: 6px; height: 6px; border-radius: 50%; background: var(--olive-mid); flex-shrink: 0; margin-top: 4px; }
-
-  /* Patient Chart Modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,31,20,0.5); z-index: 200; overflow-y: auto; padding: 40px; }
-  .modal { background: var(--white); max-width: 900px; margin: 0 auto; padding: 36px; position: relative; }
-  .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border: 1px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); margin-bottom: 4px; }
-  .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
-  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .lab-values { display: flex; flex-direction: column; gap: 0; }
-  .lab-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-  .lab-row:last-child { border-bottom: none; }
-  .lab-marker { font-size: 11px; font-weight: 500; }
-  .lab-low { color: #902820; }
-  .lab-normal { color: #3a6020; }
-  .lab-borderline { color: #7a5010; }
-
-  .rx-builder { padding: 16px; background: var(--cream); }
-  .rx-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  /* Form select arrow */
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a8a6a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 </style>
 </head>
-<body>
+<body class="font-sans bg-cream text-[#1a1f14]">
 
-<nav>
-  <div class="nav-brand"><a href="index.html">Manor</a></div>
-  <div class="nav-links">
-    <a href="index.html">Website</a>
-    <a href="provider-dashboard.html" class="active">Provider portal</a>
-    <a href="login.html">Sign out</a>
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-cream-white border-b border-olive-mid/15 px-10 h-[70px] flex items-center justify-between">
+  <div class="font-serif text-[26px] font-semibold tracking-[0.12em] text-olive-dark uppercase">
+    <a href="index.html" class="no-underline text-olive-dark">Manor</a>
   </div>
-  <div class="nav-right">
-    <div style="font-size:11px; color:var(--text-muted);">Jordyn (NP)</div>
-    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--terra-light);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:600;">JN</div>
+  <div class="flex gap-7">
+    <a href="index.html"                class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Website</a>
+    <a href="provider-dashboard.html"   class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-dark no-underline">Provider portal</a>
+    <a href="login.html"                class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Sign out</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="text-[11px] text-muted">Jordyn (NP)</div>
+    <div class="w-8 h-8 rounded-full bg-terra-light flex items-center justify-center text-[11px] text-cream font-semibold">JN</div>
   </div>
 </nav>
 
-<div class="admin-layout">
-  <div class="admin-sidebar">
-    <div class="sidebar-logo">Manor<div class="sidebar-role">Provider portal</div></div>
-    <div class="sidebar-section">Wellness</div>
-    <div class="sidebar-item active"><div class="sb-icon"></div>Patient queue <div class="sidebar-badge">3</div></div>
-    <div class="sidebar-item" onclick="window.location.href='provider-schedule.html'"><div class="sb-icon"></div>My schedule</div>
-    <div class="sidebar-item" onclick="openChart()"><div class="sb-icon"></div>Lab results <div class="sidebar-badge" style="background:var(--olive-mid);">2</div></div>
-    <div class="sidebar-item"><div class="sb-icon"></div>Prescriptions</div>
-    <div class="sidebar-section">Locked</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Settings</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Staff</div>
-    <div class="sidebar-item locked"><div class="sb-icon"></div>Reports</div>
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-user">
-      <div class="user-av">JN</div>
-      <div><div class="user-name">Jordyn (NP)</div><div class="user-role">Provider</div></div>
+<!-- LAYOUT -->
+<div class="mt-[70px] grid min-h-[calc(100vh-70px)]" style="grid-template-columns:220px 1fr;">
+
+  <!-- SIDEBAR -->
+  <div class="bg-olive-dark flex flex-col sticky top-[70px] h-[calc(100vh-70px)] overflow-y-auto">
+    <div class="px-5 py-6 border-b border-cream/[0.08]">
+      <div class="font-serif text-[18px] font-semibold tracking-[0.1em] text-cream uppercase">Manor</div>
+      <div class="text-[9px] tracking-[0.15em] uppercase text-olive-pale mt-[3px]">Provider portal</div>
+    </div>
+
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-[14px] pb-[6px]">Wellness</div>
+    <div class="sidebar-item active flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>
+      Patient queue
+      <span class="ml-auto text-[9px] px-[6px] py-[2px] bg-terra text-cream">3</span>
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]" onclick="window.location.href='provider-schedule.html'">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>My schedule
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]" onclick="openChart()">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>
+      Lab results
+      <span class="ml-auto text-[9px] px-[6px] py-[2px] bg-olive-mid text-cream">2</span>
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Prescriptions
+    </div>
+
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-[14px] pb-[6px]">Locked</div>
+    <div class="flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 opacity-30 cursor-not-allowed">
+      <div class="w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Settings
+    </div>
+    <div class="flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 opacity-30 cursor-not-allowed">
+      <div class="w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Staff
+    </div>
+    <div class="flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 opacity-30 cursor-not-allowed">
+      <div class="w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Reports
+    </div>
+
+    <div class="flex-1"></div>
+    <div class="px-5 py-[14px] border-t border-cream/[0.08] flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full bg-terra-light flex items-center justify-center text-[10px] text-cream font-semibold shrink-0">JN</div>
+      <div>
+        <div class="text-[11px] text-cream">Jordyn (NP)</div>
+        <div class="text-[9px] text-olive-pale">Provider</div>
+      </div>
     </div>
   </div>
 
-  <div class="admin-main">
-    <div class="admin-topbar">
-      <div><div class="admin-title">Patient queue</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">Monday, 6 Apr 2026 · 3 patients need action</div></div>
-      <div class="admin-actions">
-        <button class="btn btn-ghost btn-sm">Today</button>
-        <button class="btn btn-olive btn-sm">+ Manual add</button>
+  <!-- MAIN -->
+  <div class="p-[32px_36px]">
+
+    <!-- Topbar -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">Patient queue</div>
+        <div class="text-[12px] text-muted mt-[3px]">Monday, 6 Apr 2026 · 3 patients need action</div>
+      </div>
+      <div class="flex gap-[10px]">
+        <button class="px-4 py-2 text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-olive-mid hover:bg-olive-mid/10 transition-colors cursor-pointer">Today</button>
+        <button class="px-4 py-2 text-[11px] font-medium tracking-[0.08em] uppercase bg-olive text-cream-white border border-olive hover:bg-olive-mid transition-colors cursor-pointer">+ Manual add</button>
       </div>
     </div>
 
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Active patients</div><div class="stat-value">14</div><div class="stat-sub positive">+2 this month</div></div>
-      <div class="stat-card"><div class="stat-label">Awaiting review</div><div class="stat-value">3</div><div class="stat-sub warning">Action required</div></div>
-      <div class="stat-card"><div class="stat-label">Check-ins pending</div><div class="stat-value">2</div><div class="stat-sub">This week</div></div>
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-[14px] mb-6">
+      <div class="bg-cream-white border border-olive-mid/15 p-[18px_20px]">
+        <div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-2">Active patients</div>
+        <div class="font-serif text-[28px] font-light text-[#1a1f14] leading-none mb-1">14</div>
+        <div class="text-[11px] text-status-green">+2 this month</div>
+      </div>
+      <div class="bg-cream-white border border-olive-mid/15 p-[18px_20px]">
+        <div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-2">Awaiting review</div>
+        <div class="font-serif text-[28px] font-light text-[#1a1f14] leading-none mb-1">3</div>
+        <div class="text-[11px] text-status-amber">Action required</div>
+      </div>
+      <div class="bg-cream-white border border-olive-mid/15 p-[18px_20px]">
+        <div class="text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-2">Check-ins pending</div>
+        <div class="font-serif text-[28px] font-light text-[#1a1f14] leading-none mb-1">2</div>
+        <div class="text-[11px] text-muted">This week</div>
+      </div>
     </div>
 
-    <div class="main-grid">
+    <!-- Main grid: queue + sidebar -->
+    <div class="grid gap-5" style="grid-template-columns:1fr 320px;">
+
+      <!-- Patient queue table -->
       <div>
-        <div class="card-block">
-          <div class="card-block-title">Patient queue</div>
+        <div class="bg-cream-white border border-olive-mid/15 p-[20px_22px] mb-4">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Patient queue</div>
           <table>
-            <thead><tr>
-              <th>Patient</th>
-              <th>Status</th>
-              <th>Next step</th>
-              <th>Last lab</th>
-              <th>Actions</th>
-            </tr></thead>
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Status</th>
+                <th>Next step</th>
+                <th>Last lab</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
-                <td><strong>Sarah Mitchell</strong><div class="td-muted">Enrolled · Day 24</div></td>
-                <td><span class="badge badge-olive">Active</span></td>
-                <td>4-week check-in review</td>
-                <td class="td-muted">24 Mar 2026</td>
-                <td class="td-action">
-                  <span class="action-link" onclick="openChart()">View chart</span>
+                <td>
+                  <strong>Sarah Mitchell</strong>
+                  <div class="text-[11px] text-muted">Enrolled · Day 24</div>
+                </td>
+                <td><span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-olive-dark text-cream">Active</span></td>
+                <td class="text-[12px]">4-week check-in review</td>
+                <td class="text-[11px] text-muted">24 Mar 2026</td>
+                <td>
+                  <span class="text-[11px] text-olive-mid cursor-pointer px-2 py-1 border border-olive-mid/25 hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all inline-block" onclick="openChart()">View chart</span>
                 </td>
               </tr>
               <tr>
-                <td><strong>John Dawson</strong><div class="td-muted">New patient</div></td>
-                <td><span class="badge badge-terra">New</span></td>
-                <td>Review labs + prescribe</td>
-                <td class="td-muted">22 Mar 2026</td>
-                <td class="td-action">
-                  <span class="action-link" style="background:var(--terra);color:var(--white);border-color:var(--terra);" onclick="openChart()">Review labs →</span>
+                <td>
+                  <strong>John Dawson</strong>
+                  <div class="text-[11px] text-muted">New patient</div>
+                </td>
+                <td><span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-terra text-cream">New</span></td>
+                <td class="text-[12px]">Review labs + prescribe</td>
+                <td class="text-[11px] text-muted">22 Mar 2026</td>
+                <td>
+                  <span class="text-[11px] bg-terra text-cream border border-terra cursor-pointer px-2 py-1 hover:bg-terra-dark transition-all inline-block" onclick="openChart()">Review labs →</span>
                 </td>
               </tr>
               <tr>
-                <td><strong>Maria Torres</strong><div class="td-muted">Active · Day 55</div></td>
-                <td><span class="badge badge-amber">Refill req.</span></td>
-                <td>Approve refill request</td>
-                <td class="td-muted">18 Jan 2026</td>
-                <td class="td-action">
-                  <span class="action-link" onclick="openChart()">Approve</span>
+                <td>
+                  <strong>Maria Torres</strong>
+                  <div class="text-[11px] text-muted">Active · Day 55</div>
+                </td>
+                <td><span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-status-amber/15 text-status-amber border border-status-amber/25">Refill req.</span></td>
+                <td class="text-[12px]">Approve refill request</td>
+                <td class="text-[11px] text-muted">18 Jan 2026</td>
+                <td>
+                  <span class="text-[11px] text-olive-mid cursor-pointer px-2 py-1 border border-olive-mid/25 hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all inline-block" onclick="openChart()">Approve</span>
                 </td>
               </tr>
               <tr>
-                <td><strong>Tom Allen</strong><div class="td-muted">Active · Day 78</div></td>
-                <td><span class="badge badge-olive">Active</span></td>
-                <td>Auto-ship due in 12 days</td>
-                <td class="td-muted">5 Jan 2026</td>
-                <td class="td-action">
-                  <span class="action-link" onclick="openChart()">View</span>
+                <td>
+                  <strong>Tom Allen</strong>
+                  <div class="text-[11px] text-muted">Active · Day 78</div>
+                </td>
+                <td><span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-olive-dark text-cream">Active</span></td>
+                <td class="text-[12px]">Auto-ship due in 12 days</td>
+                <td class="text-[11px] text-muted">5 Jan 2026</td>
+                <td>
+                  <span class="text-[11px] text-olive-mid cursor-pointer px-2 py-1 border border-olive-mid/25 hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all inline-block" onclick="openChart()">View</span>
                 </td>
               </tr>
               <tr>
-                <td><strong>Emma Walsh</strong><div class="td-muted">Lab expired</div></td>
-                <td><span class="badge badge-red">Lab exp.</span></td>
-                <td>Request new labs</td>
-                <td class="td-muted">5 Mar 2025</td>
-                <td class="td-action">
-                  <span class="action-link" onclick="openChart()">View</span>
+                <td>
+                  <strong>Emma Walsh</strong>
+                  <div class="text-[11px] text-muted">Lab expired</div>
+                </td>
+                <td><span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-status-red/10 text-status-red border border-status-red/20">Lab exp.</span></td>
+                <td class="text-[12px]">Request new labs</td>
+                <td class="text-[11px] text-muted">5 Mar 2025</td>
+                <td>
+                  <span class="text-[11px] text-olive-mid cursor-pointer px-2 py-1 border border-olive-mid/25 hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all inline-block" onclick="openChart()">View</span>
                 </td>
               </tr>
             </tbody>
@@ -188,99 +212,156 @@
         </div>
       </div>
 
+      <!-- Right sidebar: notifications + quick links -->
       <div>
-        <div class="card-block">
-          <div class="card-block-title">Notifications</div>
-          <div class="notif-list">
-            <div class="notif-item">
-              <div class="ni-icon" style="background:rgba(139,90,60,0.08);"></div>
-              <div class="ni-body"><div class="ni-title">Lab results received</div><div class="ni-sub">John Dawson's LabCorp results are ready for review. Low IGF-1 flagged.</div></div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">1h</span><div class="ni-unread"></div></div>
+        <div class="bg-cream-white border border-olive-mid/15 p-[20px_22px] mb-4">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Notifications</div>
+          <!-- Notif item -->
+          <div class="flex gap-[10px] py-[11px] border-b border-olive-mid/15">
+            <div class="w-7 h-7 bg-terra/[0.08] shrink-0"></div>
+            <div class="flex-1">
+              <div class="text-[12px] font-medium text-[#1a1f14] mb-[2px]">Lab results received</div>
+              <div class="text-[11px] text-muted leading-[1.4]">John Dawson's LabCorp results are ready for review. Low IGF-1 flagged.</div>
             </div>
-            <div class="notif-item">
-              <div class="ni-icon" style="background:rgba(61,79,46,0.08);"></div>
-              <div class="ni-body"><div class="ni-title">Check-in submitted</div><div class="ni-sub">Sarah Mitchell submitted her 4-week check-in.</div></div>
-              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;"><span class="ni-time">3h</span><div class="ni-unread"></div></div>
-            </div>
-            <div class="notif-item">
-              <div class="ni-icon" style="background:rgba(180,120,30,0.08);"></div>
-              <div class="ni-body"><div class="ni-title">Refill request</div><div class="ni-sub">Maria Torres has requested an early refill of Sermorelin 300mcg.</div></div>
-              <span class="ni-time">Yesterday</span>
-            </div>
-            <div class="notif-item">
-              <div class="ni-icon" style="background:rgba(139,90,60,0.08);"></div>
-              <div class="ni-body"><div class="ni-title">Schedule conflict</div><div class="ni-sub">Wed 26 Mar 10:30 — Zenoti booking overlaps a wellness consult.</div></div>
-              <span class="ni-time">Yesterday</span>
+            <div class="flex flex-col items-end gap-1">
+              <span class="text-[10px] text-muted whitespace-nowrap">1h</span>
+              <div class="w-[6px] h-[6px] rounded-full bg-olive-mid shrink-0"></div>
             </div>
           </div>
+          <div class="flex gap-[10px] py-[11px] border-b border-olive-mid/15">
+            <div class="w-7 h-7 bg-olive-mid/[0.08] shrink-0"></div>
+            <div class="flex-1">
+              <div class="text-[12px] font-medium text-[#1a1f14] mb-[2px]">Check-in submitted</div>
+              <div class="text-[11px] text-muted leading-[1.4]">Sarah Mitchell submitted her 4-week check-in.</div>
+            </div>
+            <div class="flex flex-col items-end gap-1">
+              <span class="text-[10px] text-muted whitespace-nowrap">3h</span>
+              <div class="w-[6px] h-[6px] rounded-full bg-olive-mid shrink-0"></div>
+            </div>
+          </div>
+          <div class="flex gap-[10px] py-[11px] border-b border-olive-mid/15">
+            <div class="w-7 h-7 shrink-0" style="background:rgba(180,120,30,0.08);"></div>
+            <div class="flex-1">
+              <div class="text-[12px] font-medium text-[#1a1f14] mb-[2px]">Refill request</div>
+              <div class="text-[11px] text-muted leading-[1.4]">Maria Torres has requested an early refill of Sermorelin 300mcg.</div>
+            </div>
+            <span class="text-[10px] text-muted whitespace-nowrap">Yesterday</span>
+          </div>
+          <div class="flex gap-[10px] py-[11px]">
+            <div class="w-7 h-7 bg-terra/[0.08] shrink-0"></div>
+            <div class="flex-1">
+              <div class="text-[12px] font-medium text-[#1a1f14] mb-[2px]">Schedule conflict</div>
+              <div class="text-[11px] text-muted leading-[1.4]">Wed 26 Mar 10:30 — Zenoti booking overlaps a wellness consult.</div>
+            </div>
+            <span class="text-[10px] text-muted whitespace-nowrap">Yesterday</span>
+          </div>
         </div>
-        <div class="card-block">
-          <div class="card-block-title">Quick links</div>
-          <a href="provider-schedule.html" class="btn btn-outline" style="width:100%;text-align:center;display:block;margin-bottom:8px;">My schedule →</a>
-          <a href="coordinator-dashboard.html" class="btn btn-ghost" style="width:100%;text-align:center;display:block;">Coordinator view →</a>
+
+        <div class="bg-cream-white border border-olive-mid/15 p-[20px_22px]">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Quick links</div>
+          <a href="provider-schedule.html" class="w-full text-center block py-2.5 px-5 text-[11px] font-medium tracking-[0.1em] uppercase no-underline border border-olive text-olive bg-transparent hover:bg-olive hover:text-cream transition-colors mb-2">My schedule →</a>
+          <a href="coordinator-dashboard.html" class="w-full text-center block py-2.5 px-5 text-[11px] font-medium tracking-[0.1em] uppercase no-underline border border-olive-mid/30 text-muted bg-transparent hover:bg-olive-mid/10 transition-colors">Coordinator view →</a>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </div><!-- /main -->
+</div><!-- /layout -->
 
 <!-- Patient Chart Modal -->
-<div class="modal-overlay" id="chartModal" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeChart()">×</button>
-    <div class="modal-title">John Dawson — Patient chart</div>
-    <div class="modal-sub">New patient · Consult: Tue 25 Mar · Status: Labs received · Awaiting prescription</div>
-    <div style="display:flex;gap:8px;margin-bottom:24px;">
-      <span class="badge badge-terra">New patient</span>
-      <span class="badge badge-olive-light">Labs received · 22 Mar 2026</span>
+<div class="fixed inset-0 bg-[#1a1f14]/50 z-[200] overflow-y-auto p-10" id="chartModal" style="display:none;" onclick="closeModal(event)">
+  <div class="bg-cream-white max-w-[900px] mx-auto p-9 relative">
+    <button class="absolute top-4 right-4 w-8 h-8 border border-olive-mid/25 bg-transparent cursor-pointer text-[16px] text-muted flex items-center justify-center hover:bg-cream transition-colors" onclick="closeChart()">×</button>
+    <div class="font-serif text-[28px] font-normal text-[#1a1f14] mb-1">John Dawson — Patient chart</div>
+    <div class="text-[12px] text-muted mb-6">New patient · Consult: Tue 25 Mar · Status: Labs received · Awaiting prescription</div>
+    <div class="flex gap-2 mb-6">
+      <span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-terra text-cream">New patient</span>
+      <span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-olive-mid/10 text-olive-mid border border-olive-mid/20">Labs received · 22 Mar 2026</span>
     </div>
 
-    <div class="modal-grid">
+    <div class="grid grid-cols-2 gap-5">
+      <!-- Lab results -->
       <div>
-        <div class="card-block-title">Lab results (LabCorp · 22 Mar 2026)</div>
-        <div class="lab-values">
-          <div class="lab-row"><span>Testosterone</span><span class="lab-marker lab-low">Low · 8.2 nmol/L</span></div>
-          <div class="lab-row"><span>GH / IGF-1</span><span class="lab-marker lab-low">Low · 95 ng/mL</span></div>
-          <div class="lab-row"><span>Thyroid (TSH)</span><span class="lab-marker lab-normal">Normal · 2.1 mIU/L</span></div>
-          <div class="lab-row"><span>Insulin (fasting)</span><span class="lab-marker lab-borderline">Borderline · 14 μIU/mL</span></div>
-          <div class="lab-row"><span>CRP (inflammation)</span><span class="lab-marker lab-normal">Normal · 0.8 mg/L</span></div>
-          <div class="lab-row"><span>HbA1c</span><span class="lab-marker lab-normal">Normal · 5.4%</span></div>
+        <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Lab results (LabCorp · 22 Mar 2026)</div>
+        <div class="flex flex-col">
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span>Testosterone</span>
+            <span class="text-[11px] font-medium text-status-red">Low · 8.2 nmol/L</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span>GH / IGF-1</span>
+            <span class="text-[11px] font-medium text-status-red">Low · 95 ng/mL</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span>Thyroid (TSH)</span>
+            <span class="text-[11px] font-medium text-status-green">Normal · 2.1 mIU/L</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span>Insulin (fasting)</span>
+            <span class="text-[11px] font-medium text-status-amber">Borderline · 14 μIU/mL</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span>CRP (inflammation)</span>
+            <span class="text-[11px] font-medium text-status-green">Normal · 0.8 mg/L</span>
+          </div>
+          <div class="flex justify-between items-center py-2 text-[12px]">
+            <span>HbA1c</span>
+            <span class="text-[11px] font-medium text-status-green">Normal · 5.4%</span>
+          </div>
         </div>
-        <div class="info-banner" style="margin-top:16px;">
-          <div class="banner-label">AI suggestion (advisory)</div>
-          <div class="banner-body">Based on low GH/IGF-1 and borderline insulin — Sermorelin + BPC-157 may support weight loss goal. Provider review required before prescribing.</div>
+        <div class="bg-olive-mid/[0.05] border border-olive-mid/20 p-3 mt-4">
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-olive-mid mb-1">AI suggestion (advisory)</div>
+          <div class="text-[12px] text-[#1a1f14] leading-[1.5]">Based on low GH/IGF-1 and borderline insulin — Sermorelin + BPC-157 may support weight loss goal. Provider review required before prescribing.</div>
         </div>
-        <div class="form-group" style="margin-top:16px;">
-          <label class="form-label">Clinical notes</label>
-          <textarea class="form-textarea" placeholder="Add your clinical notes here…">Patient presents with low IGF-1, consistent with goal of weight loss and energy improvement. Reviewing Sermorelin protocol as primary intervention.</textarea>
+        <div class="mt-4">
+          <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Clinical notes</label>
+          <textarea class="w-full border border-olive-mid/25 bg-cream-white px-3 py-2 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-none" rows="4" placeholder="Add your clinical notes here…">Patient presents with low IGF-1, consistent with goal of weight loss and energy improvement. Reviewing Sermorelin protocol as primary intervention.</textarea>
         </div>
       </div>
+
+      <!-- Rx builder -->
       <div>
-        <div class="card-block-title">Write prescription</div>
-        <div class="rx-builder">
-          <div class="form-group">
-            <label class="form-label">Peptide</label>
-            <select class="form-select"><option selected>Sermorelin 300mcg</option><option>BPC-157 250mcg</option><option>CJC-1295 2mg</option></select>
+        <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-4">Write prescription</div>
+        <div class="bg-cream p-4">
+          <div class="mb-3">
+            <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Peptide</label>
+            <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-8 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors">
+              <option selected>Sermorelin 300mcg</option>
+              <option>BPC-157 250mcg</option>
+              <option>CJC-1295 2mg</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Dosage</label>
-            <input class="form-input" value="300mcg">
+          <div class="mb-3">
+            <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Dosage</label>
+            <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" value="300mcg">
           </div>
-          <div class="form-group">
-            <label class="form-label">Frequency</label>
-            <select class="form-select"><option selected>Daily · subcutaneous</option><option>3x per week</option></select>
+          <div class="mb-3">
+            <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Frequency</label>
+            <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-8 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors">
+              <option selected>Daily · subcutaneous</option>
+              <option>3x per week</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label class="form-label">Duration</label>
-            <select class="form-select"><option selected>90 days</option><option>60 days</option><option>30 days</option></select>
+          <div class="mb-4">
+            <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Duration</label>
+            <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-8 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors">
+              <option selected>90 days</option>
+              <option>60 days</option>
+              <option>30 days</option>
+            </select>
           </div>
-          <div class="data-row"><span class="data-key">Auto-refill eligible</span><input type="checkbox" checked></div>
-          <div class="data-row"><span class="data-key">Lab required before refill</span><input type="checkbox"></div>
+          <div class="flex justify-between items-center py-2 border-b border-olive-mid/15 text-[12px]">
+            <span class="text-muted">Auto-refill eligible</span>
+            <input type="checkbox" checked>
+          </div>
+          <div class="flex justify-between items-center py-2 text-[12px]">
+            <span class="text-muted">Lab required before refill</span>
+            <input type="checkbox">
+          </div>
         </div>
-        <div style="display:flex;gap:8px;margin-top:16px;">
-          <button class="btn btn-terra" onclick="approvePrescription()">Approve & send to coordinator →</button>
+        <div class="flex gap-2 mt-4">
+          <button class="py-2.5 px-5 bg-terra text-cream-white text-[11px] font-medium tracking-[0.1em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="approvePrescription()">Approve &amp; send to coordinator →</button>
         </div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:8px;">Coordinator will send payment link once approved</div>
+        <div class="text-[10px] text-muted mt-2">Coordinator will send payment link once approved</div>
       </div>
     </div>
   </div>

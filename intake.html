@@ -1,977 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manor — Start Your Program</title>
-    <link rel="stylesheet" href="shared.css">
-    <style>
-        body {
-            background: var(--white);
-        }
-
-        .intake-layout {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: calc(100vh - 70px);
-            margin-top: 70px;
-        }
-
-        .intake-sidebar {
-            background: var(--olive-dark);
-            padding: 40px 28px;
-            position: sticky;
-            top: 70px;
-            height: calc(100vh - 70px);
-            overflow-y: auto;
-            align-self: start;
-        }
-
-        .sidebar-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 22px;
-            font-weight: 400;
-            color: var(--cream);
-            margin-bottom: 32px;
-        }
-
-        .step-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .step-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .step-item.active {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .step-circle {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1px solid rgba(245, 240, 232, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: 500;
-            color: rgba(245, 240, 232, 0.4);
-            flex-shrink: 0;
-            transition: all 0.2s;
-        }
-
-        .step-item.done .step-circle {
-            background: var(--olive-mid);
-            border-color: var(--olive-mid);
-            color: var(--cream);
-        }
-
-        .step-item.active .step-circle {
-            background: var(--terra);
-            border-color: var(--terra);
-            color: var(--cream);
-        }
-
-        .step-text {
-            font-size: 12px;
-            color: rgba(245, 240, 232, 0.45);
-            transition: color 0.2s;
-        }
-
-        .step-item.done .step-text {
-            color: rgba(245, 240, 232, 0.6);
-        }
-
-        .step-item.active .step-text {
-            color: var(--cream);
-            font-weight: 500;
-        }
-
-        .step-divider {
-            width: 1px;
-            height: 16px;
-            background: rgba(245, 240, 232, 0.1);
-            margin-left: 23px;
-        }
-
-        .intake-main {
-            padding: 50px 60px;
-            max-width: 720px;
-        }
-
-        .step-header {
-            margin-bottom: 36px;
-        }
-
-        .step-eyebrow {
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--olive-light);
-            margin-bottom: 8px;
-        }
-
-        .step-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 36px;
-            font-weight: 400;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .step-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .goal-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .goal-card {
-            padding: 16px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .goal-card:hover {
-            border-color: var(--olive-light);
-        }
-
-        .goal-card.selected {
-            border-color: var(--olive-mid);
-            background: rgba(61, 79, 46, 0.04);
-        }
-
-        .goal-title {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-        }
-
-        .goal-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .goal-card.selected .goal-title {
-            color: var(--olive-mid);
-        }
-
-        .slot-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .slot-card {
-            padding: 14px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-        }
-
-        .slot-card:hover {
-            border-color: var(--olive-light);
-        }
-
-        .slot-card.selected {
-            border-color: var(--olive-mid);
-            background: rgba(61, 79, 46, 0.04);
-        }
-
-        .slot-card.unavail {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .slot-day {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-
-        .slot-time {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .consent-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .consent-item {
-            display: flex;
-            gap: 12px;
-            padding: 14px 16px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s;
-            align-items: flex-start;
-        }
-
-        .consent-item.checked {
-            border-color: rgba(61, 79, 46, 0.3);
-            background: rgba(61, 79, 46, 0.03);
-        }
-
-        .consent-check {
-            width: 18px;
-            height: 18px;
-            border: 1px solid var(--border);
-            flex-shrink: 0;
-            margin-top: 1px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .consent-item.checked .consent-check {
-            background: var(--olive-mid);
-            border-color: var(--olive-mid);
-        }
-
-        .consent-check-mark {
-            font-size: 10px;
-            color: var(--cream);
-            display: none;
-        }
-
-        .consent-item.checked .consent-check-mark {
-            display: block;
-        }
-
-        .consent-text {
-            font-size: 13px;
-            color: var(--text-dark);
-            line-height: 1.5;
-        }
-
-        .consent-item.checked .consent-text {
-            color: var(--olive-mid);
-        }
-
-        .sig-area {
-            border: 1px dashed var(--border-strong);
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-            background: var(--cream);
-            cursor: crosshair;
-            position: relative;
-        }
-
-        .sig-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .sig-line {
-            width: 160px;
-            height: 1px;
-            background: var(--border-strong);
-        }
-
-        .sig-signed {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-size: 22px;
-            color: var(--olive-dark);
-            display: none;
-        }
-
-        .payment-summary {
-            background: var(--cream);
-            padding: 20px 22px;
-            margin-bottom: 20px;
-        }
-
-        .payment-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--text-dark);
-            margin-bottom: 12px;
-        }
-
-        .payment-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            border: 1px solid var(--border);
-            background: var(--white);
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-
-        .payment-card.selected {
-            border-color: var(--olive-mid);
-        }
-
-        .card-icon {
-            width: 36px;
-            height: 22px;
-            background: var(--cream-dark);
-            border-radius: 2px;
-        }
-
-        .card-info {
-            flex: 1;
-            font-size: 12px;
-            color: var(--text-dark);
-        }
-
-        .card-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .radio-check {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .payment-card.selected .radio-check {
-            border-color: var(--olive-mid);
-            background: var(--olive-mid);
-        }
-
-        .radio-inner {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--cream);
-        }
-
-        .step-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .yn-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 6px;
-        }
-
-        .yn-option {
-            padding: 9px 22px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
-            letter-spacing: 0.04em;
-        }
-
-        .yn-option:hover {
-            border-color: var(--olive-light);
-            color: var(--text-dark);
-        }
-
-        .yn-option.selected {
-            border-color: var(--olive-mid);
-            background: rgba(61, 79, 46, 0.05);
-            color: var(--olive-mid);
-        }
-
-        .form-section-divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 28px 0 20px;
-        }
-
-        .form-section-divider::before,
-        .form-section-divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        .form-section-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            white-space: nowrap;
-        }
-
-        .screening-note {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.55;
-            margin-bottom: 20px;
-            padding: 10px 14px;
-            background: var(--cream);
-            border-left: 2px solid var(--olive-light);
-        }
-
-        .success-state {
-            display: none;
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .success-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: rgba(61, 79, 46, 0.1);
-            border: 1px solid rgba(61, 79, 46, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 24px;
-        }
-
-        .success-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 36px;
-            font-weight: 400;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
-
-        .success-sub {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manor — Start Your Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tw.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* JS-toggled sidebar nav states */
+  .step-item.done   .step-circle { background: #4a5c38; border-color: #4a5c38; color: #f5f0e8; }
+  .step-item.active .step-circle { background: #8b5a3c; border-color: #8b5a3c; color: #f5f0e8; }
+  .step-item.done   .step-text   { color: rgba(245,240,232,0.6); }
+  .step-item.active .step-text   { color: #f5f0e8; font-weight: 500; }
+  .step-item.active { background: rgba(255,255,255,0.08); }
+  /* Goal cards */
+  .goal-card.selected { border-color: #3d4f2e !important; background: rgba(61,79,46,0.04); }
+  .goal-card.selected .goal-title { color: #3d4f2e; }
+  /* Y/N options */
+  .yn-option.selected { border-color: #3d4f2e !important; background: rgba(61,79,46,0.05); color: #3d4f2e; }
+  /* Consent items */
+  .consent-item.checked { border-color: rgba(61,79,46,0.3) !important; background: rgba(61,79,46,0.03); }
+  .consent-item.checked .consent-check { background: #3d4f2e; border-color: #3d4f2e; }
+  .consent-item.checked .consent-check-mark { display: block !important; }
+  .consent-item.checked .consent-text { color: #3d4f2e; }
+  /* Form section divider (pseudo-elements) */
+  .form-section-divider { display:flex; align-items:center; gap:12px; margin:28px 0 20px; }
+  .form-section-divider::before, .form-section-divider::after { content:''; flex:1; height:1px; background:rgba(61,79,46,0.15); }
+  /* Responsive intake layout */
+  .intake-layout { display: block; }
+  @media (min-width: 768px) {
+    .intake-layout { display: grid; grid-template-columns: 300px 1fr; }
+  }
+</style>
 </head>
+<body class="font-sans bg-cream-white text-[#1a1f14]">
 
-<body>
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-cream-white border-b border-olive-mid/15 px-5 md:px-10 h-[70px] flex items-center justify-between">
+  <div class="flex items-center gap-2.5">
+    <a href="index.html" class="font-serif text-[26px] font-semibold tracking-[0.12em] text-olive-dark uppercase no-underline">Manor</a>
+  </div>
+  <div class="hidden md:flex gap-7">
+    <a href="index.html"  class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Home</a>
+    <a href="#"           class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-dark no-underline">Program intake</a>
+  </div>
+  <div class="flex gap-3 items-center">
+    <a href="index.html" class="px-4 py-1.5 text-[10px] font-medium tracking-[0.1em] uppercase no-underline border border-olive-mid/25 text-muted bg-transparent hover:border-olive-mid/50 hover:text-[#1a1f14] transition-all">Save &amp; exit</a>
+  </div>
+</nav>
 
-    <nav>
-        <div class="nav-brand"><a href="index.html">Manor</a></div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="#" class="active">Program intake</a>
+<!-- Mobile step progress bar -->
+<div class="md:hidden bg-olive-dark px-5 py-4 flex items-center gap-3" style="margin-top:70px;">
+  <div class="flex items-center gap-2 flex-1">
+    <div class="w-5 h-5 rounded-full bg-olive flex items-center justify-center text-[9px] text-cream shrink-0">✓</div>
+    <div class="flex-1 h-px bg-cream/20"></div>
+    <div class="w-5 h-5 rounded-full bg-terra flex items-center justify-center text-[9px] text-cream shrink-0" id="mob-step1">2</div>
+    <div class="flex-1 h-px bg-cream/20"></div>
+    <div class="w-5 h-5 rounded-full border border-cream/25 flex items-center justify-center text-[9px] text-cream/40 shrink-0" id="mob-step2">3</div>
+    <div class="flex-1 h-px bg-cream/20"></div>
+    <div class="w-5 h-5 rounded-full border border-cream/25 flex items-center justify-center text-[9px] text-cream/40 shrink-0" id="mob-step3">4</div>
+  </div>
+</div>
+
+<!-- LAYOUT: sidebar + main -->
+<div class="intake-layout md:mt-[70px] min-h-[calc(100vh-70px)]">
+
+  <!-- Sidebar -->
+  <div class="hidden md:block bg-olive-dark px-7 py-10 sticky top-[70px] h-[calc(100vh-70px)] overflow-y-auto self-start">
+    <div class="font-serif text-[22px] font-normal text-cream mb-8">Your application</div>
+    <div class="flex flex-col gap-0.5" id="stepNav">
+      <!-- Step: done (account created) -->
+      <div class="step-item done flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors hover:bg-white/5" onclick="goStep(1)">
+        <div class="step-circle w-6 h-6 rounded-full border border-cream/25 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0">✓</div>
+        <div class="step-text text-[12px] text-cream/45 transition-colors">Account created</div>
+      </div>
+      <div class="w-px h-4 bg-cream/10 ml-[23px]"></div>
+      <!-- Step 1 nav -->
+      <div class="step-item active flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors hover:bg-white/5" id="nav1" onclick="goStep(1)">
+        <div class="step-circle w-6 h-6 rounded-full border border-cream/25 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0">2</div>
+        <div class="step-text text-[12px] text-cream/45 transition-colors">Health profile</div>
+      </div>
+      <div class="w-px h-4 bg-cream/10 ml-[23px]"></div>
+      <!-- Step 2 nav -->
+      <div class="step-item flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors hover:bg-white/5" id="nav2" onclick="goStep(2)">
+        <div class="step-circle w-6 h-6 rounded-full border border-cream/25 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0">3</div>
+        <div class="step-text text-[12px] text-cream/45 transition-colors">Goals &amp; lifestyle</div>
+      </div>
+      <div class="w-px h-4 bg-cream/10 ml-[23px]"></div>
+      <!-- Step 3 nav -->
+      <div class="step-item flex items-center gap-3 px-3 py-2.5 cursor-pointer transition-colors hover:bg-white/5" id="nav3" onclick="goStep(3)">
+        <div class="step-circle w-6 h-6 rounded-full border border-cream/25 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0">4</div>
+        <div class="step-text text-[12px] text-cream/45 transition-colors">Review &amp; consent</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="px-5 py-8 md:px-[60px] md:py-[50px] max-w-[720px] w-full" id="intakeMain">
+
+    <!-- STEP 1: Health profile -->
+    <div id="step1">
+      <div class="mb-9">
+        <div class="text-[10px] font-medium tracking-[0.15em] uppercase text-olive-light mb-2">Step 2 of 4 — health profile</div>
+        <h2 class="font-serif text-[36px] font-normal text-[#1a1f14] mb-2">Tell us about yourself</h2>
+        <p class="text-[13px] text-muted leading-[1.6]">Your health profile stays within your clinical record and will not be shared with third parties.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-[18px]">
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">First name</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="text" value="Sarah"></div>
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Last name</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="text" value="Mitchell"></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-[18px]">
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Date of birth</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="date" value="1986-03-14"></div>
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Biological sex</label>
+          <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>Female</option><option>Male</option><option>Prefer not to say</option>
+          </select></div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-[18px]">
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Height (cm)</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="number" placeholder="165"></div>
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Current weight (kg)</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="number" placeholder="68"></div>
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Goal weight (kg)</label>
+          <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="number" placeholder="60"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-[18px]">
+        <div><label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Blood type</label>
+          <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>Unknown</option><option>A+</option><option>B+</option><option>O+</option><option>AB+</option>
+          </select></div>
+        <div></div>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Known medical conditions</label>
+        <textarea class="w-full border border-olive-mid/25 bg-cream-white px-3.5 py-3 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-y min-h-[80px]" placeholder="List any diagnosed conditions or past surgeries…"></textarea>
+      </div>
+
+      <div class="form-section-divider"><span class="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted whitespace-nowrap">Medical screening</span></div>
+      <p class="text-[12px] text-muted leading-[1.55] mb-5 px-3.5 py-2.5 bg-cream border-l-2 border-olive-light">Please answer yes or no to each item. Your provider will discuss any "yes" answers in detail during your consultation.</p>
+
+      <!-- Y/N screening questions -->
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of seizures, migraines, metal implants, or IUD?</label>
+        <div class="flex gap-2 mt-1.5">
+          <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">Yes</div>
+          <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">No</div>
         </div>
-        <div class="nav-right">
-            <a href="index.html" class="btn btn-ghost btn-sm">Save & exit</a>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of hernia, diastasis recti, or skin cancer?</label>
+        <div class="flex gap-2 mt-1.5">
+          <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">Yes</div>
+          <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">No</div>
         </div>
-    </nav>
-
-    <div class="intake-layout">
-        <div class="intake-sidebar">
-            <div class="sidebar-title">Your application</div>
-            <div class="step-nav" id="stepNav">
-                <div class="step-item done" onclick="goStep(1)">
-                    <div class="step-circle">✓</div>
-                    <div class="step-text">Account created</div>
-                </div>
-                <div class="step-divider"></div>
-                <div class="step-item active" id="nav1" onclick="goStep(1)">
-                    <div class="step-circle">2</div>
-                    <div class="step-text">Health profile</div>
-                </div>
-                <div class="step-divider"></div>
-                <div class="step-item" id="nav2" onclick="goStep(2)">
-                    <div class="step-circle">3</div>
-                    <div class="step-text">Goals & lifestyle</div>
-                </div>
-                <div class="step-divider"></div>
-                <div class="step-item" id="nav3" onclick="goStep(3)">
-                    <div class="step-circle">4</div>
-                    <div class="step-text">Review & consent</div>
-                </div>
-            </div>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of autoimmune disorders, keloid scarring, vitiligo, or cold sores?</label>
+        <div class="flex gap-2 mt-1.5">
+          <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">Yes</div>
+          <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">No</div>
         </div>
-
-        <div class="intake-main" id="intakeMain">
-
-            <!-- Step 1: Health profile -->
-            <div id="step1">
-                <div class="step-header">
-                    <div class="step-eyebrow">Step 2 of 4 — health profile</div>
-                    <h2 class="step-title">Tell us about yourself</h2>
-                    <p class="step-sub">Your health profile stays within your clinical record and will not be shared
-                        with third parties.</p>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">First name</label>
-                        <input class="form-input filled" type="text" value="Sarah">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Last name</label>
-                        <input class="form-input filled" type="text" value="Mitchell">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Date of birth</label>
-                        <input class="form-input" type="date" value="1986-03-14">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Biological sex</label>
-                        <select class="form-select">
-                            <option>Female</option>
-                            <option>Male</option>
-                            <option>Prefer not to say</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row three">
-                    <div class="form-group">
-                        <label class="form-label">Height (cm)</label>
-                        <input class="form-input" type="number" placeholder="165">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Current weight (kg)</label>
-                        <input class="form-input" type="number" placeholder="68">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Goal weight (kg)</label>
-                        <input class="form-input" type="number" placeholder="60">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Blood type</label>
-                        <select class="form-select">
-                            <option>Unknown</option>
-                            <option>A+</option>
-                            <option>B+</option>
-                            <option>O+</option>
-                            <option>AB+</option>
-                        </select>
-                    </div>
-                    <div class="form-group"></div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Known medical conditions</label>
-                    <textarea class="form-textarea"
-                        placeholder="List any diagnosed conditions or past surgeries…"></textarea>
-                </div>
-
-                <div class="form-section-divider">
-                    <span class="form-section-label">Medical screening</span>
-                </div>
-                <p class="screening-note">Please answer yes or no to each item. Your provider will discuss any "yes" answers in detail during your consultation.</p>
-
-                <div class="form-group">
-                    <label class="form-label">History of seizures, migraines, metal implants, or IUD?</label>
-                    <div class="yn-group">
-                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">History of hernia, diastasis recti, or skin cancer?</label>
-                    <div class="yn-group">
-                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">History of autoimmune disorders, keloid scarring, vitiligo, or cold sores?</label>
-                    <div class="yn-group">
-                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Currently pregnant or breastfeeding?</label>
-                    <div class="yn-group">
-                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Any vaccinations in the past two weeks?</label>
-                    <div class="yn-group">
-                        <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                        <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                    </div>
-                </div>
-                <div class="step-actions">
-                    <button class="btn btn-terra" onclick="goStep(2)">Save & continue →</button>
-                    <a href="register.html" class="btn btn-ghost">Back</a>
-                </div>
-            </div>
-
-            <!-- Step 2: Goals -->
-            <div id="step2" style="display:none;">
-                <div class="step-header">
-                    <div class="step-eyebrow">Step 3 of 4 — goals & lifestyle</div>
-                    <h2 class="step-title">What are you working towards?</h2>
-                    <p class="step-sub">Choose your primary wellness goal. This helps your provider design the most
-                        appropriate protocol.</p>
-                </div>
-                <div class="goal-grid">
-                    <div class="goal-card selected" data-goal="glp1" onclick="toggleGoal(this)">
-                        <div class="goal-title">Weight loss</div>
-                        <div class="goal-sub">Body composition & metabolic</div>
-                    </div>
-                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
-                        <div class="goal-title">Energy & sleep</div>
-                        <div class="goal-sub">Recovery & rest quality</div>
-                    </div>
-                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
-                        <div class="goal-title">Longevity</div>
-                        <div class="goal-sub">Healthspan focus</div>
-                    </div>
-                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
-                        <div class="goal-title">Muscle & strength</div>
-                        <div class="goal-sub">Performance & recovery</div>
-                    </div>
-                    <div class="goal-card" data-goal="testosterone" onclick="toggleGoal(this)">
-                        <div class="goal-title">Hormone balance</div>
-                        <div class="goal-sub">Men's & women's health</div>
-                    </div>
-                    <div class="goal-card" data-goal="peptides" onclick="toggleGoal(this)">
-                        <div class="goal-title">Healing & repair</div>
-                        <div class="goal-sub">Joint & tissue recovery</div>
-                    </div>
-                </div>
-
-                <!-- GLP-1 additional screening (Weight loss) -->
-                <div id="glp1Questions">
-                    <div class="form-section-divider">
-                        <span class="form-section-label">Additional screening — GLP-1</span>
-                    </div>
-                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
-                    <div class="form-group">
-                        <label class="form-label">History of pancreatitis, irritable bowel disease, or ulcerative colitis?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Personal or family history of medullary thyroid cancer?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">History of gallstones or gallbladder disease?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Diagnosed with diabetes (Type 1 or Type 2)?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Peptides additional screening (Energy & sleep / Longevity / Muscle & strength / Healing & repair) -->
-                <div id="peptideQuestions" style="display:none;">
-                    <div class="form-section-divider">
-                        <span class="form-section-label">Additional screening — Peptides</span>
-                    </div>
-                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
-                    <div class="form-group">
-                        <label class="form-label">History of major depression, bipolar disorder, manic episodes, psychosis, or suicidal thoughts/ideations?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Any other psychiatric diagnosis?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Active cancer or personal history of cancer?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">History of pituitary conditions, head trauma, or fluid retention?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Currently using corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Testosterone additional screening (Hormone balance) -->
-                <div id="testosteroneQuestions" style="display:none;">
-                    <div class="form-section-divider">
-                        <span class="form-section-label">Additional screening — Testosterone</span>
-                    </div>
-                    <p class="screening-note">Based on your goal, your provider requires a few more screening questions.</p>
-                    <div class="form-group">
-                        <label class="form-label">History of obstructive sleep apnea?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Personal history of prostate or breast cancer?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">History of erectile dysfunction?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">History of significant cardiovascular disease, or first-degree relative with prostate cancer?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Currently trying to conceive?</label>
-                        <div class="yn-group">
-                            <div class="yn-option" onclick="toggleYN(this)">Yes</div>
-                            <div class="yn-option selected" onclick="toggleYN(this)">No</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Activity level</label>
-                    <select class="form-select">
-                        <option>Sedentary (desk job, little exercise)</option>
-                        <option selected>Lightly active (1–3 days/week)</option>
-                        <option>Moderately active (3–5 days/week)</option>
-                        <option>Very active (6–7 days/week)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Current diet</label>
-                    <textarea class="form-textarea" placeholder="Describe your typical daily eating habits…"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Current medications & supplements</label>
-                    <textarea class="form-textarea" placeholder="List all prescription and over-the-counter medications or supplements…"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">What do you most want to accomplish with your health right now?</label>
-                    <textarea class="form-textarea" placeholder="e.g. Lose weight, sleep better, reduce stress, come off medications, more energy…"></textarea>
-                </div>
-                <div class="step-actions">
-                    <button class="btn btn-terra" onclick="goStep(3)">Save & continue →</button>
-                    <button class="btn btn-ghost" onclick="goStep(1)">Back</button>
-                </div>
-            </div>
-
-            <!-- Step 3: Consent -->
-            <div id="step3" style="display:none;">
-                <div class="step-header">
-                    <div class="step-eyebrow">Step 4 of 4 — review & consent</div>
-                    <h2 class="step-title">Program agreement</h2>
-                    <p class="step-sub">Please read and confirm each item. All items must be checked before you can sign
-                        and proceed.</p>
-                </div>
-                <div class="consent-list">
-                    <div class="consent-item" onclick="toggleConsent(this)">
-                        <div class="consent-check"><span class="consent-check-mark">✓</span></div>
-                        <div class="consent-text">This program involves prescription peptides ordered by a licensed
-                            provider. Dosage is set by my provider and must not be altered by me.</div>
-                    </div>
-                    <div class="consent-item" onclick="toggleConsent(this)">
-                        <div class="consent-check"><span class="consent-check-mark">✓</span></div>
-                        <div class="consent-text">Auto-ship will renew automatically at my chosen interval. I understand
-                            the cost and schedule agreed at enrolment.</div>
-                    </div>
-                    <div class="consent-item" onclick="toggleConsent(this)">
-                        <div class="consent-check"><span class="consent-check-mark">✓</span></div>
-                        <div class="consent-text">Cancellation of auto-ship requires 60 days written notice. Shipments
-                            continue and are billed during the notice period.</div>
-                    </div>
-                    <div class="consent-item" onclick="toggleConsent(this)">
-                        <div class="consent-check"><span class="consent-check-mark">✓</span></div>
-                        <div class="consent-text">Lab results must be renewed annually to continue the program.
-                            Auto-ship pauses automatically if labs expire.</div>
-                    </div>
-                    <div class="consent-item" onclick="toggleConsent(this)">
-                        <div class="consent-check"><span class="consent-check-mark">✓</span></div>
-                        <div class="consent-text">I have read and agree to the full program terms, privacy policy, and
-                            clinical consent document.</div>
-                    </div>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Draw your signature below</div>
-                <div class="sig-area" id="sigArea" onclick="signConsent()">
-                    <div class="sig-hint" id="sigHint">Click or touch to sign</div>
-                    <div class="sig-line"></div>
-                    <div class="sig-hint" style="font-size:11px;" id="sigName">Your full legal name</div>
-                    <div class="sig-signed" id="sigDisplay">Sarah Mitchell</div>
-                </div>
-                <div style="font-size:11px; color:var(--text-muted); margin-bottom:20px;">Signed agreements are stored
-                    securely with timestamp. Date: 25 Mar 2026</div>
-                <div class="step-actions">
-                    <button class="btn btn-terra" id="consentBtn" onclick="completeEnrolment()"
-                        style="opacity:0.4; pointer-events:none;">Submit application →</button>
-                    <button class="btn btn-ghost" onclick="goStep(2)">Back</button>
-                </div>
-            </div>
-
-            <!-- Success -->
-            <div id="stepSuccess" class="success-state">
-                <div class="success-icon">✓</div>
-                <h2 class="success-title">Application submitted!</h2>
-                <p class="success-sub">Thank you — your application is with our wellness team. A coordinator will be in touch shortly to schedule your pre-screening call. Your provider consultation will be booked following that.</p>
-                <div class="card" style="max-width:400px; margin:0 auto 24px; text-align:left;">
-                    <div class="data-row"><span class="data-key">Program</span><span class="data-val">Sermorelin 300mcg · 90 days</span></div>
-                    <div class="data-row"><span class="data-key">Status</span><span class="data-val" style="color:var(--olive-mid);">Under review</span></div>
-                    <div class="data-row"><span class="data-key">Next step</span><span class="data-val">Coordinator pre-screening call</span></div>
-                </div>
-                <a href="portal.html" class="btn btn-olive" style="padding:14px 36px;">Go to my program portal →</a>
-            </div>
-
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Currently pregnant or breastfeeding?</label>
+        <div class="flex gap-2 mt-1.5">
+          <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">Yes</div>
+          <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">No</div>
         </div>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Any vaccinations in the past two weeks?</label>
+        <div class="flex gap-2 mt-1.5">
+          <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">Yes</div>
+          <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted tracking-[0.04em] hover:border-olive-light hover:text-[#1a1f14]" onclick="toggleYN(this)">No</div>
+        </div>
+      </div>
+
+      <div class="flex gap-3 mt-8 pt-6 border-t border-olive-mid/15">
+        <button class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="goStep(2)">Save &amp; continue →</button>
+        <a href="register.html" class="px-6 py-2.5 border border-olive-mid/25 text-muted font-sans text-[11px] font-medium tracking-[0.1em] uppercase no-underline hover:border-olive-mid/50 hover:text-[#1a1f14] transition-all">Back</a>
+      </div>
     </div>
 
-    <script>
-        let currentStep = 1;
-        let consentChecked = 0;
-        let isSigned = false;
+    <!-- STEP 2: Goals -->
+    <div id="step2" style="display:none;">
+      <div class="mb-9">
+        <div class="text-[10px] font-medium tracking-[0.15em] uppercase text-olive-light mb-2">Step 3 of 4 — goals &amp; lifestyle</div>
+        <h2 class="font-serif text-[36px] font-normal text-[#1a1f14] mb-2">What are you working towards?</h2>
+        <p class="text-[13px] text-muted leading-[1.6]">Choose your primary wellness goal. This helps your provider design the most appropriate protocol.</p>
+      </div>
 
-        function goStep(n) {
-            document.querySelectorAll('[id^=step]:not(#stepNav)').forEach(el => el.style.display = 'none');
-            document.getElementById('stepSuccess').style.display = 'none';
-            const el = document.getElementById('step' + n);
-            if (el) el.style.display = 'block';
-            currentStep = n;
-            updateNav();
-            window.scrollTo(0, 0);
-        }
+      <!-- Goal grid -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-5">
+        <div class="goal-card selected p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="glp1" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Weight loss</div>
+          <div class="text-[11px] text-muted">Body composition &amp; metabolic</div>
+        </div>
+        <div class="goal-card p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="peptides" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Energy &amp; sleep</div>
+          <div class="text-[11px] text-muted">Recovery &amp; rest quality</div>
+        </div>
+        <div class="goal-card p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="peptides" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Longevity</div>
+          <div class="text-[11px] text-muted">Healthspan focus</div>
+        </div>
+        <div class="goal-card p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="peptides" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Muscle &amp; strength</div>
+          <div class="text-[11px] text-muted">Performance &amp; recovery</div>
+        </div>
+        <div class="goal-card p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="testosterone" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Hormone balance</div>
+          <div class="text-[11px] text-muted">Men's &amp; women's health</div>
+        </div>
+        <div class="goal-card p-4 border border-olive-mid/25 cursor-pointer transition-all hover:border-olive-light" data-goal="peptides" onclick="toggleGoal(this)">
+          <div class="goal-title text-[12px] font-medium text-[#1a1f14] mb-0.5">Healing &amp; repair</div>
+          <div class="text-[11px] text-muted">Joint &amp; tissue recovery</div>
+        </div>
+      </div>
 
-        function updateNav() {
-            for (let i = 1; i <= 3; i++) {
-                const nav = document.getElementById('nav' + i);
-                if (!nav) continue;
-                nav.classList.remove('active', 'done');
-                if (i < currentStep) nav.classList.add('done');
-                else if (i === currentStep) nav.classList.add('active');
-                const circle = nav.querySelector('.step-circle');
-                if (i < currentStep) circle.textContent = '✓';
-                else circle.textContent = i + 1;
-            }
-        }
+      <!-- GLP-1 extra questions -->
+      <div id="glp1Questions">
+        <div class="form-section-divider"><span class="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted whitespace-nowrap">Additional screening — GLP-1</span></div>
+        <p class="text-[12px] text-muted leading-[1.55] mb-5 px-3.5 py-2.5 bg-cream border-l-2 border-olive-light">Based on your goal, your provider requires a few more screening questions.</p>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of pancreatitis, irritable bowel disease, or ulcerative colitis?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Personal or family history of medullary thyroid cancer?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of gallstones or gallbladder disease?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Diagnosed with diabetes (Type 1 or Type 2)?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+      </div>
 
-        function toggleGoal(el) {
-            document.querySelectorAll('.goal-card').forEach(g => g.classList.remove('selected'));
-            el.classList.add('selected');
-            const goal = el.dataset.goal;
-            document.getElementById('glp1Questions').style.display = goal === 'glp1' ? 'block' : 'none';
-            document.getElementById('peptideQuestions').style.display = goal === 'peptides' ? 'block' : 'none';
-            document.getElementById('testosteroneQuestions').style.display = goal === 'testosterone' ? 'block' : 'none';
-        }
+      <!-- Peptide extra questions -->
+      <div id="peptideQuestions" style="display:none;">
+        <div class="form-section-divider"><span class="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted whitespace-nowrap">Additional screening — Peptides</span></div>
+        <p class="text-[12px] text-muted leading-[1.55] mb-5 px-3.5 py-2.5 bg-cream border-l-2 border-olive-light">Based on your goal, your provider requires a few more screening questions.</p>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of major depression, bipolar disorder, manic episodes, psychosis, or suicidal thoughts/ideations?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Any other psychiatric diagnosis?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Active cancer or personal history of cancer?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of pituitary conditions, head trauma, or fluid retention?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Currently using corticosteroids, anticonvulsants, cyclosporine, ritonavir, sex hormones, or simvastatin?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+      </div>
 
-        function toggleYN(el) {
-            const group = el.closest('.yn-group');
-            group.querySelectorAll('.yn-option').forEach(o => o.classList.remove('selected'));
-            el.classList.add('selected');
-        }
+      <!-- Testosterone extra questions -->
+      <div id="testosteroneQuestions" style="display:none;">
+        <div class="form-section-divider"><span class="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted whitespace-nowrap">Additional screening — Testosterone</span></div>
+        <p class="text-[12px] text-muted leading-[1.55] mb-5 px-3.5 py-2.5 bg-cream border-l-2 border-olive-light">Based on your goal, your provider requires a few more screening questions.</p>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of obstructive sleep apnea?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Personal history of prostate or breast cancer?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of erectile dysfunction?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">History of significant cardiovascular disease, or first-degree relative with prostate cancer?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+        <div class="mb-[18px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Currently trying to conceive?</label>
+          <div class="flex gap-2 mt-1.5">
+            <div class="yn-option px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">Yes</div>
+            <div class="yn-option selected px-[22px] py-2.5 border border-olive-mid/25 cursor-pointer transition-all text-[12px] font-medium text-muted" onclick="toggleYN(this)">No</div>
+          </div>
+        </div>
+      </div>
 
-        function toggleConsent(el) {
-            el.classList.toggle('checked');
-            consentChecked = document.querySelectorAll('.consent-item.checked').length;
-            checkConsentReady();
-        }
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Activity level</label>
+        <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+          <option>Sedentary (desk job, little exercise)</option>
+          <option selected>Lightly active (1–3 days/week)</option>
+          <option>Moderately active (3–5 days/week)</option>
+          <option>Very active (6–7 days/week)</option>
+        </select>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Current diet</label>
+        <textarea class="w-full border border-olive-mid/25 bg-cream-white px-3.5 py-3 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-y min-h-[80px]" placeholder="Describe your typical daily eating habits…"></textarea>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Current medications &amp; supplements</label>
+        <textarea class="w-full border border-olive-mid/25 bg-cream-white px-3.5 py-3 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-y min-h-[80px]" placeholder="List all prescription and over-the-counter medications or supplements…"></textarea>
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">What do you most want to accomplish with your health right now?</label>
+        <textarea class="w-full border border-olive-mid/25 bg-cream-white px-3.5 py-3 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-y min-h-[80px]" placeholder="e.g. Lose weight, sleep better, reduce stress, come off medications, more energy…"></textarea>
+      </div>
 
-        function signConsent() {
-            isSigned = true;
-            document.getElementById('sigHint').style.display = 'none';
-            document.getElementById('sigLine') && (document.getElementById('sigLine').style.display = 'none');
-            document.getElementById('sigName').style.display = 'none';
-            document.getElementById('sigDisplay').style.display = 'block';
-            document.getElementById('sigArea').style.background = 'rgba(61,79,46,0.04)';
-            document.getElementById('sigArea').style.borderColor = 'rgba(61,79,46,0.3)';
-            document.querySelector('.sig-line').style.display = 'none';
-            document.querySelector('.sig-hint').style.display = 'none';
-            checkConsentReady();
-        }
+      <div class="flex gap-3 mt-8 pt-6 border-t border-olive-mid/15">
+        <button class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="goStep(3)">Save &amp; continue →</button>
+        <button class="px-6 py-2.5 border border-olive-mid/25 text-muted font-sans text-[11px] font-medium tracking-[0.1em] uppercase cursor-pointer bg-transparent hover:border-olive-mid/50 hover:text-[#1a1f14] transition-all" onclick="goStep(1)">Back</button>
+      </div>
+    </div>
 
-        function checkConsentReady() {
-            const btn = document.getElementById('consentBtn');
-            if (consentChecked >= 5 && isSigned) {
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
-            }
-        }
+    <!-- STEP 3: Consent -->
+    <div id="step3" style="display:none;">
+      <div class="mb-9">
+        <div class="text-[10px] font-medium tracking-[0.15em] uppercase text-olive-light mb-2">Step 4 of 4 — review &amp; consent</div>
+        <h2 class="font-serif text-[36px] font-normal text-[#1a1f14] mb-2">Program agreement</h2>
+        <p class="text-[13px] text-muted leading-[1.6]">Please read and confirm each item. All items must be checked before you can sign and proceed.</p>
+      </div>
 
-        function completeEnrolment() {
-            document.querySelectorAll('[id^=step]:not(#stepNav)').forEach(el => el.style.display = 'none');
-            document.getElementById('stepSuccess').style.display = 'block';
-            // update all nav to done
-            for (let i = 1; i <= 3; i++) {
-                const nav = document.getElementById('nav' + i);
-                if (nav) { nav.classList.remove('active'); nav.classList.add('done'); nav.querySelector('.step-circle').textContent = '✓'; }
-            }
-            currentStep = 6;
-            window.scrollTo(0, 0);
-        }
-    </script>
+      <div class="flex flex-col gap-2 mb-6">
+        <div class="consent-item flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start" onclick="toggleConsent(this)">
+          <div class="consent-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+            <span class="consent-check-mark hidden text-[10px] text-cream">✓</span>
+          </div>
+          <div class="consent-text text-[13px] text-[#1a1f14] leading-[1.5]">This program involves prescription peptides ordered by a licensed provider. Dosage is set by my provider and must not be altered by me.</div>
+        </div>
+        <div class="consent-item flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start" onclick="toggleConsent(this)">
+          <div class="consent-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+            <span class="consent-check-mark hidden text-[10px] text-cream">✓</span>
+          </div>
+          <div class="consent-text text-[13px] text-[#1a1f14] leading-[1.5]">Auto-ship will renew automatically at my chosen interval. I understand the cost and schedule agreed at enrolment.</div>
+        </div>
+        <div class="consent-item flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start" onclick="toggleConsent(this)">
+          <div class="consent-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+            <span class="consent-check-mark hidden text-[10px] text-cream">✓</span>
+          </div>
+          <div class="consent-text text-[13px] text-[#1a1f14] leading-[1.5]">Cancellation of auto-ship requires 60 days written notice. Shipments continue and are billed during the notice period.</div>
+        </div>
+        <div class="consent-item flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start" onclick="toggleConsent(this)">
+          <div class="consent-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+            <span class="consent-check-mark hidden text-[10px] text-cream">✓</span>
+          </div>
+          <div class="consent-text text-[13px] text-[#1a1f14] leading-[1.5]">Lab results must be renewed annually to continue the program. Auto-ship pauses automatically if labs expire.</div>
+        </div>
+        <div class="consent-item flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start" onclick="toggleConsent(this)">
+          <div class="consent-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+            <span class="consent-check-mark hidden text-[10px] text-cream">✓</span>
+          </div>
+          <div class="consent-text text-[13px] text-[#1a1f14] leading-[1.5]">I have read and agree to the full program terms, privacy policy, and clinical consent document.</div>
+        </div>
+      </div>
+
+      <div class="text-[12px] text-muted mb-2">Draw your signature below</div>
+      <div class="sig-area mb-2.5 h-[120px] flex flex-col items-center justify-center gap-2 bg-cream border border-dashed border-olive-mid/30 cursor-crosshair" id="sigArea" onclick="signConsent()">
+        <div class="text-[12px] text-muted" id="sigHint">Click or touch to sign</div>
+        <div class="w-40 h-px bg-olive-mid/30" id="sigLine"></div>
+        <div class="text-[11px] text-muted" id="sigName">Your full legal name</div>
+        <div class="font-serif italic text-[22px] text-olive-dark hidden" id="sigDisplay">Sarah Mitchell</div>
+      </div>
+      <div class="text-[11px] text-muted mb-5">Signed agreements are stored securely with timestamp. Date: 25 Mar 2026</div>
+
+      <div class="flex gap-3 mt-8 pt-6 border-t border-olive-mid/15">
+        <button class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors opacity-40 pointer-events-none" id="consentBtn" onclick="completeEnrolment()">Submit application →</button>
+        <button class="px-6 py-2.5 border border-olive-mid/25 text-muted font-sans text-[11px] font-medium tracking-[0.1em] uppercase cursor-pointer bg-transparent hover:border-olive-mid/50 hover:text-[#1a1f14] transition-all" onclick="goStep(2)">Back</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="stepSuccess" class="hidden text-center py-[60px] px-5">
+      <div class="w-16 h-16 rounded-full bg-olive-mid/10 border border-olive-mid/20 flex items-center justify-center mx-auto mb-5 text-[24px]">✓</div>
+      <h2 class="font-serif text-[36px] font-normal text-[#1a1f14] mb-2.5">Application submitted!</h2>
+      <p class="text-[14px] text-muted mb-8 leading-[1.6]">Thank you — your application is with our wellness team. A coordinator will be in touch shortly to schedule your pre-screening call. Your provider consultation will be booked following that.</p>
+      <div class="bg-cream-white border border-olive-mid/15 p-[22px] max-w-[400px] mx-auto mb-6 text-left">
+        <div class="flex justify-between items-center py-2.5 border-b border-olive-mid/15 text-[13px]"><span class="text-[12px] text-muted">Program</span><span class="font-medium">Sermorelin 300mcg · 90 days</span></div>
+        <div class="flex justify-between items-center py-2.5 border-b border-olive-mid/15 text-[13px]"><span class="text-[12px] text-muted">Status</span><span class="font-medium text-olive-mid">Under review</span></div>
+        <div class="flex justify-between items-center py-2.5 text-[13px]"><span class="text-[12px] text-muted">Next step</span><span class="font-medium">Coordinator pre-screening call</span></div>
+      </div>
+      <a href="portal.html" class="inline-block px-9 py-3.5 bg-olive-dark text-cream font-sans text-[11px] font-medium tracking-[0.12em] uppercase no-underline hover:bg-olive-mid transition-colors">Go to my program portal →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentStep = 1;
+  let consentChecked = 0;
+  let isSigned = false;
+
+  function goStep(n) {
+    document.querySelectorAll('[id^=step]:not([id=stepNav])').forEach(el => el.style.display = 'none');
+    document.getElementById('stepSuccess').style.display = 'none';
+    const el = document.getElementById('step' + n);
+    if (el) el.style.display = 'block';
+    currentStep = n;
+    updateNav();
+    window.scrollTo(0, 0);
+  }
+
+  function updateNav() {
+    for (let i = 1; i <= 3; i++) {
+      const nav = document.getElementById('nav' + i);
+      if (nav) {
+        nav.classList.remove('active', 'done');
+        if (i < currentStep) nav.classList.add('done');
+        else if (i === currentStep) nav.classList.add('active');
+        const circle = nav.querySelector('.step-circle');
+        if (i < currentStep) circle.textContent = '✓';
+        else circle.textContent = i + 1;
+      }
+      // Update mobile step circles
+      const mob = document.getElementById('mob-step' + i);
+      if (mob) {
+        mob.className = 'w-5 h-5 rounded-full flex items-center justify-center text-[9px] shrink-0 ';
+        if (i < currentStep) mob.className += 'bg-olive text-cream';
+        else if (i === currentStep) mob.className += 'bg-terra text-cream';
+        else mob.className += 'border border-cream/25 text-cream/40';
+        mob.textContent = i < currentStep ? '✓' : (i + 1);
+      }
+    }
+  }
+
+  function toggleGoal(el) {
+    document.querySelectorAll('.goal-card').forEach(g => g.classList.remove('selected'));
+    el.classList.add('selected');
+    const goal = el.dataset.goal;
+    document.getElementById('glp1Questions').style.display        = goal === 'glp1'         ? 'block' : 'none';
+    document.getElementById('peptideQuestions').style.display     = goal === 'peptides'     ? 'block' : 'none';
+    document.getElementById('testosteroneQuestions').style.display = goal === 'testosterone' ? 'block' : 'none';
+  }
+
+  function toggleYN(el) {
+    const group = el.closest('.flex');
+    group.querySelectorAll('.yn-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleConsent(el) {
+    el.classList.toggle('checked');
+    consentChecked = document.querySelectorAll('.consent-item.checked').length;
+    checkConsentReady();
+  }
+
+  function signConsent() {
+    isSigned = true;
+    document.getElementById('sigHint').style.display    = 'none';
+    document.getElementById('sigLine').style.display    = 'none';
+    document.getElementById('sigName').style.display    = 'none';
+    document.getElementById('sigDisplay').style.display = 'block';
+    document.getElementById('sigArea').style.background     = 'rgba(61,79,46,0.04)';
+    document.getElementById('sigArea').style.borderColor    = 'rgba(61,79,46,0.3)';
+    document.getElementById('sigArea').style.borderStyle    = 'solid';
+    checkConsentReady();
+  }
+
+  function checkConsentReady() {
+    const btn = document.getElementById('consentBtn');
+    if (consentChecked >= 5 && isSigned) {
+      btn.style.opacity       = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  }
+
+  function completeEnrolment() {
+    document.querySelectorAll('[id^=step]:not([id=stepNav])').forEach(el => el.style.display = 'none');
+    document.getElementById('stepSuccess').style.display = 'block';
+    for (let i = 1; i <= 3; i++) {
+      const nav = document.getElementById('nav' + i);
+      if (nav) { nav.classList.remove('active'); nav.classList.add('done'); nav.querySelector('.step-circle').textContent = '✓'; }
+    }
+    currentStep = 6;
+    window.scrollTo(0, 0);
+  }
+</script>
 </body>
-
 </html>

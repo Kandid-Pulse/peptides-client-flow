@@ -4,354 +4,135 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manor — Create Your Account</title>
-<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
 <style>
-  body { background: var(--cream); display: flex; min-height: 100vh; }
-
-  .reg-left {
-    width: 45%;
-    background: var(--olive-dark);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 80px 60px;
-    position: relative;
-    overflow: hidden;
-  }
-  .reg-left::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.02);
-  }
-
-  .reg-brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    color: var(--cream);
-    text-transform: uppercase;
-    text-decoration: none;
-    display: block;
-    margin-bottom: 60px;
-  }
-
-  .reg-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 44px;
-    font-weight: 300;
-    color: var(--cream);
-    line-height: 1.15;
-    margin-bottom: 20px;
-  }
-  .reg-headline em { font-style: italic; }
-
-  .reg-body {
-    font-size: 13px;
-    color: rgba(245,240,232,0.55);
-    line-height: 1.7;
-    margin-bottom: 48px;
-  }
-
-  .reg-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .reg-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .reg-step-num {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid rgba(245,240,232,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 500;
-    color: rgba(245,240,232,0.4);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .reg-step-num.current {
-    background: var(--terra);
-    border-color: var(--terra);
-    color: var(--cream);
-  }
-
-  .reg-step-label {
-    font-size: 12px;
-    color: rgba(245,240,232,0.4);
-    line-height: 1.5;
-  }
-
-  .reg-step-label strong {
-    display: block;
-    color: rgba(245,240,232,0.9);
-    font-weight: 500;
-    margin-bottom: 2px;
-  }
-
-  .reg-step.active .reg-step-label {
-    color: rgba(245,240,232,0.7);
-  }
-
-  .reg-right {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px;
-  }
-
-  .reg-box {
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .reg-box-eyebrow {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--olive-light);
-    margin-bottom: 8px;
-  }
-
-  .reg-box-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 30px;
-    font-weight: 400;
-    color: var(--text-dark);
-    margin-bottom: 6px;
-  }
-
-  .reg-box-sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 36px;
-  }
-
-  .reg-submit {
-    width: 100%;
-    padding: 13px;
-    background: var(--terra);
-    color: var(--white);
-    font-family: 'Jost', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    cursor: pointer;
-    margin-top: 24px;
-    transition: background 0.2s;
-  }
-  .reg-submit:hover { background: var(--terra-dark); }
-  .reg-submit:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    background: var(--terra);
-  }
-
-  .reg-footer {
-    text-align: center;
-    margin-top: 24px;
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .reg-footer a {
-    color: var(--olive-mid);
-    text-decoration: none;
-  }
-
-  /* Password field wrapper for show/hide toggle */
-  .password-wrapper {
-    position: relative;
-  }
-  .password-wrapper .form-input {
-    padding-right: 44px;
-  }
-  .pw-toggle {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    color: var(--text-muted);
-    font-size: 11px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .pw-toggle:hover { color: var(--olive-mid); }
-
-  /* Inline error */
-  .field-error {
-    font-size: 11px;
-    color: var(--terra);
-    margin-top: 5px;
-    display: none;
-  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* JS-toggled states */
+  .field-error { display: none; }
   .field-error.visible { display: block; }
-
-  /* Terms consent row */
-  .terms-row {
-    display: flex;
-    gap: 12px;
-    padding: 14px 16px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: all 0.2s;
-    align-items: flex-start;
-    margin-top: 4px;
-  }
-  .terms-row.checked {
-    border-color: rgba(61,79,46,0.3);
-    background: rgba(61,79,46,0.03);
-  }
-  .terms-check {
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-    margin-top: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  .terms-row.checked .terms-check {
-    background: var(--olive-mid);
-    border-color: var(--olive-mid);
-  }
-  .terms-check-mark {
-    font-size: 10px;
-    color: var(--cream);
-    display: none;
-  }
-  .terms-row.checked .terms-check-mark { display: block; }
-  .terms-text {
-    font-size: 12px;
-    color: var(--text-dark);
-    line-height: 1.5;
-  }
-  .terms-row.checked .terms-text { color: var(--olive-mid); }
-  .terms-text a {
-    color: var(--olive-mid);
-    text-decoration: underline;
-  }
+  .terms-row.checked { border-color: rgba(61,79,46,0.3) !important; background: rgba(61,79,46,0.03); }
+  .terms-row.checked .terms-check { background: #3d4f2e; border-color: #3d4f2e; }
+  .terms-row.checked .terms-check-mark { display: block !important; }
+  .terms-row.checked .terms-text { color: #3d4f2e; }
 </style>
 </head>
-<body>
+<body class="font-sans bg-cream flex flex-col md:flex-row min-h-screen overflow-x-hidden text-[#1a1f14]">
 
-<div class="reg-left">
-  <a href="index.html" class="reg-brand">Manor</a>
-  <h1 class="reg-headline">Begin your<br><em>wellness journey</em></h1>
-  <p class="reg-body">Provider-prescribed peptide protocols tailored to your biology. Create an account to start your intake — it takes about 5 minutes.</p>
+<!-- Mobile-only top bar -->
+<div class="md:hidden bg-olive-dark px-6 py-5 flex items-center justify-between">
+  <a href="index.html" class="font-serif text-[28px] font-semibold tracking-[0.15em] text-cream uppercase no-underline">Manor</a>
+  <div class="text-[11px] text-cream/55">Step 1 of 4</div>
+</div>
 
-  <div class="reg-steps">
-    <div class="reg-step active">
-      <div class="reg-step-num current">1</div>
-      <div class="reg-step-label">
-        <strong>Create account</strong>
-        Set up your secure patient profile
+<!-- Left panel -->
+<div class="hidden md:flex md:w-[45%] shrink-0 bg-olive-dark flex-col justify-center px-[60px] py-[80px] relative overflow-hidden">
+  <div class="absolute -top-[100px] -right-[100px] w-[400px] h-[400px] rounded-full bg-white/[0.02] pointer-events-none"></div>
+  <a href="index.html" class="font-serif text-[32px] font-semibold tracking-[0.15em] text-cream uppercase no-underline block mb-[60px]">Manor</a>
+  <h1 class="font-serif text-[44px] font-light text-cream leading-[1.15] mb-5">Begin your<br><em>wellness journey</em></h1>
+  <p class="text-[13px] text-cream/55 leading-[1.7] mb-12">Provider-prescribed peptide protocols tailored to your biology. Create an account to start your intake — it takes about 5 minutes.</p>
+
+  <!-- Progress steps -->
+  <div class="flex flex-col gap-4">
+    <!-- Step 1 — active/current -->
+    <div class="flex items-start gap-3.5">
+      <div class="w-6 h-6 rounded-full bg-terra border border-terra flex items-center justify-center text-[10px] font-medium text-cream shrink-0 mt-[1px]">1</div>
+      <div class="text-[12px] leading-[1.5]">
+        <strong class="block text-cream/90 font-medium mb-0.5">Create account</strong>
+        <span class="text-cream/70">Set up your secure patient profile</span>
       </div>
     </div>
-    <div class="reg-step">
-      <div class="reg-step-num">2</div>
-      <div class="reg-step-label">
-        <strong>Health profile</strong>
-        Basic health history & screening
+    <!-- Steps 2–4 — pending -->
+    <div class="flex items-start gap-3.5">
+      <div class="w-6 h-6 rounded-full border border-cream/20 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0 mt-[1px]">2</div>
+      <div class="text-[12px] leading-[1.5]">
+        <strong class="block text-cream/90 font-medium mb-0.5">Health profile</strong>
+        <span class="text-cream/40">Basic health history &amp; screening</span>
       </div>
     </div>
-    <div class="reg-step">
-      <div class="reg-step-num">3</div>
-      <div class="reg-step-label">
-        <strong>Goals & lifestyle</strong>
-        Your wellness objectives
+    <div class="flex items-start gap-3.5">
+      <div class="w-6 h-6 rounded-full border border-cream/20 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0 mt-[1px]">3</div>
+      <div class="text-[12px] leading-[1.5]">
+        <strong class="block text-cream/90 font-medium mb-0.5">Goals &amp; lifestyle</strong>
+        <span class="text-cream/40">Your wellness objectives</span>
       </div>
     </div>
-    <div class="reg-step">
-      <div class="reg-step-num">4</div>
-      <div class="reg-step-label">
-        <strong>Review & consent</strong>
-        Program agreement & signature
+    <div class="flex items-start gap-3.5">
+      <div class="w-6 h-6 rounded-full border border-cream/20 flex items-center justify-center text-[10px] font-medium text-cream/40 shrink-0 mt-[1px]">4</div>
+      <div class="text-[12px] leading-[1.5]">
+        <strong class="block text-cream/90 font-medium mb-0.5">Review &amp; consent</strong>
+        <span class="text-cream/40">Program agreement &amp; signature</span>
       </div>
     </div>
   </div>
 </div>
 
-<div class="reg-right">
-  <div class="reg-box">
-    <div class="reg-box-eyebrow">Step 1 of 4</div>
-    <div class="reg-box-title">Create your account</div>
-    <div class="reg-box-sub">Your information is encrypted and stored securely.</div>
+<!-- Right panel -->
+<div class="flex-1 flex items-start md:items-center justify-center p-6 md:p-[60px]">
+  <div class="w-full max-w-[420px]">
+    <div class="text-[10px] font-medium tracking-[0.15em] uppercase text-olive-light mb-2">Step 1 of 4</div>
+    <div class="font-serif text-[30px] font-normal text-[#1a1f14] mb-1.5">Create your account</div>
+    <div class="text-[13px] text-muted mb-9">Your information is encrypted and stored securely.</div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">First name</label>
-        <input class="form-input" type="text" id="firstName" placeholder="Sarah" autocomplete="given-name">
+    <!-- Name row -->
+    <div class="grid grid-cols-2 gap-4 mb-[18px]">
+      <div>
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">First name</label>
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="text" id="firstName" placeholder="Sarah" autocomplete="given-name">
       </div>
-      <div class="form-group">
-        <label class="form-label">Last name</label>
-        <input class="form-input" type="text" id="lastName" placeholder="Mitchell" autocomplete="family-name">
+      <div>
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Last name</label>
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="text" id="lastName" placeholder="Mitchell" autocomplete="family-name">
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Email address</label>
-      <input class="form-input" type="email" id="email" placeholder="your@email.com" autocomplete="email">
-      <div class="field-error" id="emailError">Please enter a valid email address.</div>
+    <!-- Email -->
+    <div class="mb-[18px]">
+      <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Email address</label>
+      <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="email" id="email" placeholder="your@email.com" autocomplete="email">
+      <div class="field-error text-[11px] text-terra mt-1" id="emailError">Please enter a valid email address.</div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Password</label>
-      <div class="password-wrapper">
-        <input class="form-input" type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password">
-        <button class="pw-toggle" type="button" onclick="togglePw('password', this)">Show</button>
+    <!-- Password -->
+    <div class="mb-[18px]">
+      <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Password</label>
+      <div class="relative">
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-11 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password">
+        <button class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-muted text-[11px] font-medium tracking-[0.05em] uppercase hover:text-olive-mid" type="button" onclick="togglePw('password', this)">Show</button>
       </div>
-      <div class="field-error" id="passwordError">Password must be at least 8 characters.</div>
+      <div class="field-error text-[11px] text-terra mt-1" id="passwordError">Password must be at least 8 characters.</div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Confirm password</label>
-      <div class="password-wrapper">
-        <input class="form-input" type="password" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password">
-        <button class="pw-toggle" type="button" onclick="togglePw('confirmPassword', this)">Show</button>
+    <!-- Confirm password -->
+    <div class="mb-[18px]">
+      <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Confirm password</label>
+      <div class="relative">
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-11 font-sans text-[13px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="password" id="confirmPassword" placeholder="Repeat your password" autocomplete="new-password">
+        <button class="absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-muted text-[11px] font-medium tracking-[0.05em] uppercase hover:text-olive-mid" type="button" onclick="togglePw('confirmPassword', this)">Show</button>
       </div>
-      <div class="field-error" id="confirmError">Passwords do not match.</div>
+      <div class="field-error text-[11px] text-terra mt-1" id="confirmError">Passwords do not match.</div>
     </div>
 
-    <div class="form-group" style="margin-bottom:0;">
-      <label class="form-label">Terms</label>
-      <div class="terms-row" id="termsRow" onclick="toggleTerms()">
-        <div class="terms-check"><span class="terms-check-mark">✓</span></div>
-        <div class="terms-text">I agree to the <a href="#" onclick="return false;">Terms of Service</a> and <a href="#" onclick="return false;">Privacy Policy</a>, and consent to receiving clinical communications from Manor.</div>
+    <!-- Terms -->
+    <div>
+      <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Terms</label>
+      <div class="terms-row flex gap-3 p-3.5 border border-olive-mid/25 cursor-pointer transition-all items-start mt-1" id="termsRow" onclick="toggleTerms()">
+        <div class="terms-check w-[18px] h-[18px] border border-olive-mid/25 shrink-0 mt-[1px] flex items-center justify-center transition-all">
+          <span class="terms-check-mark hidden text-[10px] text-cream">✓</span>
+        </div>
+        <div class="terms-text text-[12px] text-[#1a1f14] leading-[1.5]">
+          I agree to the <a href="#" onclick="return false;" class="text-olive-mid underline">Terms of Service</a> and <a href="#" onclick="return false;" class="text-olive-mid underline">Privacy Policy</a>, and consent to receiving clinical communications from Manor.
+        </div>
       </div>
-      <div class="field-error" id="termsError">You must agree to the terms to continue.</div>
+      <div class="field-error text-[11px] text-terra mt-1" id="termsError">You must agree to the terms to continue.</div>
     </div>
 
-    <button class="reg-submit" id="regSubmit" onclick="handleRegister()">Create account &amp; continue →</button>
+    <button class="w-full py-3.5 bg-terra text-cream-white font-sans text-[12px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer mt-6 hover:bg-terra-dark transition-colors disabled:opacity-45 disabled:cursor-not-allowed" id="regSubmit" onclick="handleRegister()">Create account &amp; continue →</button>
 
-    <div class="reg-footer">
-      Already have an account? <a href="login.html">Sign in →</a>
+    <div class="text-center mt-6 text-[12px] text-muted">
+      Already have an account? <a href="login.html" class="text-olive-mid no-underline">Sign in →</a>
     </div>
   </div>
 </div>
@@ -362,9 +143,7 @@
   function toggleTerms() {
     termsAccepted = !termsAccepted;
     document.getElementById('termsRow').classList.toggle('checked', termsAccepted);
-    if (termsAccepted) {
-      document.getElementById('termsError').classList.remove('visible');
-    }
+    if (termsAccepted) document.getElementById('termsError').classList.remove('visible');
   }
 
   function togglePw(fieldId, btn) {
@@ -376,60 +155,37 @@
 
   function clearErrors() {
     document.querySelectorAll('.field-error').forEach(el => el.classList.remove('visible'));
-    document.querySelectorAll('.form-input').forEach(el => el.style.borderColor = '');
+    document.querySelectorAll('input').forEach(el => el.style.borderColor = '');
   }
 
   function showError(fieldId, errorId) {
     const input = document.getElementById(fieldId);
     const error = document.getElementById(errorId);
-    if (input) input.style.borderColor = 'var(--terra)';
+    if (input) input.style.borderColor = '#8b5a3c';
     if (error) error.classList.add('visible');
   }
 
   function handleRegister() {
     clearErrors();
-
     const firstName = document.getElementById('firstName').value.trim();
     const lastName  = document.getElementById('lastName').value.trim();
     const email     = document.getElementById('email').value.trim();
     const password  = document.getElementById('password').value;
     const confirm   = document.getElementById('confirmPassword').value;
-
     let valid = true;
 
-    if (!firstName || !lastName) {
-      document.getElementById('firstName').style.borderColor = !firstName ? 'var(--terra)' : '';
-      document.getElementById('lastName').style.borderColor  = !lastName  ? 'var(--terra)' : '';
-      valid = false;
-    }
+    if (!firstName) { document.getElementById('firstName').style.borderColor = '#8b5a3c'; valid = false; }
+    if (!lastName)  { document.getElementById('lastName').style.borderColor  = '#8b5a3c'; valid = false; }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      showError('email', 'emailError');
-      valid = false;
-    }
-
-    if (password.length < 8) {
-      showError('password', 'passwordError');
-      valid = false;
-    }
-
-    if (password !== confirm) {
-      showError('confirmPassword', 'confirmError');
-      valid = false;
-    }
-
-    if (!termsAccepted) {
-      document.getElementById('termsError').classList.add('visible');
-      valid = false;
-    }
+    if (!emailPattern.test(email)) { showError('email', 'emailError'); valid = false; }
+    if (password.length < 8)       { showError('password', 'passwordError'); valid = false; }
+    if (password !== confirm)      { showError('confirmPassword', 'confirmError'); valid = false; }
+    if (!termsAccepted)            { document.getElementById('termsError').classList.add('visible'); valid = false; }
 
     if (!valid) return;
-
-    // Proceed to intake
     window.location.href = 'intake.html';
   }
 </script>
-
 </body>
 </html>

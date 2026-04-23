@@ -6,243 +6,162 @@
 <title>Manor — Wellness Program</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
 <style>
-  :root {
-    --olive: #3d4f2e;
-    --olive-dark: #2d3a21;
-    --olive-mid: #4a5c38;
-    --olive-light: #6b7c58;
-    --olive-pale: #8a9878;
-    --cream: #f5f0e8;
-    --cream-dark: #ede7da;
-    --cream-mid: #e8e0d0;
-    --terra: #8b5a3c;
-    --terra-dark: #6d4530;
-    --terra-light: #a67055;
-    --white: #faf9f6;
-    --text-dark: #1a1f14;
-    --text-mid: #3d4f2e;
-    --text-muted: #7a8a6a;
-    --border: rgba(61,79,46,0.15);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Jost', sans-serif; background: var(--white); color: var(--text-dark); overflow-x: hidden; }
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: 0 40px;
-    height: 70px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .nav-brand { display: flex; align-items: center; gap: 10px; }
-  .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; letter-spacing: 0.12em; color: var(--olive-dark); text-transform: uppercase; text-decoration: none; }
-  .nav-links { display: flex; gap: 28px; }
-  .nav-links a { font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-light); text-decoration: none; transition: color 0.2s; }
-  .nav-links a:hover, .nav-links a.active { color: var(--olive-dark); }
-  .nav-right { display: flex; gap: 12px; align-items: center; }
-  .btn-nav { padding: 8px 20px; border-radius: 2px; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all 0.2s; }
-  .btn-outline { border: 1px solid var(--olive-mid); color: var(--olive-mid); background: transparent; }
-  .btn-outline:hover { background: var(--olive-mid); color: var(--white); }
-  .btn-solid { background: var(--terra); color: var(--white); border: 1px solid var(--terra); }
-  .btn-solid:hover { background: var(--terra-dark); }
-
-  /* HERO */
-  .hero {
-    margin-top: 70px;
-    display: grid; grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 70px);
-  }
-  .hero-left {
-    background: var(--olive-dark);
-    padding: 80px 60px;
-    display: flex; flex-direction: column; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  .hero-left::before {
-    content: '';
-    position: absolute; top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.03);
-  }
-  .hero-left::after {
-    content: '';
-    position: absolute; bottom: -40px; left: 20px;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.02);
-  }
-  .hero-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); margin-bottom: 20px; }
-  .hero-h1 { font-family: 'Cormorant Garamond', serif; font-size: 58px; font-weight: 300; line-height: 1.1; color: var(--cream); margin-bottom: 24px; }
-  .hero-h1 em { font-style: italic; color: var(--cream-dark); }
-  .hero-body { font-size: 14px; font-weight: 300; line-height: 1.8; color: rgba(245,240,232,0.7); margin-bottom: 36px; max-width: 400px; }
-  .hero-actions { display: flex; gap: 12px; }
-  .btn-hero-primary { padding: 14px 32px; background: var(--terra); color: var(--white); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; }
-  .btn-hero-primary:hover { background: var(--terra-dark); }
-  .btn-hero-ghost { padding: 14px 32px; border: 1px solid rgba(245,240,232,0.3); color: var(--cream); font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; background: transparent; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; }
-  .btn-hero-ghost:hover { border-color: rgba(245,240,232,0.6); }
-  .hero-trust { margin-top: 48px; padding-top: 32px; border-top: 1px solid rgba(245,240,232,0.12); }
-  .hero-trust-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-pale); margin-bottom: 12px; }
-  .hero-trust-items { display: flex; gap: 24px; }
-  .trust-item { font-size: 12px; color: rgba(245,240,232,0.5); }
-
-  .hero-right {
-    background: var(--cream);
-    padding: 60px 50px;
-    display: flex; flex-direction: column; justify-content: center; gap: 16px;
-  }
-  .hero-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    padding: 20px 22px;
-    transition: transform 0.2s;
-  }
-  .hero-card:hover { transform: translateY(-2px); }
-  .hc-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-light); margin-bottom: 8px; }
-  .hc-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 500; color: var(--text-dark); margin-bottom: 4px; }
-  .hc-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-  .hc-bar { height: 3px; background: var(--cream-dark); margin-top: 12px; overflow: hidden; }
-  .hc-bar-fill { height: 100%; background: var(--olive-mid); width: 27%; }
-  .hc-meta { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; color: var(--text-muted); }
-  .hc-badge { display: inline-block; padding: 3px 10px; background: var(--olive-dark); color: var(--cream); font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
-  .hc-badge.terra { background: rgba(139,90,60,0.1); color: var(--terra); }
-  .hc-badge.alert { background: rgba(139,90,60,0.1); color: var(--terra); }
-
-  /* PROCESS */
-  .process { padding: 100px 80px; background: var(--white); }
-  .section-eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-light); text-align: center; margin-bottom: 16px; }
-  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; color: var(--text-dark); text-align: center; margin-bottom: 12px; }
-  .section-sub { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 64px; }
-  .steps { display: grid; grid-template-columns: repeat(5,1fr); gap: 0; position: relative; }
-  .steps::before { content: ''; position: absolute; top: 28px; left: 10%; right: 10%; height: 1px; background: var(--border); }
-  .step { display: flex; flex-direction: column; align-items: center; padding: 0 16px; position: relative; z-index: 1; }
-  .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--white); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--olive-mid); margin-bottom: 16px; }
-  .step-num.active { background: var(--olive-dark); border-color: var(--olive-dark); color: var(--cream); }
-  .step-label { font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dark); text-align: center; margin-bottom: 6px; }
-  .step-desc { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5; }
-
-  /* FOOTER */
-  footer { background: var(--olive-dark); padding: 40px 80px; display: flex; justify-content: space-between; align-items: center; }
-  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; letter-spacing: 0.15em; color: var(--cream); text-transform: uppercase; }
-  .footer-links { display: flex; gap: 24px; }
-  .footer-links a { font-size: 11px; color: var(--olive-pale); text-decoration: none; letter-spacing: 0.08em; }
-  .footer-legal { font-size: 10px; color: var(--olive-pale); }
-
-  /* ANIMATIONS */
+  /* Fade-up entrance animations with nth-child stagger */
   .fade-up { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s forwards; }
   @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
   .fade-up:nth-child(1) { animation-delay: 0.1s; }
   .fade-up:nth-child(2) { animation-delay: 0.2s; }
   .fade-up:nth-child(3) { animation-delay: 0.3s; }
+  .fade-up:nth-child(4) { animation-delay: 0.4s; }
+  .fade-up:nth-child(5) { animation-delay: 0.5s; }
+
+  /* Process connector line */
+  .steps-grid { position: relative; }
+  .steps-grid::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 10%; right: 10%;
+    height: 1px;
+    background: rgba(61,79,46,0.15);
+  }
 </style>
 </head>
-<body>
+<body class="font-sans bg-cream-white text-[#1a1f14] overflow-x-hidden">
 
-<nav>
-  <div class="nav-brand">
-    <a href="index.html" class="nav-logo">Manor</a>
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-cream-white border-b border-olive-mid/15 px-10 h-[70px] flex items-center justify-between">
+  <div class="flex items-center gap-2.5">
+    <a href="index.html" class="font-serif text-[26px] font-semibold tracking-[0.12em] text-olive-dark uppercase no-underline">Manor</a>
   </div>
-  <div class="nav-links">
-    <a href="index.html" class="active">Home</a>
-    <a href="index.html#how-it-works">Wellness</a>
-    <a href="portal.html">My Program</a>
-    <a href="admin-dashboard.html">Admin</a>
+  <div class="flex gap-7">
+    <a href="index.html"              class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-dark no-underline transition-colors">Home</a>
+    <a href="index.html#how-it-works" class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Wellness</a>
+    <a href="portal.html"             class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">My Program</a>
+    <a href="admin-dashboard.html"    class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Admin</a>
   </div>
-  <div class="nav-right">
-    <a href="login.html" class="btn-nav btn-outline">Sign in</a>
-    <a href="register.html" class="btn-nav btn-solid">Get started</a>
+  <div class="flex gap-3 items-center">
+    <a href="login.html"    class="px-5 py-2 rounded-sm text-[11px] font-medium tracking-[0.1em] uppercase no-underline border border-olive-mid text-olive-mid bg-transparent hover:bg-olive-mid hover:text-cream-white transition-all">Sign in</a>
+    <a href="register.html" class="px-5 py-2 rounded-sm text-[11px] font-medium tracking-[0.1em] uppercase no-underline bg-terra text-cream-white border border-terra hover:bg-terra-dark transition-all">Get started</a>
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow fade-up">Personalised peptide program</div>
-    <h1 class="hero-h1 fade-up">Wellness built<br>around <em>your labs</em>,<br>your goals</h1>
-    <p class="hero-body fade-up">A provider-guided peptide protocol tailored to your blood work. Delivered to your door. Managed from anywhere.</p>
-    <div class="hero-actions fade-up">
-      <a href="register.html" class="btn-hero-primary">Start your program</a>
-      <a href="index.html#how-it-works" class="btn-hero-ghost">How it works</a>
+<!-- HERO -->
+<section class="mt-[70px] grid grid-cols-2 min-h-[calc(100vh-70px)]">
+  <!-- Left: olive-dark -->
+  <div class="bg-olive-dark px-[60px] py-[80px] flex flex-col justify-center relative overflow-hidden">
+    <div class="absolute -top-[60px] -right-[60px] w-[300px] h-[300px] rounded-full bg-white/[0.03] pointer-events-none"></div>
+    <div class="absolute -bottom-[40px] left-5 w-[180px] h-[180px] rounded-full bg-white/[0.02] pointer-events-none"></div>
+
+    <div class="fade-up text-[10px] font-medium tracking-[0.2em] uppercase text-olive-pale mb-5">Personalised peptide program</div>
+    <h1 class="fade-up font-serif text-[58px] font-light leading-[1.1] text-cream mb-6">Wellness built<br>around <em class="italic text-cream-dark">your labs</em>,<br>your goals</h1>
+    <p class="fade-up text-[14px] font-light leading-[1.8] text-cream/70 mb-9 max-w-[400px]">A provider-guided peptide protocol tailored to your blood work. Delivered to your door. Managed from anywhere.</p>
+    <div class="fade-up flex gap-3">
+      <a href="register.html"           class="px-8 py-3.5 bg-terra text-cream-white text-[11px] font-medium tracking-[0.12em] uppercase no-underline inline-block hover:bg-terra-dark transition-all">Start your program</a>
+      <a href="index.html#how-it-works" class="px-8 py-3.5 border border-cream/30 text-cream text-[11px] font-medium tracking-[0.12em] uppercase no-underline inline-block bg-transparent hover:border-cream/60 transition-all">How it works</a>
     </div>
-    <div class="hero-trust fade-up">
-      <div class="hero-trust-label">Program includes</div>
-      <div class="hero-trust-items">
-        <span class="trust-item">LabCorp blood work</span>
-        <span class="trust-item">Licensed provider</span>
-        <span class="trust-item">Auto-ship delivery</span>
-        <span class="trust-item">60-day cancellation</span>
+    <div class="fade-up mt-12 pt-8 border-t border-cream/[0.12]">
+      <div class="text-[10px] tracking-[0.15em] uppercase text-olive-pale mb-3">Program includes</div>
+      <div class="flex gap-6">
+        <span class="text-[12px] text-cream/50">LabCorp blood work</span>
+        <span class="text-[12px] text-cream/50">Licensed provider</span>
+        <span class="text-[12px] text-cream/50">Auto-ship delivery</span>
+        <span class="text-[12px] text-cream/50">60-day cancellation</span>
       </div>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-card fade-up">
-      <div class="hc-eyebrow">Your program · Day 24 of 90</div>
-      <div class="hc-title">Sermorelin protocol</div>
-      <div class="hc-sub">Next auto-ship in 66 days · €350/cycle</div>
-      <div class="hc-bar"><div class="hc-bar-fill"></div></div>
-      <div class="hc-meta"><span>Day 24 of 90</span><span class="hc-badge">Active · Auto-ship on</span></div>
+
+  <!-- Right: cream -->
+  <div class="bg-cream px-[50px] py-[60px] flex flex-col justify-center gap-4">
+    <!-- Program card -->
+    <div class="fade-up bg-cream-white border border-olive-mid/15 p-[22px] hover:-translate-y-0.5 transition-transform">
+      <div class="text-[10px] font-medium tracking-[0.12em] uppercase text-olive-light mb-2">Your program · Day 24 of 90</div>
+      <div class="font-serif text-[18px] font-medium text-[#1a1f14] mb-1">Sermorelin protocol</div>
+      <div class="text-[12px] text-muted leading-[1.5]">Next auto-ship in 66 days · €350/cycle</div>
+      <div class="h-[3px] bg-cream-dark mt-3 overflow-hidden">
+        <div class="h-full bg-olive-mid w-[27%]"></div>
+      </div>
+      <div class="flex justify-between mt-1.5 text-[10px] text-muted">
+        <span>Day 24 of 90</span>
+        <span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active · Auto-ship on</span>
+      </div>
     </div>
-    <div class="hero-card fade-up">
-      <div class="hc-eyebrow">Provider note · Jordyn NP</div>
-      <div class="hc-title">4-week check-in reviewed</div>
-      <div class="hc-sub">All on track. Protocol continues at 300mcg daily. Next review in 4 weeks.</div>
+
+    <!-- Provider note card -->
+    <div class="fade-up bg-cream-white border border-olive-mid/15 p-[22px] hover:-translate-y-0.5 transition-transform">
+      <div class="text-[10px] font-medium tracking-[0.12em] uppercase text-olive-light mb-2">Provider note · Jordyn NP</div>
+      <div class="font-serif text-[18px] font-medium text-[#1a1f14] mb-1">4-week check-in reviewed</div>
+      <div class="text-[12px] text-muted leading-[1.5]">All on track. Protocol continues at 300mcg daily. Next review in 4 weeks.</div>
     </div>
-    <div class="hero-card fade-up" style="background:rgba(61,79,46,0.04); border-color:rgba(61,79,46,0.2);">
-      <div class="hc-eyebrow">Lab status</div>
-      <div class="hc-sub" style="color:var(--olive-mid);">Valid until 24 Mar 2027 · 355 days remaining · LabCorp</div>
+
+    <!-- Lab status card -->
+    <div class="fade-up bg-olive-mid/[0.04] border border-olive-mid/20 p-[22px] hover:-translate-y-0.5 transition-transform">
+      <div class="text-[10px] font-medium tracking-[0.12em] uppercase text-olive-light mb-2">Lab status</div>
+      <div class="text-[12px] text-olive-mid leading-[1.5]">Valid until 24 Mar 2027 · 355 days remaining · LabCorp</div>
     </div>
-    <div style="text-align:center; padding-top:8px;">
-      <a href="portal.html" style="font-size:11px; color:var(--olive-light); text-decoration:none; letter-spacing:0.08em; border-bottom: 1px solid var(--border);">View my program →</a>
+
+    <div class="text-center pt-2">
+      <a href="portal.html" class="text-[11px] text-olive-light no-underline tracking-[0.08em] border-b border-olive-mid/15 pb-px">View my program →</a>
     </div>
   </div>
 </section>
 
-<section class="process" id="how-it-works">
-  <div class="section-eyebrow">The journey</div>
-  <h2 class="section-title">From first visit to ongoing care</h2>
-  <p class="section-sub">Five steps from your health profile to a provider-prescribed protocol delivered to your door</p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num active">1</div>
-      <div class="step-label">Health intake</div>
-      <div class="step-desc">Complete your health profile and wellness goals online</div>
+<!-- PROCESS -->
+<section class="py-[100px] px-[80px] bg-cream-white" id="how-it-works">
+  <div class="text-[10px] font-medium tracking-[0.2em] uppercase text-olive-light text-center mb-4">The journey</div>
+  <h2 class="font-serif text-[40px] font-light text-[#1a1f14] text-center mb-3">From first visit to ongoing care</h2>
+  <p class="text-[14px] text-muted text-center mb-16">Five steps from your health profile to a provider-prescribed protocol delivered to your door</p>
+
+  <div class="steps-grid grid grid-cols-5 gap-0 relative">
+    <!-- Step 1 — active -->
+    <div class="flex flex-col items-center px-4 relative z-[1]">
+      <div class="w-14 h-14 rounded-full bg-olive-dark border border-olive-dark flex items-center justify-center font-serif text-[20px] font-medium text-cream mb-4">1</div>
+      <div class="text-[12px] font-medium tracking-[0.06em] uppercase text-[#1a1f14] text-center mb-1.5">Health intake</div>
+      <div class="text-[11px] text-muted text-center leading-[1.5]">Complete your health profile and wellness goals online</div>
     </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-label">Lab</div>
-      <div class="step-desc">Visit any LabCorp location for your requisition</div>
+    <!-- Step 2 -->
+    <div class="flex flex-col items-center px-4 relative z-[1]">
+      <div class="w-14 h-14 rounded-full bg-cream-white border border-olive-mid/15 flex items-center justify-center font-serif text-[20px] font-medium text-olive-mid mb-4">2</div>
+      <div class="text-[12px] font-medium tracking-[0.06em] uppercase text-[#1a1f14] text-center mb-1.5">Lab</div>
+      <div class="text-[11px] text-muted text-center leading-[1.5]">Visit any LabCorp location for your requisition</div>
     </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-label">Provider consult</div>
-      <div class="step-desc">Virtual review of your labs and protocol design</div>
+    <!-- Step 3 -->
+    <div class="flex flex-col items-center px-4 relative z-[1]">
+      <div class="w-14 h-14 rounded-full bg-cream-white border border-olive-mid/15 flex items-center justify-center font-serif text-[20px] font-medium text-olive-mid mb-4">3</div>
+      <div class="text-[12px] font-medium tracking-[0.06em] uppercase text-[#1a1f14] text-center mb-1.5">Provider consult</div>
+      <div class="text-[11px] text-muted text-center leading-[1.5]">Virtual review of your labs and protocol design</div>
     </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-label">Enrol & pay</div>
-      <div class="step-desc">Sign consent, enrol in auto-ship, receive your peptides</div>
+    <!-- Step 4 -->
+    <div class="flex flex-col items-center px-4 relative z-[1]">
+      <div class="w-14 h-14 rounded-full bg-cream-white border border-olive-mid/15 flex items-center justify-center font-serif text-[20px] font-medium text-olive-mid mb-4">4</div>
+      <div class="text-[12px] font-medium tracking-[0.06em] uppercase text-[#1a1f14] text-center mb-1.5">Enrol &amp; pay</div>
+      <div class="text-[11px] text-muted text-center leading-[1.5]">Sign consent, enrol in auto-ship, receive your peptides</div>
     </div>
-    <div class="step">
-      <div class="step-num">5</div>
-      <div class="step-label">Ongoing care</div>
-      <div class="step-desc">Check-ins, refills and protocol adjustments</div>
+    <!-- Step 5 -->
+    <div class="flex flex-col items-center px-4 relative z-[1]">
+      <div class="w-14 h-14 rounded-full bg-cream-white border border-olive-mid/15 flex items-center justify-center font-serif text-[20px] font-medium text-olive-mid mb-4">5</div>
+      <div class="text-[12px] font-medium tracking-[0.06em] uppercase text-[#1a1f14] text-center mb-1.5">Ongoing care</div>
+      <div class="text-[11px] text-muted text-center leading-[1.5]">Check-ins, refills and protocol adjustments</div>
     </div>
   </div>
 </section>
 
-<footer>
-  <div class="footer-brand">Manor</div>
-  <div class="footer-links">
-    <a href="index.html">Home</a>
-    <a href="register.html">Get started</a>
-    <a href="login.html">Sign in</a>
-    <a href="portal.html">My program</a>
-    <a href="admin-dashboard.html">Admin</a>
+<!-- FOOTER -->
+<footer class="bg-olive-dark py-10 px-[80px] flex justify-between items-center">
+  <div class="font-serif text-[20px] font-semibold tracking-[0.15em] text-cream uppercase">Manor</div>
+  <div class="flex gap-6">
+    <a href="index.html"           class="text-[11px] text-olive-pale no-underline tracking-[0.08em]">Home</a>
+    <a href="register.html"        class="text-[11px] text-olive-pale no-underline tracking-[0.08em]">Get started</a>
+    <a href="login.html"           class="text-[11px] text-olive-pale no-underline tracking-[0.08em]">Sign in</a>
+    <a href="portal.html"          class="text-[11px] text-olive-pale no-underline tracking-[0.08em]">My program</a>
+    <a href="admin-dashboard.html" class="text-[11px] text-olive-pale no-underline tracking-[0.08em]">Admin</a>
   </div>
-  <div class="footer-legal">© 2026 Manor Medspa. All rights reserved.</div>
+  <div class="text-[10px] text-olive-pale">© 2026 Manor Medspa. All rights reserved.</div>
 </footer>
 
 </body>

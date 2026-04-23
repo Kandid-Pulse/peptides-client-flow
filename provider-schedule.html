@@ -4,222 +4,300 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manor — Provider Schedule</title>
-<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared-tw.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="brand-config.js"></script>
 <style>
-  body { background: var(--cream); }
-  .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 70px); margin-top: 70px; }
-  .admin-sidebar { background: var(--olive-dark); padding: 0; display: flex; flex-direction: column; position: sticky; top: 70px; height: calc(100vh - 70px); }
-  .sidebar-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(245,240,232,0.08); font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--cream); letter-spacing: 0.1em; text-transform: uppercase; }
-  .sidebar-role { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--olive-pale); margin-top: 3px; }
-  .sidebar-section { font-size: 9px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--olive-pale); padding: 14px 20px 6px; }
-  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 12px; color: rgba(245,240,232,0.55); text-decoration: none; transition: all 0.2s; cursor: pointer; }
-  .sidebar-item:hover { color: var(--cream); background: rgba(255,255,255,0.05); }
-  .sidebar-item.active { color: var(--cream); background: rgba(255,255,255,0.08); border-left: 2px solid var(--terra); }
-  .sidebar-item.locked { opacity: 0.3; cursor: not-allowed; }
-  .sb-icon { width: 14px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.15); flex-shrink: 0; }
-  .sidebar-item.active .sb-icon { background: var(--terra); }
-  .sidebar-spacer { flex: 1; }
-  .sidebar-user { padding: 14px 20px; border-top: 1px solid rgba(245,240,232,0.08); display: flex; align-items: center; gap: 8px; }
-  .user-av { width: 28px; height: 28px; border-radius: 50%; background: var(--terra-light); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--white); font-weight: 600; }
-  .user-name { font-size: 11px; color: var(--cream); }
-  .user-role-label { font-size: 9px; color: var(--olive-pale); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .main { padding: 32px 36px; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .page-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: var(--text-dark); }
+  /* Sidebar active */
+  .sidebar-item.active { color: #f5f0e8 !important; background: rgba(255,255,255,0.08) !important; border-left: 2px solid #8b5a3c; }
+  .sidebar-item.active .sb-icon { background: #8b5a3c !important; }
 
-  .legend { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
-  .leg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
-  .leg-swatch { width: 14px; height: 10px; }
+  /* Event types */
+  .ev-zenoti  { background: rgba(61,79,46,0.08);  color: #3d4f2e; border-left: 2px solid #3d4f2e; }
+  .ev-consult { background: rgba(61,79,46,0.12);  color: #2d3a21; border-left: 2px solid #2d3a21; }
+  .ev-doxy    { background: rgba(139,90,60,0.10); color: #6d4530; border-left: 2px solid #8b5a3c; }
+  .ev-blocked { background: rgba(180,120,30,0.10);color: #7a5010; border-left: 2px solid #ba7517; }
+  .ev-conflict{ background: rgba(160,50,40,0.10); color: #902820; border-left: 2px solid #c03020; }
+  .ev-checkin { background: rgba(58,96,32,0.08);  color: #3a6020; border-left: 2px solid #639922; }
 
-  .schedule-grid { background: var(--white); border: 1px solid var(--border); overflow: hidden; }
-  .sched-header { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid var(--border); }
-  .sched-th { padding: 10px 8px; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); text-align: center; border-right: 1px solid var(--border); }
-  .sched-th:last-child { border-right: none; }
-  .sched-th.today { background: rgba(61,79,46,0.05); color: var(--olive-mid); }
-  .sched-row { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid var(--border); }
+  /* Schedule grid layout */
+  .sched-header { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid #ddd8cc; }
+  .sched-row    { display: grid; grid-template-columns: 52px repeat(5,1fr); border-bottom: 1px solid #ddd8cc; }
   .sched-row:last-child { border-bottom: none; }
-  .sched-time { padding: 8px 6px; font-size: 9px; color: var(--text-muted); text-align: right; border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: flex-end; padding-top: 10px; }
-  .sched-cell { min-height: 52px; padding: 4px; border-right: 1px solid var(--border); }
-  .sched-cell:last-child { border-right: none; }
-  .event { padding: 5px 7px; font-size: 10px; font-weight: 500; margin-bottom: 2px; cursor: pointer; transition: opacity 0.15s; }
-  .event:hover { opacity: 0.85; }
-  .ev-zenoti { background: rgba(61,79,46,0.08); color: var(--olive-mid); border-left: 2px solid var(--olive-mid); }
-  .ev-consult { background: rgba(61,79,46,0.12); color: var(--olive-dark); border-left: 2px solid var(--olive-dark); }
-  .ev-doxy { background: rgba(139,90,60,0.1); color: var(--terra-dark); border-left: 2px solid var(--terra); }
-  .ev-blocked { background: rgba(180,120,30,0.1); color: #7a5010; border-left: 2px solid #ba7517; }
-  .ev-conflict { background: rgba(160,50,40,0.1); color: #902820; border-left: 2px solid #c03020; }
-  .ev-checkin { background: rgba(58,96,32,0.08); color: #3a6020; border-left: 2px solid #639922; }
-  .ev-free { background: var(--cream); color: var(--text-muted); border-left: 2px solid var(--border-strong); }
 
-  .conflict-bar { background: rgba(160,50,40,0.08); border: 1px solid rgba(160,50,40,0.25); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .conflict-text { font-size: 12px; color: #902820; }
+  /* Form select arrow */
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a8a6a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 </style>
 </head>
-<body>
+<body class="font-sans bg-cream text-[#1a1f14]">
 
-<nav>
-  <div class="nav-brand"><a href="index.html">Manor</a></div>
-  <div class="nav-links">
-    <a href="provider-dashboard.html">Queue</a>
-    <a href="provider-schedule.html" class="active">Schedule</a>
+<!-- NAV -->
+<nav class="fixed top-0 left-0 right-0 z-[100] bg-cream-white border-b border-olive-mid/15 px-10 h-[70px] flex items-center justify-between">
+  <div class="font-serif text-[26px] font-semibold tracking-[0.12em] text-olive-dark uppercase">
+    <a href="index.html" class="no-underline text-olive-dark">Manor</a>
   </div>
-  <div class="nav-right">
-    <div style="font-size:11px;color:var(--text-muted);">Jordyn (NP)</div>
-    <div class="user-av" style="width:32px;height:32px;border-radius:50%;background:var(--terra-light);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:600;">JN</div>
+  <div class="flex gap-7">
+    <a href="provider-dashboard.html" class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-light no-underline hover:text-olive-dark transition-colors">Queue</a>
+    <a href="provider-schedule.html"  class="text-[12px] font-medium tracking-[0.12em] uppercase text-olive-dark no-underline">Schedule</a>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="text-[11px] text-muted">Jordyn (NP)</div>
+    <div class="w-8 h-8 rounded-full bg-terra-light flex items-center justify-center text-[11px] text-cream font-semibold">JN</div>
   </div>
 </nav>
 
-<div class="admin-layout">
-  <div class="admin-sidebar">
-    <div class="sidebar-logo">Manor<div class="sidebar-role">Provider portal</div></div>
-    <div class="sidebar-section">Wellness</div>
-    <div class="sidebar-item" onclick="window.location.href='provider-dashboard.html'"><div class="sb-icon"></div>Patient queue</div>
-    <div class="sidebar-item active"><div class="sb-icon"></div>My schedule</div>
-    <div class="sidebar-item"><div class="sb-icon"></div>Lab results</div>
-    <div class="sidebar-item"><div class="sb-icon"></div>Prescriptions</div>
-    <div class="sidebar-section">Schedule</div>
-    <div class="sidebar-item" onclick="document.getElementById('availModal').style.display='block'"><div class="sb-icon"></div>Availability</div>
-    <div class="sidebar-item" onclick="document.getElementById('blockModal').style.display='block'"><div class="sb-icon"></div>Block time</div>
-    <div class="sidebar-spacer"></div>
-    <div class="sidebar-user">
-      <div class="user-av">JN</div>
-      <div><div class="user-name">Jordyn (NP)</div><div class="user-role-label">Provider</div></div>
+<!-- LAYOUT -->
+<div class="mt-[70px] grid min-h-[calc(100vh-70px)]" style="grid-template-columns:220px 1fr;">
+
+  <!-- SIDEBAR -->
+  <div class="bg-olive-dark flex flex-col sticky top-[70px] h-[calc(100vh-70px)] overflow-y-auto">
+    <div class="px-5 py-6 border-b border-cream/[0.08]">
+      <div class="font-serif text-[18px] font-semibold tracking-[0.1em] text-cream uppercase">Manor</div>
+      <div class="text-[9px] tracking-[0.15em] uppercase text-olive-pale mt-[3px]">Provider portal</div>
+    </div>
+
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-[14px] pb-[6px]">Wellness</div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]" onclick="window.location.href='provider-dashboard.html'">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Patient queue
+    </div>
+    <div class="sidebar-item active flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>My schedule
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Lab results
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Prescriptions
+    </div>
+
+    <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-olive-pale px-5 pt-[14px] pb-[6px]">Schedule</div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]" onclick="document.getElementById('availModal').style.display='block'">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Availability
+    </div>
+    <div class="sidebar-item flex items-center gap-[10px] px-5 py-[9px] text-[12px] text-cream/55 cursor-pointer transition-all hover:text-cream hover:bg-white/[0.05]" onclick="document.getElementById('blockModal').style.display='block'">
+      <div class="sb-icon w-[14px] h-[14px] rounded-sm bg-white/[0.15] shrink-0"></div>Block time
+    </div>
+
+    <div class="flex-1"></div>
+    <div class="px-5 py-[14px] border-t border-cream/[0.08] flex items-center gap-2">
+      <div class="w-7 h-7 rounded-full bg-terra-light flex items-center justify-center text-[10px] text-cream font-semibold shrink-0">JN</div>
+      <div>
+        <div class="text-[11px] text-cream">Jordyn (NP)</div>
+        <div class="text-[9px] text-olive-pale">Provider</div>
+      </div>
     </div>
   </div>
 
-  <div class="main">
-    <div class="topbar">
-      <div><div class="page-title">My schedule</div><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">Week of 24–28 Mar 2026</div></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost btn-sm">← Prev</button>
-        <button class="btn btn-ghost btn-sm">24–28 Mar</button>
-        <button class="btn btn-ghost btn-sm">Next →</button>
-        <button class="btn btn-ghost btn-sm" style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--olive-mid);"></span>Sync Zenoti</button>
-        <button class="btn btn-olive btn-sm" onclick="document.getElementById('blockModal').style.display='block'">+ Block time</button>
+  <!-- MAIN -->
+  <div class="p-[32px_36px]">
+
+    <!-- Topbar -->
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]">My schedule</div>
+        <div class="text-[12px] text-muted mt-[3px]">Week of 24–28 Mar 2026</div>
+      </div>
+      <div class="flex gap-2">
+        <button class="px-3 py-[7px] text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-muted hover:bg-olive-mid/10 transition-colors cursor-pointer">← Prev</button>
+        <button class="px-3 py-[7px] text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-muted hover:bg-olive-mid/10 transition-colors cursor-pointer">24–28 Mar</button>
+        <button class="px-3 py-[7px] text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-muted hover:bg-olive-mid/10 transition-colors cursor-pointer">Next →</button>
+        <button class="px-3 py-[7px] text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-muted hover:bg-olive-mid/10 transition-colors cursor-pointer flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-olive-mid"></span>Sync Zenoti
+        </button>
+        <button class="px-3 py-[7px] text-[11px] font-medium tracking-[0.08em] uppercase bg-olive text-cream-white border border-olive hover:bg-olive-mid transition-colors cursor-pointer" onclick="document.getElementById('blockModal').style.display='block'">+ Block time</button>
       </div>
     </div>
 
-    <div class="conflict-bar">
-      <div class="conflict-text">⚠ Wed 26 Mar 10:30 am — Zenoti booking overlaps a wellness consult. Review required.</div>
-      <button class="btn btn-sm" style="background:rgba(160,50,40,0.1);color:#902820;border:1px solid rgba(160,50,40,0.2);" onclick="resolveConflict()">Resolve</button>
+    <!-- Conflict bar -->
+    <div class="flex items-center justify-between px-4 py-[10px] bg-status-red/[0.08] border border-status-red/25 mb-4">
+      <div class="text-[12px] text-status-red">⚠ Wed 26 Mar 10:30 am — Zenoti booking overlaps a wellness consult. Review required.</div>
+      <button class="px-3 py-1 text-[11px] font-medium tracking-[0.06em] uppercase bg-status-red/10 text-status-red border border-status-red/20 cursor-pointer" onclick="resolveConflict()">Resolve</button>
     </div>
 
-    <div class="legend">
-      <div class="leg"><div class="leg-swatch ev-zenoti"></div>Zenoti booking</div>
-      <div class="leg"><div class="leg-swatch ev-consult"></div>Wellness consult</div>
-      <div class="leg"><div class="leg-swatch ev-doxy"></div>Doxy.me session</div>
-      <div class="leg"><div class="leg-swatch ev-checkin"></div>Check-in review</div>
-      <div class="leg"><div class="leg-swatch ev-blocked"></div>Blocked</div>
-      <div class="leg"><div class="leg-swatch ev-conflict"></div>Conflict</div>
+    <!-- Legend -->
+    <div class="flex gap-4 mb-4 flex-wrap">
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-zenoti"></div>Zenoti booking</div>
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-consult"></div>Wellness consult</div>
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-doxy"></div>Doxy.me session</div>
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-checkin"></div>Check-in review</div>
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-blocked"></div>Blocked</div>
+      <div class="flex items-center gap-[6px] text-[11px] text-muted"><div class="w-[14px] h-[10px] ev-conflict"></div>Conflict</div>
     </div>
 
-    <div class="schedule-grid">
+    <!-- Schedule grid -->
+    <div class="bg-cream-white border border-olive-mid/15 overflow-hidden">
+      <!-- Header -->
       <div class="sched-header">
-        <div class="sched-th"></div>
-        <div class="sched-th">Mon 24</div>
-        <div class="sched-th today">Tue 25</div>
-        <div class="sched-th">Wed 26</div>
-        <div class="sched-th">Thu 27</div>
-        <div class="sched-th">Fri 28</div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-muted border-r border-olive-mid/15"></div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-muted text-center border-r border-olive-mid/15">Mon 24</div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-olive-mid text-center border-r border-olive-mid/15 bg-olive-mid/[0.05]">Tue 25</div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-muted text-center border-r border-olive-mid/15">Wed 26</div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-muted text-center border-r border-olive-mid/15">Thu 27</div>
+        <div class="px-2 py-[10px] text-[10px] font-semibold tracking-[0.08em] uppercase text-muted text-center">Fri 28</div>
       </div>
+
+      <!-- 9:00 row -->
       <div class="sched-row">
-        <div class="sched-time">9:00</div>
-        <div class="sched-cell"><div class="event ev-consult">Wellness consult<div style="font-weight:300;">Sarah M.</div></div></div>
-        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Facial</div></div></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-consult">Wellness consult<div style="font-weight:300;">New patient</div></div></div>
-        <div class="sched-cell"></div>
+        <div class="px-[6px] pt-[10px] pb-2 text-[9px] text-muted text-right border-r border-olive-mid/15">9:00</div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-consult p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Wellness consult<div class="font-light">Sarah M.</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-zenoti p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Spa booking (Z)<div class="font-light">Facial</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-consult p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Wellness consult<div class="font-light">New patient</div></div>
+        </div>
+        <div class="min-h-[52px] p-1"></div>
       </div>
+
+      <!-- 10:00 row -->
       <div class="sched-row">
-        <div class="sched-time">10:00</div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-conflict">⚠ CONFLICT<div style="font-weight:300;">Zenoti + Consult</div></div></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-doxy">Doxy.me<div style="font-weight:300;">J. Dawson</div></div></div>
+        <div class="px-[6px] pt-[10px] pb-2 text-[9px] text-muted text-right border-r border-olive-mid/15">10:00</div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-conflict p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">⚠ CONFLICT<div class="font-light">Zenoti + Consult</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1">
+          <div class="event ev-doxy p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Doxy.me<div class="font-light">J. Dawson</div></div>
+        </div>
       </div>
+
+      <!-- 11:00 row -->
       <div class="sched-row">
-        <div class="sched-time">11:00</div>
-        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Massage</div></div></div>
-        <div class="sched-cell"><div class="event ev-checkin">Check-in review<div style="font-weight:300;">Tom A.</div></div></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-zenoti">Spa booking (Z)<div style="font-weight:300;">Facial</div></div></div>
-        <div class="sched-cell"></div>
+        <div class="px-[6px] pt-[10px] pb-2 text-[9px] text-muted text-right border-r border-olive-mid/15">11:00</div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-zenoti p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Spa booking (Z)<div class="font-light">Massage</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-checkin p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Check-in review<div class="font-light">Tom A.</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-zenoti p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Spa booking (Z)<div class="font-light">Facial</div></div>
+        </div>
+        <div class="min-h-[52px] p-1"></div>
       </div>
+
+      <!-- 14:00 row -->
       <div class="sched-row">
-        <div class="sched-time">14:00</div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-doxy">Doxy.me session<div style="font-weight:300;">Maria T.</div></div></div>
-        <div class="sched-cell"><div class="event ev-blocked">Blocked — personal</div></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell"><div class="event ev-checkin">Check-in review<div style="font-weight:300;">Sarah M.</div></div></div>
+        <div class="px-[6px] pt-[10px] pb-2 text-[9px] text-muted text-right border-r border-olive-mid/15">14:00</div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-doxy p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Doxy.me session<div class="font-light">Maria T.</div></div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15">
+          <div class="event ev-blocked p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Blocked — personal</div>
+        </div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1">
+          <div class="event ev-checkin p-[5px_7px] text-[10px] font-medium mb-[2px] cursor-pointer hover:opacity-85 transition-opacity">Check-in review<div class="font-light">Sarah M.</div></div>
+        </div>
       </div>
+
+      <!-- 15:00 row -->
       <div class="sched-row">
-        <div class="sched-time">15:00</div>
-        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
-        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
-        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
-        <div class="sched-cell"></div>
-        <div class="sched-cell" style="background:rgba(0,0,0,0.01);"></div>
+        <div class="px-[6px] pt-[10px] pb-2 text-[9px] text-muted text-right border-r border-olive-mid/15">15:00</div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15 bg-black/[0.01]"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15 bg-black/[0.01]"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15 bg-black/[0.01]"></div>
+        <div class="min-h-[52px] p-1 border-r border-olive-mid/15"></div>
+        <div class="min-h-[52px] p-1 bg-black/[0.01]"></div>
       </div>
     </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Conflict Modal -->
+<div id="conflictModal" class="fixed inset-0 bg-[#1a1f14]/50 z-[200] items-center justify-center p-10" style="display:none;">
+  <div class="bg-cream-white max-w-[560px] w-full p-8 relative mx-auto mt-[10vh]">
+    <div class="font-serif text-[24px] font-normal text-[#1a1f14] mb-1">Schedule conflict</div>
+    <div class="text-[12px] text-muted mb-5">Wed 26 Mar · 10:30 am — Choose which event takes priority</div>
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="p-[14px] border-2 border-olive-mid bg-olive-mid/[0.04] cursor-pointer" onclick="resolveKeep('zenoti')">
+        <span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-olive-mid/10 text-olive-mid border border-olive-mid/20 mb-2">Zenoti booking</span>
+        <div class="text-[13px] font-medium text-[#1a1f14] mb-[3px]">Classic glow facial</div>
+        <div class="text-[11px] text-muted">Client: Sarah M. · 60 min · Booked 3 days ago</div>
+      </div>
+      <div class="p-[14px] border border-olive-mid/25 cursor-pointer hover:border-olive-mid transition-colors" onclick="resolveKeep('wellness')">
+        <span class="inline-block px-2 py-[3px] text-[9px] font-medium tracking-[0.08em] uppercase bg-terra text-cream mb-2">Wellness consult</span>
+        <div class="text-[13px] font-medium text-[#1a1f14] mb-[3px]">New patient consult</div>
+        <div class="text-[11px] text-muted">Patient: John D. · 45 min · Booked today</div>
+      </div>
+    </div>
+    <div class="bg-terra/[0.05] border border-terra/15 p-3 mb-3">
+      <div class="text-[11px] text-[#1a1f14] leading-[1.5]">Keeping a Zenoti booking will not cancel it in Zenoti. Keeping the wellness consult will notify the patient to reschedule the Zenoti booking.</div>
+    </div>
+    <button class="px-4 py-2 text-[11px] font-medium tracking-[0.08em] uppercase border border-olive-mid/30 bg-transparent text-muted hover:bg-olive-mid/10 transition-colors cursor-pointer" onclick="document.getElementById('conflictModal').style.display='none'">Dismiss — resolve manually</button>
   </div>
 </div>
 
-<!-- Conflict modal -->
-<div id="conflictModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:40px;">
-  <div style="background:var(--white);max-width:560px;width:100%;padding:32px;position:relative;">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--text-dark);margin-bottom:4px;">Schedule conflict</div>
-    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Wed 26 Mar · 10:30 am — Choose which event takes priority</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-      <div style="padding:14px;border:2px solid var(--olive-mid);background:rgba(61,79,46,0.04);cursor:pointer;" onclick="resolveKeep('zenoti')">
-        <div class="badge badge-olive-light" style="margin-bottom:8px;">Zenoti booking</div>
-        <div style="font-size:13px;font-weight:500;color:var(--text-dark);margin-bottom:3px;">Classic glow facial</div>
-        <div style="font-size:11px;color:var(--text-muted);">Client: Sarah M. · 60 min · Booked 3 days ago</div>
-      </div>
-      <div style="padding:14px;border:1px solid var(--border);cursor:pointer;" onclick="resolveKeep('wellness')">
-        <div class="badge badge-terra" style="margin-bottom:8px;">Wellness consult</div>
-        <div style="font-size:13px;font-weight:500;color:var(--text-dark);margin-bottom:3px;">New patient consult</div>
-        <div style="font-size:11px;color:var(--text-muted);">Patient: John D. · 45 min · Booked today</div>
-      </div>
-    </div>
-    <div class="warn-banner"><div class="banner-body" style="font-size:11px;">Keeping a Zenoti booking will not cancel it in Zenoti. Keeping the wellness consult will notify the patient to reschedule the Zenoti booking.</div></div>
-    <button class="btn btn-ghost" onclick="document.getElementById('conflictModal').style.display='none'" style="margin-top:8px;">Dismiss — resolve manually</button>
-  </div>
-</div>
-
-<!-- Availability modal -->
-<div id="availModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;overflow-y:auto;padding:40px;">
-  <div style="background:var(--white);max-width:520px;margin:0 auto;padding:32px;position:relative;">
-    <button onclick="document.getElementById('availModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);">×</button>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">My availability</div>
-    <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">Weekly working hours</div>
+<!-- Availability Modal -->
+<div id="availModal" class="fixed inset-0 bg-[#1a1f14]/50 z-[200] overflow-y-auto p-10" style="display:none;">
+  <div class="bg-cream-white max-w-[520px] mx-auto p-8 relative">
+    <button class="absolute top-[14px] right-[14px] bg-transparent border border-olive-mid/25 w-7 h-7 cursor-pointer text-[14px] text-muted" onclick="document.getElementById('availModal').style.display='none'">×</button>
+    <div class="font-serif text-[24px] font-normal text-[#1a1f14] mb-5">My availability</div>
+    <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Weekly working hours</div>
     <div id="avail-days"></div>
-    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-      <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Consult slot settings</div>
-      <div class="form-row" style="margin-top:10px;">
-        <div class="form-group"><label class="form-label">Duration</label><select class="form-select"><option selected>45 minutes</option><option>30 minutes</option></select></div>
-        <div class="form-group"><label class="form-label">Buffer</label><select class="form-select"><option selected>15 minutes</option><option>10 minutes</option></select></div>
+    <div class="mt-5 pt-4 border-t border-olive-mid/15">
+      <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Consult slot settings</div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Duration</label>
+          <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-8 font-sans text-[12px] text-[#1a1f14] outline-none">
+            <option selected>45 minutes</option>
+            <option>30 minutes</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Buffer</label>
+          <select class="form-select w-full h-[42px] border border-olive-mid/25 bg-cream-white pl-3.5 pr-8 font-sans text-[12px] text-[#1a1f14] outline-none">
+            <option selected>15 minutes</option>
+            <option>10 minutes</option>
+          </select>
+        </div>
       </div>
     </div>
-    <button class="btn btn-terra" style="width:100%;margin-top:16px;text-align:center;" onclick="document.getElementById('availModal').style.display='none'">Save changes</button>
+    <button class="w-full text-center py-3 mt-4 bg-terra text-cream-white text-[12px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="document.getElementById('availModal').style.display='none'">Save changes</button>
   </div>
 </div>
 
-<!-- Block time modal -->
-<div id="blockModal" style="display:none;position:fixed;inset:0;background:rgba(26,31,20,0.5);z-index:200;overflow-y:auto;padding:40px;">
-  <div style="background:var(--white);max-width:460px;margin:0 auto;padding:32px;position:relative;">
-    <button onclick="document.getElementById('blockModal').style.display='none'" style="position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--text-muted);">×</button>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:20px;">Block time</div>
-    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" value="2026-03-31"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Start time</label><input class="form-input" type="time" value="14:00"></div>
-      <div class="form-group"><label class="form-label">End time</label><input class="form-input" type="time" value="17:00"></div>
+<!-- Block Time Modal -->
+<div id="blockModal" class="fixed inset-0 bg-[#1a1f14]/50 z-[200] overflow-y-auto p-10" style="display:none;">
+  <div class="bg-cream-white max-w-[460px] mx-auto p-8 relative">
+    <button class="absolute top-[14px] right-[14px] bg-transparent border border-olive-mid/25 w-7 h-7 cursor-pointer text-[14px] text-muted" onclick="document.getElementById('blockModal').style.display='none'">×</button>
+    <div class="font-serif text-[24px] font-normal text-[#1a1f14] mb-5">Block time</div>
+    <div class="mb-4">
+      <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Date</label>
+      <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="date" value="2026-03-31">
     </div>
-    <div class="form-group"><label class="form-label">Reason (internal)</label><input class="form-input" placeholder="e.g. Personal, CPD, Conference"></div>
-    <div class="warn-banner"><div class="banner-label">Impact check</div><div class="banner-body">2 wellness consults will need rescheduling. Patients will be notified automatically on save.</div></div>
-    <button class="btn btn-terra" style="width:100%;text-align:center;" onclick="saveBlock()">Save block</button>
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div>
+        <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Start time</label>
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="time" value="14:00">
+      </div>
+      <div>
+        <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">End time</label>
+        <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" type="time" value="17:00">
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="block text-[10px] font-medium tracking-[0.1em] uppercase text-muted mb-1.5">Reason (internal)</label>
+      <input class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors" placeholder="e.g. Personal, CPD, Conference">
+    </div>
+    <div class="bg-terra/[0.05] border border-terra/15 p-3 mb-4">
+      <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-terra mb-1">Impact check</div>
+      <div class="text-[11px] text-[#1a1f14] leading-[1.5]">2 wellness consults will need rescheduling. Patients will be notified automatically on save.</div>
+    </div>
+    <button class="w-full text-center py-3 bg-terra text-cream-white text-[12px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors" onclick="saveBlock()">Save block</button>
   </div>
 </div>
 
@@ -233,11 +311,11 @@
   const container = document.getElementById('avail-days');
   days.forEach((d,i) => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);';
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #ddd8cc;font-family:Jost,sans-serif;';
     const def = defaults[i];
-    row.innerHTML = `<span style="font-size:12px;color:var(--text-muted);width:32px;">${d}</span>
+    row.innerHTML = `<span style="font-size:12px;color:#7a8a6a;width:32px;">${d}</span>
       <input type="checkbox" ${def.on?'checked':''} style="cursor:pointer;">
-      ${def.on ? `<input type="time" value="${def.s}" class="form-input" style="flex:1;height:32px;"><span style="color:var(--text-muted);font-size:12px;">to</span><input type="time" value="${def.e}" class="form-input" style="flex:1;height:32px;">` : `<span style="font-size:12px;color:var(--text-muted);font-style:italic;">Not available</span>`}`;
+      ${def.on ? `<input type="time" value="${def.s}" style="flex:1;height:32px;border:1px solid rgba(61,79,46,0.25);background:#faf9f6;padding:0 10px;font-family:Jost,sans-serif;font-size:12px;outline:none;"><span style="color:#7a8a6a;font-size:12px;">to</span><input type="time" value="${def.e}" style="flex:1;height:32px;border:1px solid rgba(61,79,46,0.25);background:#faf9f6;padding:0 10px;font-family:Jost,sans-serif;font-size:12px;outline:none;">` : `<span style="font-size:12px;color:#7a8a6a;font-style:italic;">Not available</span>`}`;
     container.appendChild(row);
   });
 

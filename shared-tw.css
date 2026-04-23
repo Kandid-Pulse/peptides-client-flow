@@ -1,0 +1,62 @@
+/* shared-tw.css — Manor Wellness Portal (Tailwind companion) */
+/* Only styles that cannot be expressed as Tailwind utilities */
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(61,79,46,0.2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(61,79,46,0.4); }
+
+/* Fade-up scroll animation (used on index.html) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-on-scroll { opacity: 0; }
+.animate-on-scroll.visible { animation: fadeUp 0.6s ease forwards; }
+
+/* Custom select arrow — appearance-none + bg SVG */
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='none' stroke='%237a8a6a' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+/* Divider with centre label (::before / ::after pseudo-elements) */
+.divider-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.divider-label::before,
+.divider-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(61,79,46,0.15);
+}
+
+/* Progress track (used on index, portal, intake) */
+.progress-track { height: 4px; background: #ede7da; overflow: hidden; }
+.progress-fill  { height: 100%; background: #4a5c38; }
+
+/* Signature area */
+.signature-area {
+  border: 1px dashed rgba(61,79,46,0.3);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.signature-area:hover { background: rgba(61,79,46,0.03); }
+.signature-area.signed {
+  background: rgba(61,79,46,0.04);
+  border-style: solid;
+  border-color: rgba(61,79,46,0.2);
+}
