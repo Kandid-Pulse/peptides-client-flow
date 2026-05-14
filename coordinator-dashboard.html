@@ -164,13 +164,85 @@
         <table>
           <thead><tr><th>Patient</th><th>Program</th><th>Stage</th><th>Payment</th><th>Actions</th></tr></thead>
           <tbody>
-            <tr><td><strong>John Dawson</strong><div class="text-[11px] text-muted">New patient</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting link</span></td><td class="text-[11px] text-muted">—</td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
-            <tr><td><strong>Maria Torres</strong><div class="text-[11px] text-muted">Active · Day 55</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting dispatch</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Paid</span></td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
-            <tr><td><strong>Sarah Mitchell</strong><div class="text-[11px] text-muted">Active · Day 24</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all" onclick="showView('shipments')">View</button></td></tr>
-            <tr><td><strong>Tom Allen</strong><div class="text-[11px] text-muted">Active · Day 78</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">View</button></td></tr>
-            <tr><td><strong>Emma Walsh</strong><div class="text-[11px] text-muted">Lab expired</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Paused</span></td><td class="text-[11px] text-muted">On hold</td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">Flag</button></td></tr>
+            <tr><td><button class="text-left font-medium text-[13px] text-[#1a1f14] hover:text-terra transition-colors cursor-pointer bg-transparent border-none p-0" onclick="viewPatient('john')">John Dawson</button><div class="text-[11px] text-muted">New patient</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting link</span></td><td class="text-[11px] text-muted">—</td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="openPaymentModal('John Dawson')">Send link</button></td></tr>
+            <tr><td><button class="text-left font-medium text-[13px] text-[#1a1f14] hover:text-terra transition-colors cursor-pointer bg-transparent border-none p-0" onclick="viewPatient('maria')">Maria Torres</button><div class="text-[11px] text-muted">Active · Day 55</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting dispatch</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Paid</span></td><td><button class="text-[10px] px-2 py-1 bg-terra text-cream-white border-none cursor-pointer font-sans hover:bg-terra-dark transition-colors" onclick="confirmDispatch('Maria Torres')">Dispatch</button></td></tr>
+            <tr><td><button class="text-left font-medium text-[13px] text-[#1a1f14] hover:text-terra transition-colors cursor-pointer bg-transparent border-none p-0" onclick="viewPatient('sarah')">Sarah Mitchell</button><div class="text-[11px] text-muted">Active · Day 24</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all" onclick="showView('shipments')">View</button></td></tr>
+            <tr><td><button class="text-left font-medium text-[13px] text-[#1a1f14] hover:text-terra transition-colors cursor-pointer bg-transparent border-none p-0" onclick="viewPatient('tom')">Tom Allen</button><div class="text-[11px] text-muted">Active · Day 78</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span></td><td><span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Auto-pay on</span></td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">View</button></td></tr>
+            <tr><td><button class="text-left font-medium text-[13px] text-[#1a1f14] hover:text-terra transition-colors cursor-pointer bg-transparent border-none p-0" onclick="viewPatient('emma')">Emma Walsh</button><div class="text-[11px] text-muted">Lab expired</div></td><td class="text-[11px] text-muted">90-day · €350</td><td><span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Paused</span></td><td class="text-[11px] text-muted">On hold</td><td><button class="text-[10px] px-2 py-1 border border-olive-mid/25 text-muted bg-transparent cursor-pointer font-sans hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">Flag</button></td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- PATIENT VIEW -->
+    <div id="view-patient" style="display:none;">
+      <div class="flex items-center gap-3 mb-6">
+        <button onclick="showView('queue')" class="flex items-center gap-1.5 text-[11px] font-medium tracking-[0.06em] uppercase text-muted hover:text-olive-dark transition-colors cursor-pointer bg-transparent border-none font-sans">← Queue</button>
+        <span class="text-muted text-[12px]">/</span>
+        <div class="font-serif text-[28px] font-normal text-[#1a1f14]" id="pt-name">—</div>
+        <span id="pt-status-badge"></span>
+      </div>
+      <div class="grid gap-5 items-start" style="grid-template-columns: 260px 1fr 300px;">
+        <!-- Left: patient details -->
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="flex items-center gap-3 mb-5 pb-5 border-b border-olive-mid/15">
+            <div class="w-12 h-12 rounded-full bg-cream flex items-center justify-center text-[15px] font-semibold text-olive-mid shrink-0" id="pt-avatar">—</div>
+            <div>
+              <div class="text-[14px] font-medium" id="pt-name-sm">—</div>
+              <div class="text-[11px] text-muted mt-0.5" id="pt-program">—</div>
+            </div>
+          </div>
+          <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Patient details</div>
+          <div class="flex flex-col gap-2.5 mb-5">
+            <div class="flex justify-between text-[12px]"><span class="text-muted">Date of birth</span><span class="font-medium" id="pt-dob">—</span></div>
+            <div class="flex justify-between text-[12px]"><span class="text-muted">Biological sex</span><span class="font-medium" id="pt-sex">—</span></div>
+            <div class="flex justify-between text-[12px]"><span class="text-muted">Height</span><span class="font-medium" id="pt-height">—</span></div>
+            <div class="flex justify-between text-[12px]"><span class="text-muted">Current weight</span><span class="font-medium" id="pt-weight">—</span></div>
+            <div class="flex justify-between text-[12px]"><span class="text-muted">Goal weight</span><span class="font-medium" id="pt-goal-weight">—</span></div>
+            <div class="flex justify-between text-[12px]"><span class="text-muted">BMI</span><span class="font-medium" id="pt-bmi">—</span></div>
+          </div>
+          <div class="border-t border-olive-mid/15 pt-4 mb-5">
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-2.5">Medical notes</div>
+            <div class="text-[11px] text-muted mb-1.5">Conditions<br><span class="text-[#1a1f14]" id="pt-conditions">—</span></div>
+            <div class="text-[11px] text-muted">Medications<br><span class="text-[#1a1f14]" id="pt-meds">—</span></div>
+          </div>
+          <div class="border-t border-olive-mid/15 pt-4">
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-2">Wellness goal</div>
+            <div class="text-[12px] text-[#1a1f14]" id="pt-goal">—</div>
+          </div>
+        </div>
+        <!-- Centre: timeline -->
+        <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+          <div class="text-[11px] font-semibold tracking-[0.1em] uppercase text-muted mb-5">Patient timeline</div>
+          <div id="pt-timeline" class="relative"></div>
+        </div>
+        <!-- Right: actions -->
+        <div class="flex flex-col gap-4">
+          <!-- Context actions -->
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Actions</div>
+            <div id="pt-actions" class="flex flex-col gap-2"></div>
+          </div>
+          <!-- Stage update -->
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Update stage</div>
+            <select id="pt-stage-select" class="w-full h-[38px] border border-olive-mid/25 bg-cream-white px-3 font-sans text-[12px] text-[#1a1f14] outline-none cursor-pointer mb-2.5">
+              <option value="awaiting_link">Awaiting payment link</option>
+              <option value="awaiting_dispatch">Awaiting dispatch</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="completed">Completed</option>
+            </select>
+            <div class="mb-2.5"><textarea id="pt-stage-note" class="w-full border border-olive-mid/25 bg-cream-white px-3 py-2 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-none h-[60px]" placeholder="Add a note (optional)…"></textarea></div>
+            <button onclick="saveStageUpdate()" class="w-full py-2 bg-olive-dark text-cream font-sans text-[10px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-olive-mid transition-colors">Save stage</button>
+          </div>
+          <!-- Add note -->
+          <div class="bg-cream-white border border-olive-mid/15 px-[22px] py-5">
+            <div class="text-[10px] font-semibold tracking-[0.1em] uppercase text-muted mb-3">Add note to timeline</div>
+            <textarea id="pt-add-note" class="w-full border border-olive-mid/25 bg-cream-white px-3 py-2 font-sans text-[12px] text-[#1a1f14] outline-none focus:border-olive-mid transition-colors resize-none h-[72px] mb-2.5" placeholder="e.g. Spoke with patient — reported mild nausea, monitoring…"></textarea>
+            <button onclick="addTimelineNote()" class="w-full py-2 border border-olive-mid/25 text-muted bg-transparent font-sans text-[10px] font-medium tracking-[0.12em] uppercase cursor-pointer hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all">Add note</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -443,9 +515,67 @@
 
 <script>
   const patientData = {
-    sarah: { name:'Sarah Mitchell',dob:'14 Mar 1986',height:'165 cm',sex:'Female',weight:68,goalWeight:60,conditions:'None reported',meds:'Vitamin D 2000 IU daily',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Lightly active (1–3 days/week)',diet:'Currently working on meal planning. ~150g protein per day.',narrative:'Wants to lose weight and improve energy levels.' },
-    john:  { name:'John Dawson',dob:'3 Jul 1979',height:'180 cm',sex:'Male',weight:102,goalWeight:85,conditions:'Hypertension (managed)',meds:'Amlodipine 5mg',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Sedentary (desk job, little exercise)',diet:'Eats out frequently. High sodium intake.',narrative:'Wants to lose weight and come off blood pressure medication.' },
-    maria: { name:'Maria Torres',dob:'19 Nov 1990',height:'158 cm',sex:'Female',weight:74,goalWeight:62,conditions:'PCOS',meds:'Metformin 500mg, Inositol supplement',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Hormone balance',goalType:'testosterone',testApnea:'No',testCancer:'No',testEd:'No',testCardio:'No',testConceive:'No',activity:'Moderately active (3–5 days/week)',diet:'Low carb, intermittent fasting.',narrative:'Wants to improve hormone balance and lose weight with PCOS.' }
+    sarah: { name:'Sarah Mitchell',dob:'14 Mar 1986',height:'165 cm',sex:'Female',weight:68,goalWeight:60,conditions:'None reported',meds:'Vitamin D 2000 IU daily',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Lightly active (1–3 days/week)',diet:'Currently working on meal planning. ~150g protein per day.',narrative:'Wants to lose weight and improve energy levels.',program:'90-day · €350',status:'Active · Day 24',statusType:'active',timeline:[
+      {date:'20 Jan 2026',type:'intake',label:'Intake form submitted',detail:'Patient completed online intake form'},
+      {date:'25 Jan 2026',type:'call',label:'Pre-screening call completed',detail:'Conducted by Celeste — BMI qualified, labs ordered'},
+      {date:'26 Jan 2026',type:'lab',label:'Lab order placed',detail:'Draw site: Manor clinic'},
+      {date:'30 Jan 2026',type:'lab',label:'Lab results received',detail:'Results reviewed by Jordyn (NP)'},
+      {date:'3 Feb 2026',type:'consultation',label:'Virtual consultation completed',detail:'Jordyn (NP) reviewed labs and intake data'},
+      {date:'4 Feb 2026',type:'rx',label:'Rx approved — Cycle 1',detail:'Jordyn (NP) approved 90-day wellness program'},
+      {date:'4 Feb 2026',type:'payment',label:'Payment link sent',detail:'Link sent via email by Celeste · €350'},
+      {date:'5 Feb 2026',type:'payment',label:'Payment received',detail:'€350 received · Auto-ship enrolled at 90-day intervals'},
+      {date:'7 Feb 2026',type:'shipment',label:'Cycle 1 dispatched',detail:'Tracking: TRK-20260128 · Compound pharmacy notified'},
+      {date:'11 Feb 2026',type:'delivery',label:'Cycle 1 delivered',detail:'Confirmed delivered to patient address'},
+      {date:'13 Mar 2026',type:'note',label:'Program start — Day 1',detail:'Patient confirmed start of treatment program'},
+      {date:'6 Apr 2026',type:'note',label:'Currently active — Day 24',detail:'No adverse effects reported · Auto-ship due 28 Mar'},
+    ]},
+    john:  { name:'John Dawson',dob:'3 Jul 1979',height:'180 cm',sex:'Male',weight:102,goalWeight:85,conditions:'Hypertension (managed)',meds:'Amlodipine 5mg',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Weight loss',goalType:'glp1',glp1Ibd:'No',glp1Thyroid:'No',glp1Gallstones:'No',glp1Diabetes:'No',activity:'Sedentary (desk job, little exercise)',diet:'Eats out frequently. High sodium intake.',narrative:'Wants to lose weight and come off blood pressure medication.',program:'90-day · €350',status:'New patient',statusType:'awaiting_link',timeline:[
+      {date:'14 Mar 2026',type:'intake',label:'Intake form submitted',detail:'Patient completed online intake form'},
+      {date:'18 Mar 2026',type:'call',label:'Pre-screening call completed',detail:'Conducted by Celeste — BMI qualified, labs ordered'},
+      {date:'19 Mar 2026',type:'lab',label:'Lab order placed',detail:'Draw site: Manor clinic'},
+      {date:'24 Mar 2026',type:'lab',label:'Lab results received',detail:'Results reviewed by Jordyn (NP)'},
+      {date:'28 Mar 2026',type:'consultation',label:'Virtual consultation completed',detail:'Jordyn (NP) reviewed labs and intake data'},
+      {date:'6 Apr 2026',type:'rx',label:'Rx approved',detail:'Jordyn (NP) approved 90-day wellness program · Awaiting payment link'},
+    ]},
+    maria: { name:'Maria Torres',dob:'19 Nov 1990',height:'158 cm',sex:'Female',weight:74,goalWeight:62,conditions:'PCOS',meds:'Metformin 500mg, Inositol supplement',gfeSeizures:'No',gfeHernia:'No',gfeAutoimmune:'No',gfePregnant:'No',gfeVaccines:'No',goal:'Hormone balance',goalType:'testosterone',testApnea:'No',testCancer:'No',testEd:'No',testCardio:'No',testConceive:'No',activity:'Moderately active (3–5 days/week)',diet:'Low carb, intermittent fasting.',narrative:'Wants to improve hormone balance and lose weight with PCOS.',program:'90-day · €350',status:'Active · Day 55',statusType:'awaiting_dispatch',timeline:[
+      {date:'8 Jan 2026',type:'intake',label:'Intake form submitted',detail:'Patient completed online intake form'},
+      {date:'12 Jan 2026',type:'call',label:'Pre-screening call completed',detail:'Conducted by Celeste — BMI qualified, labs ordered'},
+      {date:'13 Jan 2026',type:'lab',label:'Lab order placed',detail:'Draw site: Manor clinic'},
+      {date:'17 Jan 2026',type:'lab',label:'Lab results received',detail:'Results reviewed by Jordyn (NP)'},
+      {date:'20 Jan 2026',type:'consultation',label:'Virtual consultation completed',detail:'Jordyn (NP) reviewed labs and intake data'},
+      {date:'22 Jan 2026',type:'rx',label:'Rx approved — Cycle 1',detail:'Jordyn (NP) approved 90-day wellness program'},
+      {date:'22 Jan 2026',type:'payment',label:'Payment link sent',detail:'Link sent via email by Celeste · €350'},
+      {date:'23 Jan 2026',type:'payment',label:'Payment received',detail:'€350 received · Auto-ship enrolled at 90-day intervals'},
+      {date:'25 Jan 2026',type:'shipment',label:'Cycle 1 dispatched',detail:'Tracking: TRK-20260125 · Compound pharmacy notified'},
+      {date:'28 Jan 2026',type:'delivery',label:'Cycle 1 delivered',detail:'Confirmed delivered to patient address'},
+      {date:'10 Feb 2026',type:'note',label:'Program start — Day 1',detail:'Patient confirmed start of treatment program'},
+      {date:'10 Mar 2026',type:'note',label:'Day 30 check-in',detail:'Jordyn (NP) noted good tolerance, no adverse effects reported'},
+      {date:'6 Apr 2026',type:'rx',label:'Rx approved — Cycle 2',detail:'Jordyn (NP) approved renewal · Payment received · Awaiting dispatch'},
+    ]},
+    tom: { name:'Tom Allen',dob:'7 May 1981',height:'178 cm',sex:'Male',weight:95,goalWeight:80,conditions:'None reported',meds:'None',goal:'Weight loss',activity:'Moderately active (3–5 days/week)',diet:'Balanced diet, some processed foods.',narrative:'Wants to lose weight and improve overall fitness.',program:'90-day · €350',status:'Active · Day 78',statusType:'active',timeline:[
+      {date:'5 Nov 2025',type:'intake',label:'Intake form submitted',detail:'Patient completed online intake form'},
+      {date:'10 Nov 2025',type:'call',label:'Pre-screening call completed',detail:'Conducted by Celeste — BMI qualified, labs ordered'},
+      {date:'11 Nov 2025',type:'lab',label:'Lab order placed',detail:'Draw site: LabCorp'},
+      {date:'15 Nov 2025',type:'lab',label:'Lab results received',detail:'Results reviewed by Jordyn (NP)'},
+      {date:'20 Nov 2025',type:'consultation',label:'Virtual consultation completed',detail:'Jordyn (NP) reviewed labs and intake data'},
+      {date:'22 Nov 2025',type:'rx',label:'Rx approved — Cycle 1',detail:'Jordyn (NP) approved 90-day wellness program'},
+      {date:'22 Nov 2025',type:'payment',label:'Payment link sent',detail:'Link sent via email by Celeste · €350'},
+      {date:'23 Nov 2025',type:'payment',label:'Payment received',detail:'€350 received · Auto-ship enrolled at 90-day intervals'},
+      {date:'18 Jan 2026',type:'note',label:'Program start — Day 1',detail:'Patient confirmed start of treatment program'},
+      {date:'25 Jan 2026',type:'shipment',label:'Cycle 1 dispatched',detail:'Tracking: TRK-20260125 · Compound pharmacy notified'},
+      {date:'29 Jan 2026',type:'flag',label:'Shipment flagged',detail:'Carrier delay reported — TRK-20260125 under review with pharmacy'},
+      {date:'6 Apr 2026',type:'note',label:'Currently active — Day 78',detail:'Shipment flag pending resolution · Auto-ship due 2 Apr'},
+    ]},
+    emma: { name:'Emma Walsh',dob:'22 Aug 1988',height:'162 cm',sex:'Female',weight:72,goalWeight:62,conditions:'None reported',meds:'None',goal:'Weight loss',activity:'Lightly active (1–3 days/week)',diet:'Mostly healthy, occasional indulgences.',narrative:'Wants to lose weight but has been hesitant to commit to the program.',program:'90-day · €350',status:'Lab expired · Paused',statusType:'paused',timeline:[
+      {date:'10 Dec 2025',type:'intake',label:'Intake form submitted',detail:'Patient completed online intake form'},
+      {date:'15 Dec 2025',type:'call',label:'Pre-screening call completed',detail:'Conducted by Celeste — BMI qualified, labs ordered'},
+      {date:'16 Dec 2025',type:'lab',label:'Lab order placed',detail:'Draw site: Manor clinic'},
+      {date:'20 Dec 2025',type:'lab',label:'Lab results received',detail:'Results reviewed by Jordyn (NP)'},
+      {date:'5 Jan 2026',type:'consultation',label:'Virtual consultation completed',detail:'Jordyn (NP) reviewed labs and intake data — patient requested time to consider'},
+      {date:'20 Feb 2026',type:'flag',label:'Lab results expired',detail:'Lab results older than 90 days — new labs required to proceed'},
+      {date:'25 Mar 2026',type:'note',label:'Cancellation notice received',detail:'Patient gave 60-day notice via email · Final date: 24 May 2026'},
+      {date:'6 Apr 2026',type:'flag',label:'Program paused',detail:'Awaiting new labs or final cancellation confirmation'},
+    ]},
   };
   function calcBMI(w,h){const hm=h/100;return(w/(hm*hm)).toFixed(1);}
   function bmiCategory(b){if(b<18.5)return'Underweight';if(b<25)return'Normal';if(b<30)return'Overweight';return'Obese';}
@@ -473,9 +603,115 @@
   function toggleCheck(el){el.classList.toggle('checked');}
   function savePrescreen(){const b=document.getElementById('ps-badge');if(b)b.style.display='none';alert('Pre-screening record saved.');}
   function showView(name) {
-    ['dashboard','queue','payments','shipments','autoship','prescreening'].forEach(v=>document.getElementById('view-'+v).style.display='none');
+    ['dashboard','queue','patient','payments','shipments','autoship','prescreening'].forEach(v=>document.getElementById('view-'+v).style.display='none');
     document.getElementById('view-'+name).style.display='block';
     document.querySelectorAll('.sidebar-item').forEach(item=>item.classList.remove('active'));
+  }
+  let currentPatientKey = null;
+  function viewPatient(key) {
+    currentPatientKey = key;
+    const p = patientData[key];
+    if (!p) return;
+    const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const badges = {
+      awaiting_link:     '<span class="inline-block px-2.5 py-[3px] bg-terra/10 text-terra text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting link</span>',
+      awaiting_dispatch: '<span class="inline-block px-2.5 py-[3px] bg-status-amber/10 text-status-amber text-[9px] font-medium tracking-[0.1em] uppercase">Awaiting dispatch</span>',
+      active:            '<span class="inline-block px-2.5 py-[3px] bg-olive-dark text-cream text-[9px] font-medium tracking-[0.1em] uppercase">Active</span>',
+      paused:            '<span class="inline-block px-2.5 py-[3px] bg-status-red/10 text-status-red text-[9px] font-medium tracking-[0.1em] uppercase">Paused</span>',
+      completed:         '<span class="inline-block px-2.5 py-[3px] bg-status-green/10 text-status-green text-[9px] font-medium tracking-[0.1em] uppercase">Completed</span>',
+    };
+    document.getElementById('pt-name').textContent = p.name;
+    document.getElementById('pt-name-sm').textContent = p.name;
+    document.getElementById('pt-status-badge').innerHTML = badges[p.statusType] || '';
+    document.getElementById('pt-avatar').textContent = initials;
+    document.getElementById('pt-program').textContent = p.program + ' · ' + p.status;
+    document.getElementById('pt-dob').textContent = p.dob;
+    document.getElementById('pt-sex').textContent = p.sex || '—';
+    document.getElementById('pt-height').textContent = p.height || '—';
+    document.getElementById('pt-weight').textContent = p.weight + ' kg';
+    document.getElementById('pt-goal-weight').textContent = p.goalWeight + ' kg';
+    // pre-select current stage in dropdown
+    document.getElementById('pt-stage-select').value = p.statusType || 'active';
+    document.getElementById('pt-stage-note').value = '';
+    document.getElementById('pt-add-note').value = '';
+    // render context-sensitive action buttons
+    const actionDefs = {
+      awaiting_link:     [{label:'Send payment link',style:'primary',fn:`openPaymentModal('${p.name}')`},{label:'View pre-screening',style:'secondary',fn:"showView('prescreening')"}],
+      awaiting_dispatch: [{label:'Confirm dispatch',style:'primary',fn:`confirmDispatch('${p.name}')`},{label:'Send payment link',style:'secondary',fn:`openPaymentModal('${p.name}')`}],
+      active:            [{label:'Send payment link',style:'secondary',fn:`openPaymentModal('${p.name}')`},{label:'View shipments',style:'secondary',fn:"showView('shipments')"}],
+      paused:            [{label:'Send payment link',style:'secondary',fn:`openPaymentModal('${p.name}')`},{label:'Record cancellation notice',style:'danger',fn:"showView('autoship')"}],
+      completed:         [{label:'Send payment link',style:'secondary',fn:`openPaymentModal('${p.name}')`}],
+    };
+    const actions = actionDefs[p.statusType] || [];
+    const actionsEl = document.getElementById('pt-actions');
+    actionsEl.innerHTML = actions.length ? '' : '<div class="text-[11px] text-muted">No actions available.</div>';
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.setAttribute('onclick', a.fn);
+      btn.className = a.style === 'primary'
+        ? 'w-full py-2 bg-terra text-cream-white font-sans text-[10px] font-medium tracking-[0.1em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors'
+        : a.style === 'danger'
+        ? 'w-full py-2 border border-status-red/30 text-status-red bg-transparent font-sans text-[10px] font-medium tracking-[0.1em] uppercase cursor-pointer hover:bg-status-red hover:text-cream-white transition-all'
+        : 'w-full py-2 border border-olive-mid/25 text-muted bg-transparent font-sans text-[10px] font-medium tracking-[0.1em] uppercase cursor-pointer hover:bg-olive-dark hover:text-cream hover:border-olive-dark transition-all';
+      btn.textContent = a.label;
+      actionsEl.appendChild(btn);
+    });
+    const bmi = calcBMI(p.weight, parseInt(p.height));
+    document.getElementById('pt-bmi').textContent = bmi + ' — ' + bmiCategory(parseFloat(bmi));
+    document.getElementById('pt-conditions').textContent = p.conditions || '—';
+    document.getElementById('pt-meds').textContent = p.meds || '—';
+    document.getElementById('pt-goal').textContent = p.goal || '—';
+    const dots = {
+      intake:'bg-olive-mid/20 border-olive-mid/50', call:'bg-olive-mid/20 border-olive-mid/50',
+      lab:'bg-[#6b8cae]/20 border-[#6b8cae]/50', consultation:'bg-status-green/20 border-status-green/50',
+      rx:'bg-status-green/20 border-status-green/50', payment:'bg-terra/20 border-terra/50',
+      shipment:'bg-status-amber/20 border-status-amber/50', delivery:'bg-status-green/20 border-status-green/50',
+      note:'bg-[#7a8a6a]/20 border-[#7a8a6a]/30', flag:'bg-status-red/20 border-status-red/50',
+    };
+    const el = document.getElementById('pt-timeline');
+    el.innerHTML = '';
+    (p.timeline || []).forEach((ev, idx) => {
+      const isLast = idx === p.timeline.length - 1;
+      const dot = dots[ev.type] || dots.note;
+      const item = document.createElement('div');
+      item.className = 'flex gap-4 relative ' + (isLast ? '' : 'pb-5');
+      item.innerHTML =
+        (!isLast ? '<div class="absolute left-[7px] top-[18px] bottom-0 w-[1px] bg-olive-mid/15"></div>' : '') +
+        '<div class="w-[15px] h-[15px] rounded-full ' + dot + ' border-2 shrink-0 mt-[3px] relative z-10"></div>' +
+        '<div class="flex-1"><div class="flex justify-between items-start gap-2">' +
+        '<div class="text-[12px] font-medium text-[#1a1f14]">' + ev.label + '</div>' +
+        '<div class="text-[10px] text-muted shrink-0 pt-[1px]">' + ev.date + '</div></div>' +
+        '<div class="text-[11px] text-muted mt-[3px] leading-[1.5]">' + ev.detail + '</div></div>';
+      el.appendChild(item);
+    });
+    ['dashboard','queue','payments','shipments','autoship','prescreening'].forEach(v => document.getElementById('view-'+v).style.display='none');
+    document.getElementById('view-patient').style.display = 'block';
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  }
+  function saveStageUpdate() {
+    const key = currentPatientKey;
+    if (!key || !patientData[key]) return;
+    const p = patientData[key];
+    const newStage = document.getElementById('pt-stage-select').value;
+    const note = document.getElementById('pt-stage-note').value.trim();
+    const stageLabels = {awaiting_link:'Awaiting payment link',awaiting_dispatch:'Awaiting dispatch',active:'Active',paused:'Paused',completed:'Completed'};
+    const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    p.statusType = newStage;
+    p.status = stageLabels[newStage] || newStage;
+    p.timeline.push({date:today,type:'note',label:'Stage updated to: ' + stageLabels[newStage],detail: note || 'Updated by Celeste (Coordinator)'});
+    document.getElementById('pt-stage-note').value = '';
+    viewPatient(key);
+    alert('Stage updated to: ' + stageLabels[newStage]);
+  }
+  function addTimelineNote() {
+    const key = currentPatientKey;
+    if (!key || !patientData[key]) return;
+    const noteText = document.getElementById('pt-add-note').value.trim();
+    if (!noteText) return;
+    const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    patientData[key].timeline.push({date:today,type:'note',label:'Coordinator note',detail:noteText});
+    document.getElementById('pt-add-note').value = '';
+    viewPatient(key);
   }
   function openPaymentModal(patient){document.getElementById('payModalPatient').textContent='Patient: '+patient;document.getElementById('paymentModal').style.display='flex';}
   function sendPaymentLink(){document.getElementById('paymentModal').style.display='none';alert('Payment link sent. You will be notified when the patient completes payment.');}
