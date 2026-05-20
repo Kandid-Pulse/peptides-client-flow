@@ -412,12 +412,15 @@
       </div>
 
       <div class="text-[12px] text-muted mb-2">Draw your signature below</div>
-      <div class="sig-area mb-2.5 h-[120px] flex flex-col items-center justify-center gap-2 bg-cream border border-dashed border-olive-mid/30 cursor-crosshair" id="sigArea" onclick="signConsent()">
-        <div class="text-[12px] text-muted" id="sigHint">Click or touch to sign</div>
-        <div class="w-40 h-px bg-olive-mid/30" id="sigLine"></div>
-        <div class="text-[11px] text-muted" id="sigName">Your full legal name</div>
-        <div class="font-serif italic text-[22px] text-olive-dark hidden" id="sigDisplay">Sarah Mitchell</div>
+      <div class="sig-area mb-2.5 h-[120px] bg-cream border border-dashed border-olive-mid/30 cursor-crosshair relative" id="sigArea">
+        <canvas id="signatureCanvas" style="width:100%;height:100%;touch-action:none;display:block;"></canvas>
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none" id="sigHintWrap">
+          <div class="text-[12px] text-muted" id="sigHint">Click or touch to sign</div>
+          <div class="w-40 h-px bg-olive-mid/30" id="sigLine"></div>
+          <div class="text-[11px] text-muted" id="sigName">Your full legal name</div>
+        </div>
       </div>
+      <button type="button" class="px-3.5 py-1.5 border border-olive-mid/25 text-muted font-sans text-[10px] font-medium tracking-[0.08em] uppercase cursor-pointer bg-transparent hover:border-olive-mid/50 hover:text-[#1a1f14] transition-all mb-5" onclick="clearSignature()">Clear signature</button>
       <div class="text-[11px] text-muted mb-5">Signed agreements are stored securely with timestamp. Date: 25 Mar 2026</div>
 
       <div class="flex gap-3 mt-8 pt-6 border-t border-olive-mid/15">
@@ -446,6 +449,10 @@
   let currentStep = 1;
   let consentChecked = 0;
   let isSigned = false;
+  let isDrawing = false;
+  let hasDrawnSignature = false;
+  let signatureCtx = null;
+  let signatureCanvas = null;
 
   function goStep(n) {
     document.querySelectorAll('[id^=step]:not([id=stepNav])').forEach(el => el.style.display = 'none');
@@ -454,6 +461,7 @@
     if (el) el.style.display = 'block';
     currentStep = n;
     updateNav();
+    if (n === 3) resizeSignatureCanvas();
     window.scrollTo(0, 0);
   }
 
@@ -501,15 +509,98 @@
     checkConsentReady();
   }
 
-  function signConsent() {
+  function initSignaturePad() {
+    signatureCanvas = document.getElementById('signatureCanvas');
+    if (!signatureCanvas) return;
+    signatureCtx = signatureCanvas.getContext('2d');
+    resizeSignatureCanvas();
+    window.addEventListener('resize', resizeSignatureCanvas);
+    signatureCanvas.addEventListener('pointerdown', startSignatureStroke);
+    signatureCanvas.addEventListener('pointermove', drawSignatureStroke);
+    signatureCanvas.addEventListener('pointerup', endSignatureStroke);
+    signatureCanvas.addEventListener('pointerleave', endSignatureStroke);
+  }
+
+  function resizeSignatureCanvas() {
+    if (!signatureCanvas || !signatureCtx) return;
+    const rect = signatureCanvas.getBoundingClientRect();
+    const ratio = window.devicePixelRatio || 1;
+    const existingData = signatureCanvas.width ? signatureCanvas.toDataURL() : null;
+    signatureCanvas.width = Math.max(1, Math.floor(rect.width * ratio));
+    signatureCanvas.height = Math.max(1, Math.floor(rect.height * ratio));
+    signatureCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    signatureCtx.lineCap = 'round';
+    signatureCtx.lineJoin = 'round';
+    signatureCtx.lineWidth = 2;
+    signatureCtx.strokeStyle = '#3d4f2e';
+
+    if (existingData && hasDrawnSignature) {
+      const img = new Image();
+      img.onload = () => signatureCtx.drawImage(img, 0, 0, rect.width, rect.height);
+      img.src = existingData;
+    }
+  }
+
+  function startSignatureStroke(e) {
+    if (!signatureCtx) return;
+    isDrawing = true;
+    const point = getSignaturePoint(e);
+    signatureCtx.beginPath();
+    signatureCtx.moveTo(point.x, point.y);
+    signatureCtx.lineTo(point.x, point.y);
+    signatureCtx.stroke();
+    markSignatureComplete();
+    signatureCanvas.setPointerCapture(e.pointerId);
+  }
+
+  function drawSignatureStroke(e) {
+    if (!isDrawing || !signatureCtx) return;
+    const point = getSignaturePoint(e);
+    signatureCtx.lineTo(point.x, point.y);
+    signatureCtx.stroke();
+    markSignatureComplete();
+  }
+
+  function markSignatureComplete() {
+    if (hasDrawnSignature) return;
+    hasDrawnSignature = true;
     isSigned = true;
-    document.getElementById('sigHint').style.display    = 'none';
-    document.getElementById('sigLine').style.display    = 'none';
-    document.getElementById('sigName').style.display    = 'none';
-    document.getElementById('sigDisplay').style.display = 'block';
-    document.getElementById('sigArea').style.background     = 'rgba(61,79,46,0.04)';
-    document.getElementById('sigArea').style.borderColor    = 'rgba(61,79,46,0.3)';
-    document.getElementById('sigArea').style.borderStyle    = 'solid';
+    const sigArea = document.getElementById('sigArea');
+    sigArea.style.background = 'rgba(61,79,46,0.04)';
+    sigArea.style.borderColor = 'rgba(61,79,46,0.3)';
+    sigArea.style.borderStyle = 'solid';
+    document.getElementById('sigHintWrap').style.display = 'none';
+    checkConsentReady();
+  }
+
+  function endSignatureStroke(e) {
+    if (!isDrawing) return;
+    isDrawing = false;
+    signatureCtx.closePath();
+    if (signatureCanvas && signatureCanvas.hasPointerCapture(e.pointerId)) {
+      signatureCanvas.releasePointerCapture(e.pointerId);
+    }
+  }
+
+  function getSignaturePoint(e) {
+    const rect = signatureCanvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  function clearSignature() {
+    if (!signatureCanvas || !signatureCtx) return;
+    signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+    hasDrawnSignature = false;
+    isSigned = false;
+    isDrawing = false;
+    const sigArea = document.getElementById('sigArea');
+    sigArea.style.background = '';
+    sigArea.style.borderColor = '';
+    sigArea.style.borderStyle = '';
+    document.getElementById('sigHintWrap').style.display = 'flex';
     checkConsentReady();
   }
 
@@ -518,6 +609,9 @@
     if (consentChecked >= 5 && isSigned) {
       btn.style.opacity       = '1';
       btn.style.pointerEvents = 'auto';
+    } else {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
     }
   }
 
@@ -531,6 +625,8 @@
     currentStep = 6;
     window.scrollTo(0, 0);
   }
+
+  initSignaturePad();
 </script>
 </body>
 </html>
