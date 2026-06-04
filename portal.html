@@ -117,6 +117,9 @@
     <a href="#" class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-muted no-underline transition-all hover:text-olive-mid hover:bg-olive-mid/[0.03]">
       <div class="sidebar-dot w-1.5 h-1.5 rounded-full bg-olive-mid/50 shrink-0"></div>Lab results
     </a>
+    <a href="#" class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-muted no-underline transition-all hover:text-olive-mid hover:bg-olive-mid/[0.03]" onclick="showTab('medical'); return false;">
+      <div class="sidebar-dot w-1.5 h-1.5 rounded-full bg-olive-mid/50 shrink-0"></div>Medical Records
+    </a>
     <div class="text-[9px] font-semibold tracking-[0.2em] uppercase text-muted px-5 mt-4 mb-1.5">Account</div>
     <a href="#" class="sidebar-item flex items-center gap-2.5 px-5 py-2.5 text-[12px] text-muted no-underline transition-all hover:text-olive-mid hover:bg-olive-mid/[0.03]" onclick="showTab('shop'); return false;">
       <div class="sidebar-dot w-1.5 h-1.5 rounded-full bg-olive-mid/50 shrink-0"></div>Shop
@@ -160,6 +163,7 @@
       <div class="tab-item whitespace-nowrap shrink-0 px-4 md:px-5 py-2.5 text-[12px] font-medium tracking-[0.06em] uppercase text-muted cursor-pointer border-b-2 border-transparent -mb-px transition-all hover:text-olive-dark" onclick="showTab('shipments')">Shipments</div>
       <div class="tab-item whitespace-nowrap shrink-0 px-4 md:px-5 py-2.5 text-[12px] font-medium tracking-[0.06em] uppercase text-muted cursor-pointer border-b-2 border-transparent -mb-px transition-all hover:text-olive-dark" onclick="showTab('checkin')">Check-in</div>
       <div class="tab-item whitespace-nowrap shrink-0 px-4 md:px-5 py-2.5 text-[12px] font-medium tracking-[0.06em] uppercase text-muted cursor-pointer border-b-2 border-transparent -mb-px transition-all hover:text-olive-dark" onclick="showTab('shop')">Shop</div>
+      <div class="tab-item whitespace-nowrap shrink-0 px-4 md:px-5 py-2.5 text-[12px] font-medium tracking-[0.06em] uppercase text-muted cursor-pointer border-b-2 border-transparent -mb-px transition-all hover:text-olive-dark" onclick="showTab('medical')">Medical Records</div>
     </div>
 
     <!-- OVERVIEW TAB -->
@@ -313,6 +317,300 @@
         </div>
       </div>
     </div>
+
+    <!-- MEDICAL RECORDS TAB -->
+    <div class="tab-content" id="tab-medical">
+
+      <!-- General Medical Condition -->
+      <div class="bg-cream-white border border-olive-mid/15 p-[24px] mb-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-serif text-[22px] font-medium text-[#1a1f14]">General Medical Condition</div>
+        <button onclick="openMedCondModal()" class="px-4 py-1.5 text-cream-white font-sans text-[11px] font-medium tracking-[0.08em] border-none cursor-pointer hover:opacity-90 transition-opacity" style="background:#1a2d5a;">Edit</button>
+      </div>
+
+      <!-- Social -->
+      <div class="border border-olive-mid/15 mb-4">
+        <div class="px-4 py-2.5 border-b border-olive-mid/15 text-[13px] font-semibold" style="color:#4ba3c7;">Social</div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Smoking</span><span id="mc-smoking">Currently</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Number of Cigarettes daily</span><span id="mc-cigarettes">Not Set</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Years of smoking</span><span id="mc-smoking-years">Not Set</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Alcohol Intake</span><span id="mc-alcohol">0 standard drinks per week</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Recreational Drug Use</span><span id="mc-drugs">No</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Exercise Level</span><span id="mc-exercise">Rarely</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 text-[13px]"><span class="text-muted">Diet</span><span id="mc-diet">N/A</span></div>
+      </div>
+
+      <!-- Sexuality -->
+      <div class="border border-olive-mid/15 mb-4">
+        <div class="px-4 py-2.5 border-b border-olive-mid/15 text-[13px] font-semibold" style="color:#4ba3c7;">Sexuality</div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Sexually Active</span><span id="mc-sexually-active">No</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Sexual Partner</span><span id="mc-sexual-partner">—</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 text-[13px]"><span class="text-muted">Protected Sex</span><span id="mc-protected-sex">Always</span></div>
+      </div>
+
+      <!-- Education / Occupation -->
+      <div class="border border-olive-mid/15">
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Education Level</span><span id="mc-education">Post graduate</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 border-b border-olive-mid/[0.08] text-[13px]"><span class="text-muted">Occupation</span><span id="mc-occupation">Information Technology</span></div>
+        <div class="flex justify-between items-center px-4 py-2.5 text-[13px]"><span class="text-muted">Number of Children</span><span id="mc-children">1</span></div>
+      </div>
+    </div>
+
+    <!-- Allergies -->
+    <div class="bg-cream-white border border-olive-mid/15 p-[24px] mb-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-serif text-[22px] font-medium text-[#1a1f14]">Allergies</div>
+        <button onclick="openAllergyModal(null)" class="px-4 py-1.5 text-cream-white font-sans text-[11px] font-medium tracking-[0.08em] border-none cursor-pointer hover:opacity-90 transition-opacity" style="background:#1a2d5a;">+ Add New</button>
+      </div>
+      <table class="w-full border-collapse text-[13px]">
+        <thead>
+          <tr style="background-color:#4ba3c7; color:#fff;">
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em] w-[45%]">Substance</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Reaction</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Severity</th>
+            <th class="px-4 py-2.5 w-[72px]"></th>
+          </tr>
+        </thead>
+        <tbody id="allergiesTableBody"></tbody>
+      </table>
+      <div class="h-[3px]" style="background:#4ba3c7;"></div>
+    </div>
+
+    <!-- Medications -->
+    <div class="bg-cream-white border border-olive-mid/15 p-[24px] mb-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-serif text-[22px] font-medium text-[#1a1f14]">Medications</div>
+        <button onclick="openMedicationModal(null)" class="px-4 py-1.5 text-cream-white font-sans text-[11px] font-medium tracking-[0.08em] border-none cursor-pointer hover:opacity-90 transition-opacity" style="background:#1a2d5a;">+ Add New</button>
+      </div>
+      <table class="w-full border-collapse text-[13px]">
+        <thead>
+          <tr style="background-color:#4ba3c7; color:#fff;">
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Name</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Dose</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Frequency</th>
+            <th class="px-4 py-2.5 w-[72px]"></th>
+          </tr>
+        </thead>
+        <tbody id="medicationsTableBody"></tbody>
+      </table>
+      <div class="h-[3px]" style="background:#4ba3c7;"></div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div class="bg-cream-white border border-olive-mid/15 p-[24px] mb-5">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-serif text-[22px] font-medium text-[#1a1f14]">Emergency Contacts</div>
+        <button onclick="openContactModal(null)" class="px-4 py-1.5 text-cream-white font-sans text-[11px] font-medium tracking-[0.08em] border-none cursor-pointer hover:opacity-90 transition-opacity" style="background:#1a2d5a;">+ Add New</button>
+      </div>
+      <table class="w-full border-collapse text-[13px]">
+        <thead>
+          <tr style="background-color:#4ba3c7; color:#fff;">
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Name</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Relationship</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">Phone</th>
+            <th class="text-left px-4 py-2.5 text-[11px] font-medium tracking-[0.06em]">EMR Access</th>
+            <th class="px-4 py-2.5 w-[72px]"></th>
+          </tr>
+        </thead>
+        <tbody id="contactsTableBody"></tbody>
+      </table>
+      <div class="h-[3px]" style="background:#4ba3c7;"></div>
+    </div>
+
+    </div><!-- end tab-medical -->
+  </div><!-- end main content -->
+</div><!-- end portal-layout -->
+
+<!-- MEDICAL CONDITION MODAL -->
+<div class="fixed inset-0 bg-[#1a1f14]/55 z-[300] flex items-center justify-center p-3 md:p-10" id="medCondModal" style="display:none;">
+  <div class="bg-cream-white w-full max-w-[700px] max-h-[90vh] overflow-y-auto" style="display:flex; flex-direction:column;">
+    <div class="px-5 md:px-7 pt-5 pb-[18px] border-b border-olive-mid/15 flex justify-between items-center">
+      <div class="font-serif text-[22px] font-normal text-[#1a1f14]">Edit General Medical Condition</div>
+      <button class="w-[30px] h-[30px] border border-olive-mid/25 bg-transparent cursor-pointer text-[16px] flex items-center justify-center hover:bg-cream transition-colors" onclick="closeMedCondModal()">×</button>
+    </div>
+    <div class="px-5 md:px-7 py-5">
+      <div class="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted mb-3 pb-1 border-b border-olive-mid/15">Social</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Smoking</label>
+          <select id="f-smoking" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>Currently</option><option>Former</option><option>Never</option>
+          </select>
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Number of Cigarettes daily</label>
+          <input id="f-cigarettes" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. 10">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Years of smoking</label>
+          <input id="f-smoking-years" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. 5">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Alcohol Intake</label>
+          <input id="f-alcohol" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. 0 standard drinks per week">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Recreational Drug Use</label>
+          <select id="f-drugs" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>No</option><option>Yes</option>
+          </select>
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Exercise Level</label>
+          <select id="f-exercise" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>Never</option><option>Rarely</option><option>Sometimes</option><option>Regularly</option>
+          </select>
+        </div>
+        <div class="mb-[14px] md:col-span-2">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Diet</label>
+          <input id="f-diet" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Balanced, Vegan, N/A">
+        </div>
+      </div>
+
+      <div class="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted mb-3 pb-1 border-b border-olive-mid/15">Sexuality</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Sexually Active</label>
+          <select id="f-sexually-active" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>No</option><option>Yes</option>
+          </select>
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Sexual Partner</label>
+          <input id="f-sexual-partner" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="Optional">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Protected Sex</label>
+          <select id="f-protected-sex" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>Always</option><option>Sometimes</option><option>Never</option><option>N/A</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="text-[10px] font-semibold tracking-[0.15em] uppercase text-muted mb-3 pb-1 border-b border-olive-mid/15">Education &amp; Background</div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Education Level</label>
+          <select id="f-education" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option>High school</option><option>Some college</option><option>Undergraduate</option><option>Post graduate</option><option>Other</option>
+          </select>
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Occupation</label>
+          <input id="f-occupation" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Information Technology">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Number of Children</label>
+          <input id="f-children" type="number" min="0" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="0">
+        </div>
+      </div>
+    </div>
+    <div class="px-5 md:px-7 pb-5 md:pb-7 flex gap-3">
+      <button onclick="saveMedCondModal()" class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors">Save changes</button>
+      <button onclick="closeMedCondModal()" class="px-6 py-2.5 border border-olive-mid/25 bg-cream text-muted font-sans text-[11px] font-medium tracking-[0.12em] uppercase cursor-pointer hover:border-olive-mid transition-colors">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ALLERGY MODAL -->
+<div class="fixed inset-0 bg-[#1a1f14]/55 z-[300] flex items-center justify-center p-3 md:p-10" id="allergyModal" style="display:none;">
+  <div class="bg-cream-white w-full max-w-[500px]" style="display:flex; flex-direction:column;">
+    <div class="px-5 md:px-7 pt-5 pb-[18px] border-b border-olive-mid/15 flex justify-between items-center">
+      <div class="font-serif text-[22px] font-normal text-[#1a1f14]" id="allergyModalTitle">Add Allergy</div>
+      <button class="w-[30px] h-[30px] border border-olive-mid/25 bg-transparent cursor-pointer text-[16px] flex items-center justify-center hover:bg-cream transition-colors" onclick="closeAllergyModal()">×</button>
+    </div>
+    <div class="px-5 md:px-7 py-5">
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Substance</label>
+        <input id="f-allergy-substance" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Penicillin, Peanuts, Grain">
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Reaction</label>
+        <input id="f-allergy-reaction" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Hives, Swelling, Unclear throat">
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Severity</label>
+        <select id="f-allergy-severity" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+          <option>Mild</option><option>Medium</option><option>Severe</option>
+        </select>
+      </div>
+    </div>
+    <div class="px-5 md:px-7 pb-5 md:pb-7 flex gap-3">
+      <button onclick="saveAllergy()" class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors">Save</button>
+      <button onclick="closeAllergyModal()" class="px-6 py-2.5 border border-olive-mid/25 bg-cream text-muted font-sans text-[11px] font-medium tracking-[0.12em] uppercase cursor-pointer hover:border-olive-mid transition-colors">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEDICATION MODAL -->
+<div class="fixed inset-0 bg-[#1a1f14]/55 z-[300] flex items-center justify-center p-3 md:p-10" id="medicationModal" style="display:none;">
+  <div class="bg-cream-white w-full max-w-[500px]" style="display:flex; flex-direction:column;">
+    <div class="px-5 md:px-7 pt-5 pb-[18px] border-b border-olive-mid/15 flex justify-between items-center">
+      <div class="font-serif text-[22px] font-normal text-[#1a1f14]" id="medicationModalTitle">Add Medication</div>
+      <button class="w-[30px] h-[30px] border border-olive-mid/25 bg-transparent cursor-pointer text-[16px] flex items-center justify-center hover:bg-cream transition-colors" onclick="closeMedicationModal()">×</button>
+    </div>
+    <div class="px-5 md:px-7 py-5">
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Name</label>
+        <input id="f-med-name" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Painkiller, PCM">
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Dose</label>
+        <input id="f-med-dose" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. 500mg, 2 tablets of 200mg">
+      </div>
+      <div class="mb-[18px]">
+        <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Frequency</label>
+        <input id="f-med-frequency" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="e.g. Once daily, When required">
+      </div>
+    </div>
+    <div class="px-5 md:px-7 pb-5 md:pb-7 flex gap-3">
+      <button onclick="saveMedication()" class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors">Save</button>
+      <button onclick="closeMedicationModal()" class="px-6 py-2.5 border border-olive-mid/25 bg-cream text-muted font-sans text-[11px] font-medium tracking-[0.12em] uppercase cursor-pointer hover:border-olive-mid transition-colors">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMERGENCY CONTACT MODAL -->
+<div class="fixed inset-0 bg-[#1a1f14]/55 z-[300] flex items-center justify-center p-3 md:p-10" id="contactModal" style="display:none;">
+  <div class="bg-cream-white w-full max-w-[680px]" style="display:flex; flex-direction:column;">
+    <div class="px-5 md:px-7 pt-5 pb-[18px] border-b border-olive-mid/15 flex justify-between items-center">
+      <div class="font-serif text-[22px] font-normal text-[#1a1f14]" id="contactModalTitle">Add Emergency Contact</div>
+      <button class="w-[30px] h-[30px] border border-olive-mid/25 bg-transparent cursor-pointer text-[16px] flex items-center justify-center hover:bg-cream transition-colors" onclick="closeContactModal()">×</button>
+    </div>
+    <div class="px-5 md:px-7 py-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Contact Name <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-muted text-[9px] text-muted cursor-default" title="Full name of emergency contact">ℹ</span></label>
+          <input id="f-contact-name" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="Contact Name">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Contact Relationship <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-muted text-[9px] text-muted cursor-default" title="How this person is related to you">ℹ</span></label>
+          <select id="f-contact-relationship" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option value="">Select</option>
+            <option>Spouse</option><option>Partner</option><option>Parent</option><option>Child</option><option>Sibling</option><option>Friend</option><option>Other</option>
+          </select>
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Contact Phone Number <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-muted text-[9px] text-muted cursor-default" title="Best phone number to reach this contact">ℹ</span></label>
+          <input id="f-contact-phone" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="Contact Phone Number">
+        </div>
+        <div class="mb-[14px]">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Contact Can Access EMR <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-muted text-[9px] text-muted cursor-default" title="Whether this contact is permitted to view your Electronic Medical Record">ℹ</span></label>
+          <select id="f-contact-emr" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] text-[#1a1f14] outline-none cursor-pointer">
+            <option value="">Select Contact Access</option>
+            <option>Yes</option><option>No</option>
+          </select>
+        </div>
+        <div class="mb-[14px] md:col-span-2">
+          <label class="block text-[11px] font-medium tracking-[0.08em] uppercase text-muted mb-1.5">Contact Address <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-muted text-[9px] text-muted cursor-default" title="Residential address of this contact">ℹ</span></label>
+          <input id="f-contact-address" class="w-full h-[42px] border border-olive-mid/25 bg-cream-white px-3.5 font-sans text-[13px] outline-none focus:border-olive-mid" placeholder="Contact Address">
+        </div>
+      </div>
+    </div>
+    <div class="px-5 md:px-7 pb-5 md:pb-7 flex gap-3">
+      <button onclick="saveContact()" class="px-6 py-2.5 bg-terra text-cream-white font-sans text-[11px] font-medium tracking-[0.12em] uppercase border-none cursor-pointer hover:bg-terra-dark transition-colors">Save</button>
+      <button onclick="closeContactModal()" class="px-6 py-2.5 border border-olive-mid/25 bg-cream text-muted font-sans text-[11px] font-medium tracking-[0.12em] uppercase cursor-pointer hover:border-olive-mid transition-colors">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -379,7 +677,7 @@
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-'+name).classList.add('active');
-    const tabs = {'overview':0,'protocol':1,'shipments':2,'checkin':3,'shop':4};
+    const tabs = {'overview':0,'protocol':1,'shipments':2,'checkin':3,'shop':4,'medical':5};
     document.querySelectorAll('.tab-item')[tabs[name]]?.classList.add('active');
   }
   function toggleNotif() {
@@ -479,6 +777,211 @@
     document.getElementById('orderSuccess').style.display = 'block';
   }
   renderProducts();
+
+  // ── Medical Records ──────────────────────────────────────────────
+  const medCond = {
+    smoking: 'Currently', cigarettes: 'Not Set', smokingYears: 'Not Set',
+    alcohol: '0 standard drinks per week', drugs: 'No', exercise: 'Rarely', diet: 'N/A',
+    sexuallyActive: 'No', sexualPartner: '', protectedSex: 'Always',
+    education: 'Post graduate', occupation: 'Information Technology', children: '1'
+  };
+  const allergies = [
+    { substance: 'Grain', reaction: 'Unclear throat', severity: 'Medium' }
+  ];
+  const medications = [
+    { name: 'Painkiller', dose: '2 tablets of 200mg', frequency: 'When required' },
+    { name: 'PCM', dose: '500mg', frequency: 'In the morning' }
+  ];
+  const emergencyContacts = [];
+  let editingAllergyIdx = null, editingMedIdx = null, editingContactIdx = null;
+
+  // Icon helpers
+  const editIcon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ba3c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+  const deleteIcon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+
+  function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ── General Medical Condition ────────────────────────────────────
+  function openMedCondModal() {
+    const m = medCond;
+    const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+    setVal('f-smoking', m.smoking); setVal('f-cigarettes', m.cigarettes === 'Not Set' ? '' : m.cigarettes);
+    setVal('f-smoking-years', m.smokingYears === 'Not Set' ? '' : m.smokingYears);
+    setVal('f-alcohol', m.alcohol); setVal('f-drugs', m.drugs);
+    setVal('f-exercise', m.exercise); setVal('f-diet', m.diet === 'N/A' ? '' : m.diet);
+    setVal('f-sexually-active', m.sexuallyActive); setVal('f-sexual-partner', m.sexualPartner);
+    setVal('f-protected-sex', m.protectedSex); setVal('f-education', m.education);
+    setVal('f-occupation', m.occupation); setVal('f-children', m.children);
+    document.getElementById('medCondModal').style.display = 'flex';
+  }
+  function closeMedCondModal() { document.getElementById('medCondModal').style.display = 'none'; }
+  function saveMedCondModal() {
+    const g = id => document.getElementById(id).value.trim();
+    medCond.smoking = g('f-smoking');
+    medCond.cigarettes = g('f-cigarettes') || 'Not Set';
+    medCond.smokingYears = g('f-smoking-years') || 'Not Set';
+    medCond.alcohol = g('f-alcohol') || 'Not Set';
+    medCond.drugs = g('f-drugs');
+    medCond.exercise = g('f-exercise');
+    medCond.diet = g('f-diet') || 'N/A';
+    medCond.sexuallyActive = g('f-sexually-active');
+    medCond.sexualPartner = g('f-sexual-partner');
+    medCond.protectedSex = g('f-protected-sex');
+    medCond.education = g('f-education');
+    medCond.occupation = g('f-occupation');
+    medCond.children = g('f-children') || '0';
+    document.getElementById('mc-smoking').textContent = medCond.smoking;
+    document.getElementById('mc-cigarettes').textContent = medCond.cigarettes;
+    document.getElementById('mc-smoking-years').textContent = medCond.smokingYears;
+    document.getElementById('mc-alcohol').textContent = medCond.alcohol;
+    document.getElementById('mc-drugs').textContent = medCond.drugs;
+    document.getElementById('mc-exercise').textContent = medCond.exercise;
+    document.getElementById('mc-diet').textContent = medCond.diet;
+    document.getElementById('mc-sexually-active').textContent = medCond.sexuallyActive;
+    document.getElementById('mc-sexual-partner').textContent = medCond.sexualPartner || '—';
+    document.getElementById('mc-protected-sex').textContent = medCond.protectedSex;
+    document.getElementById('mc-education').textContent = medCond.education;
+    document.getElementById('mc-occupation').textContent = medCond.occupation;
+    document.getElementById('mc-children').textContent = medCond.children;
+    closeMedCondModal();
+  }
+
+  // ── Allergies ────────────────────────────────────────────────────
+  function renderAllergies() {
+    const tb = document.getElementById('allergiesTableBody');
+    if (!tb) return;
+    tb.innerHTML = allergies.map((a, i) => `
+      <tr class="border-b border-olive-mid/[0.08] hover:bg-cream/50">
+        <td class="px-4 py-3">${esc(a.substance)}</td>
+        <td class="px-4 py-3">${esc(a.reaction)}</td>
+        <td class="px-4 py-3">${esc(a.severity)}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2 justify-end">
+            <button onclick="openAllergyModal(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Edit">${editIcon}</button>
+            <button onclick="deleteAllergy(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Delete">${deleteIcon}</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  function openAllergyModal(idx) {
+    editingAllergyIdx = idx;
+    document.getElementById('allergyModalTitle').textContent = idx === null ? 'Add Allergy' : 'Edit Allergy';
+    const a = idx !== null ? allergies[idx] : { substance:'', reaction:'', severity:'Mild' };
+    document.getElementById('f-allergy-substance').value = a.substance;
+    document.getElementById('f-allergy-reaction').value = a.reaction;
+    document.getElementById('f-allergy-severity').value = a.severity;
+    document.getElementById('allergyModal').style.display = 'flex';
+  }
+  function closeAllergyModal() { document.getElementById('allergyModal').style.display = 'none'; }
+  function saveAllergy() {
+    const substance = document.getElementById('f-allergy-substance').value.trim();
+    if (!substance) { alert('Please enter a substance.'); return; }
+    const entry = {
+      substance, reaction: document.getElementById('f-allergy-reaction').value.trim(),
+      severity: document.getElementById('f-allergy-severity').value
+    };
+    if (editingAllergyIdx !== null) allergies[editingAllergyIdx] = entry;
+    else allergies.push(entry);
+    renderAllergies(); closeAllergyModal();
+  }
+  function deleteAllergy(idx) {
+    if (confirm('Remove this allergy?')) { allergies.splice(idx, 1); renderAllergies(); }
+  }
+
+  // ── Medications ──────────────────────────────────────────────────
+  function renderMedications() {
+    const tb = document.getElementById('medicationsTableBody');
+    if (!tb) return;
+    tb.innerHTML = medications.map((m, i) => `
+      <tr class="border-b border-olive-mid/[0.08] hover:bg-cream/50">
+        <td class="px-4 py-3">${esc(m.name)}</td>
+        <td class="px-4 py-3">${esc(m.dose)}</td>
+        <td class="px-4 py-3">${esc(m.frequency)}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2 justify-end">
+            <button onclick="openMedicationModal(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Edit">${editIcon}</button>
+            <button onclick="deleteMedication(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Delete">${deleteIcon}</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  function openMedicationModal(idx) {
+    editingMedIdx = idx;
+    document.getElementById('medicationModalTitle').textContent = idx === null ? 'Add Medication' : 'Edit Medication';
+    const m = idx !== null ? medications[idx] : { name:'', dose:'', frequency:'' };
+    document.getElementById('f-med-name').value = m.name;
+    document.getElementById('f-med-dose').value = m.dose;
+    document.getElementById('f-med-frequency').value = m.frequency;
+    document.getElementById('medicationModal').style.display = 'flex';
+  }
+  function closeMedicationModal() { document.getElementById('medicationModal').style.display = 'none'; }
+  function saveMedication() {
+    const name = document.getElementById('f-med-name').value.trim();
+    if (!name) { alert('Please enter a medication name.'); return; }
+    const entry = {
+      name, dose: document.getElementById('f-med-dose').value.trim(),
+      frequency: document.getElementById('f-med-frequency').value.trim()
+    };
+    if (editingMedIdx !== null) medications[editingMedIdx] = entry;
+    else medications.push(entry);
+    renderMedications(); closeMedicationModal();
+  }
+  function deleteMedication(idx) {
+    if (confirm('Remove this medication?')) { medications.splice(idx, 1); renderMedications(); }
+  }
+
+  // ── Emergency Contacts ───────────────────────────────────────────
+  function renderContacts() {
+    const tb = document.getElementById('contactsTableBody');
+    if (!tb) return;
+    tb.innerHTML = emergencyContacts.length === 0
+      ? `<tr><td colspan="5" class="px-4 py-5 text-center text-[12px] text-muted">No emergency contacts added yet.</td></tr>`
+      : emergencyContacts.map((c, i) => `
+      <tr class="border-b border-olive-mid/[0.08] hover:bg-cream/50">
+        <td class="px-4 py-3">${esc(c.name)}</td>
+        <td class="px-4 py-3">${esc(c.relationship)}</td>
+        <td class="px-4 py-3">${esc(c.phone)}</td>
+        <td class="px-4 py-3">${esc(c.emrAccess)}</td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2 justify-end">
+            <button onclick="openContactModal(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Edit">${editIcon}</button>
+            <button onclick="deleteContact(${i})" class="p-1 border-none bg-transparent cursor-pointer hover:opacity-70 transition-opacity" title="Delete">${deleteIcon}</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+  function openContactModal(idx) {
+    editingContactIdx = idx;
+    document.getElementById('contactModalTitle').textContent = idx === null ? 'Add Emergency Contact' : 'Edit Emergency Contact';
+    const c = idx !== null ? emergencyContacts[idx] : { name:'', relationship:'', phone:'', emrAccess:'', address:'' };
+    document.getElementById('f-contact-name').value = c.name;
+    document.getElementById('f-contact-relationship').value = c.relationship;
+    document.getElementById('f-contact-phone').value = c.phone;
+    document.getElementById('f-contact-emr').value = c.emrAccess;
+    document.getElementById('f-contact-address').value = c.address;
+    document.getElementById('contactModal').style.display = 'flex';
+  }
+  function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+  function saveContact() {
+    const name = document.getElementById('f-contact-name').value.trim();
+    if (!name) { alert('Please enter a contact name.'); return; }
+    const entry = {
+      name,
+      relationship: document.getElementById('f-contact-relationship').value,
+      phone: document.getElementById('f-contact-phone').value.trim(),
+      emrAccess: document.getElementById('f-contact-emr').value,
+      address: document.getElementById('f-contact-address').value.trim()
+    };
+    if (editingContactIdx !== null) emergencyContacts[editingContactIdx] = entry;
+    else emergencyContacts.push(entry);
+    renderContacts(); closeContactModal();
+  }
+  function deleteContact(idx) {
+    if (confirm('Remove this emergency contact?')) { emergencyContacts.splice(idx, 1); renderContacts(); }
+  }
+
+  // Initial render
+  renderAllergies(); renderMedications(); renderContacts();
 </script>
 </body>
 </html>
